@@ -1,0 +1,24 @@
+*{
+    background: linear-gradient(to right, #1622A7, #DC4D00);
+}
+body{
+    margin: 0;
+     padding-inline: 10px;
+    display: flex;
+    flex-direction: column;
+     height: 100vh;
+     gap: 3rem;
+  padding-top: 5rem;
+}
+.login-form{
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #001938;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    display: block;
+}
