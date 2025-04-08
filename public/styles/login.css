@@ -25,26 +25,19 @@ body{
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
-    height: 200px;
-    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
   }
   
   .login_form {
-    width: 30vw;
-    height: 30vh;
     margin: auto;
-    background-color: rgba(255, 255, 255, 0.95);
-    border: 2px solid #fff;
     border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 0.75rem;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     padding: 1rem;
   }
   
@@ -85,10 +78,15 @@ body{
   
   .logo-bg {
     position: absolute;
-    width: 70%;
-    height: 90%;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     z-index: 0;
   }
+  
+  
   
   .black-overlay {
     position: absolute;
