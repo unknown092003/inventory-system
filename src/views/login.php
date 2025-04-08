@@ -7,13 +7,16 @@
     <title>Login</title>
 </head>
 <body>
-    <div class="login_form">
-        <img src= "" alt="">
-        <h1>Log In</h1>
-        <input type="username"placeholder="Enter your Username">
-        <input type="password" placeholder="Enter your password">
-        <button type="submit">Log In</button>
-    </div>
-    
+<div class="bg-wrapper">
+  <img class="logo-bg" src="/inventory-system/public/img/ocd.png" alt="Logo Background" />
+  <div class="black-overlay"></div>
+
+  <div class="login_form">
+    <h1>Log In</h1>
+    <input type="text" placeholder="Enter your Username">
+    <input type="password" placeholder="Enter your Password">
+    <button type="submit">Log In</button>
+  </div>
+</div>
 </body>
 </html>
