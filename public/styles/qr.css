@@ -62,3 +62,14 @@ body {
     border: 1px solid #ccc;
     position: relative; /* Ensure it is positioned correctly */
 }
+button{
+    text-align: center;
+    margin-top: 30px;
+    padding: 4px;
+    width: 150px;
+    height: 60px;
+}
+
+.qr-area button{
+    margin-left: 50%;
+}

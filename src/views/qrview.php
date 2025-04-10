@@ -17,6 +17,7 @@
         <h1>Scan</h1>
         <div id="reader"></div>
         <div id="result" style="text-align: center; margin-top: 20px; color: black;"></div> <!-- Changed color to black for better visibility -->
+        <button>EDIT</button>
     </div>
 
     <script>
@@ -37,8 +38,8 @@
         html5QrCode.start(
             { facingMode: "environment" }, // Use the rear camera
             {
-                fps: 10, // Frames per second
-                qrbox: { width: 250, height: 250 } // Size of the scanning box
+                fps: 30, // Frames per second
+                qrbox: { width: 300, height: 200 } // Size of the scanning box
             },
             onScanSuccess,
             onScanError
