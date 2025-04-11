@@ -1,39 +1,44 @@
-// function onScanSuccess(decodedText, decodedResult) {
-//   document.getElementById(
-//     "result"
-//   ).innerText = `QR Code Scanned: ${decodedText}`;
-//   console.log(`Scan result: ${decodedText}`, decodedResult);
-// }
+function onScanSuccess(decodedText, decodedResult) {
+  document.getElementById(
+    "result"
+  ).innerText = `QR Code Scanned: ${decodedText}`;
 
-// function onScanError(errorMessage) {
-//   console.warn(`QR Code scan error: ${errorMessage}`);
-// }
+  fetch("/inventory-system/item.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      productNumber: decodedText,
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => console.log(data));
+}
 
-// const html5QrCode = new Html5Qrcode("reader");
+function onScanError(errorMessage) {
+  console.warn(`QR Code scan error: ${errorMessage}`);
+}
 
-// html5QrCode
-//   .start(
-//     {
-//       facingMode: "environment",
-//     },
-//     {
-//       fps: 30,
-//       qrbox: {
-//         width: 200,
-//         height: 200,
-//       },
-//     },
-//     onScanSuccess,
-//     onScanError
-//   )
-//   .catch((err) => {
-//     console.error(`Unable to start scanning: ${err}`);
-//     document.getElementById("result").innerText =
-//       "Unable to start scanning. Please check your camera permissions.";
-//   });
+const html5QrCode = new Html5Qrcode("reader");
 
-fetch("/inventory-system/item.php", {
-  method: "GET",
-})
-  .then((res) => res.json())
-  .then((data) => console.log(data));
+html5QrCode
+  .start(
+    {
+      facingMode: "environment",
+    },
+    {
+      fps: 30,
+      qrbox: {
+        width: 200,
+        height: 200,
+      },
+    },
+    onScanSuccess,
+    onScanError
+  )
+  .catch((err) => {
+    console.error(`Unable to start scanning: ${err}`);
+    document.getElementById("result").innerText =
+      "Unable to start scanning. Please check your camera permissions.";
+  });

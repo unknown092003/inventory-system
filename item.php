@@ -2,9 +2,10 @@
 
 header("Content-Type: application/json");
 
-$data = json_encode([
-    "user_id" => 1,
-    "user" => "John Doe",
-]);
+echo json_encode($_POST);
 
-echo $data;
+ob_flush();
+flush();
+
+
+// Error In Fetching Data
