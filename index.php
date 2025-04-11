@@ -19,7 +19,6 @@
         <h1>Scan</h1>
         <div id="reader"></div>
         <div id="result" style="text-align: center; margin-top: 20px; color: black;"></div>
-        <button>EDIT</button>
     </div>
 
     <script src="/inventory-system/public/scripts/scanner.js"></script>
