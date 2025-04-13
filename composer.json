@@ -1,0 +1,16 @@
+{
+    "name": "info/inventory",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Info\\Inventory\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Jasper",
+            "email": "dev.jasperyano@gmail.com"
+        }
+    ],
+    "require": {}
+}
