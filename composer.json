@@ -12,5 +12,7 @@
             "email": "dev.jasperyano@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "bacon/bacon-qr-code": "^3.0"
+    }
 }
