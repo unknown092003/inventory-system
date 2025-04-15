@@ -2,10 +2,9 @@
 
 header("Content-Type: application/json");
 
-echo json_encode($_POST);
+$pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
+$stmt = $pdo->prepare("SELECT * FROM inventory WHERE product_number = :prod_num;");
+$stmt->execute([":prod_num" => $_POST["productNumber"]]);
+$res = $stmt->fetch(PDO::FETCH_ASSOC);
 
-ob_flush();
-flush();
-
-
-// Error In Fetching Data
+echo json_encode($res);

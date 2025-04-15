@@ -1,25 +1,3 @@
-function onScanSuccess(decodedText, decodedResult) {
-  document.getElementById(
-    "result"
-  ).innerText = `QR Code Scanned: ${decodedText}`;
-
-  fetch("/inventory-system/item.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      productNumber: decodedText,
-    }),
-  })
-    .then((res) => res.json())
-    .then((data) => console.log(data));
-}
-
-function onScanError(errorMessage) {
-  console.warn(`QR Code scan error: ${errorMessage}`);
-}
-
 const html5QrCode = new Html5Qrcode("reader");
 
 html5QrCode
@@ -28,7 +6,7 @@ html5QrCode
       facingMode: "environment",
     },
     {
-      fps: 30,
+      fps: 10,
       qrbox: {
         width: 200,
         height: 200,
@@ -39,6 +17,43 @@ html5QrCode
   )
   .catch((err) => {
     console.error(`Unable to start scanning: ${err}`);
-    document.getElementById("result").innerText =
+    document.getElementById("message").innerText =
       "Unable to start scanning. Please check your camera permissions.";
   });
+
+function onScanSuccess(decodedText, decodedResult) {
+  const form = new FormData();
+  form.append("productNumber", decodedText);
+
+  fetch("/inventory-system/item.php", {
+    method: "POST",
+    body: form,
+  })
+    .then((res) => {
+      html5QrCode.pause();
+      return res.json();
+    })
+    .then((data) => {
+      // alert(JSON.stringify(data));
+      setContent(data);
+      document.querySelector("dialog").showModal();
+      document.getElementById("scan-again").addEventListener("click", () => {
+        document.querySelector("dialog").close();
+        html5QrCode.resume();
+      });
+    });
+}
+
+function onScanError(errorMessage) {
+  console.warn(`QR Code scan error: ${errorMessage}`);
+}
+
+function setContent(data) {
+  const prodName = document.getElementById("prod-name");
+  const prodId = document.getElementById("prod-id");
+  const prodDesc = document.getElementById("prod-desc");
+
+  prodName.textContent = data.product_name ?? "No Record Found";
+  prodId.textContent = data.product_number;
+  prodDesc.textContent = data.product_description;
+}

@@ -10,7 +10,22 @@
 </head>
 
 <body>
-    <div class="bg-wrapper">
+    <main>
+        <div id="container">
+            <div class="qr-area">
+                <h1>Scan</h1>
+                <div id="reader"></div>
+                <p id="message"></p>
+            </div>
+        </div>
+        <dialog>
+            <h2 id="prod-name"></h2>
+            <p><small id="prod-id"></small></p>
+            <p id="prod-desc"></p>
+            <button id="scan-again">Scan Again</button>
+        </dialog>
+    </main>
+    <!-- <div class="bg-wrapper">
         <img class="logo-bg" src="/inventory-system/public/img/ocd.png" alt="Logo Background" />
         <div class="black-overlay"></div>
     </div>
@@ -20,6 +35,13 @@
         <div id="reader"></div>
         <div id="result" style="text-align: center; margin-top: 20px; color: black;"></div>
     </div>
+
+    <dialog>
+        <h2 id="prod-name"></h2>
+        <p><small id="prod-id"></small></p>
+        <p id="prod-desc"></p>
+        <button id="scan-again">Scan Again</button>
+    </dialog> -->
 
     <script src="/inventory-system/public/scripts/scanner.js"></script>
 </body>

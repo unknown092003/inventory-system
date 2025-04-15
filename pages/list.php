@@ -1,6 +1,6 @@
 <?php
 $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
-$stmt = $pdo->query("SELECT * FROM inventory LIMIT 100;");
+$stmt = $pdo->query("SELECT * FROM inventory LIMIT 25;");
 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -10,6 +10,7 @@ $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/inventory-system/public/styles/list.css">
     <title>List</title>
 </head>
 
@@ -17,11 +18,12 @@ $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <main>
         <?php
         foreach ($res as $data) { ?>
-            <div data-product-number="<?= $data["product_number"] ?>">
+            <div class="product-card" data-product-number="<?= $data["product_number"] ?>">
                 <div id="<?= $data["product_number"] ?>"></div>
                 <div>
-                    <h4><?= $data["product_name"] ?></h4>
+                    <h4 title="<?= $data["product_name"] ?>"><?= $data["product_name"] ?></h4>
                 </div>
+                <button>Edit</button>
             </div>
         <?php    }
         ?>
