@@ -1,5 +1,4 @@
 * {
-  padding: 0;
   margin: 0;
   box-sizing: border-box;
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
@@ -29,4 +28,70 @@ main {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+@media print {
+  body {
+    margin: 0;
+  }
+}
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+.sticker {
+  width: 4.5in;
+  margin: 0;
+  height: 3.5in;
+  border: 1px solid #000;
+  display: flex;
+  padding: 0.1in;
+  box-sizing: border-box;
+  overflow: visible; /* Allow content to overflow */
+}
+
+.qr-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 0.2in;
+  border-right: 1px solid #ccc;
+  overflow: visible; /* Allow content to overflow */
+}
+
+.qr {
+  width: 1in; /* Set QR image width to 150px */
+  height: 1in; /* Set QR image height to 150px */
+}
+
+.info-section {
+  margin: 0; /* Remove margin to avoid extra space */
+  padding-top: 5px;
+  width: calc(100% - 150px); /* Adjust width to account for qr-section */
+  padding-left: 0.2in;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: visible; /* Allow content to overflow */
+}
+
+.info-section .line {
+  font-size: 10pt;
+  margin-bottom: 4px;
+  white-space: nowrap; /* Prevent text from wrapping */
+  text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+  overflow: visible; /* Allow content to overflow */
+  padding: 2px; /* Add padding for better readability */
+  border-radius: 2px; /* Add slight rounding to the box */
+}
+
+.info-section .line.name,
+.info-section .line.product_description,
+.info-section .line.product_number {
+  background-color: transparent; /* Remove white background */
+}
+
+.label {
+  font-weight: bold;
 }

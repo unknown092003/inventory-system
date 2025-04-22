@@ -53,7 +53,7 @@ function setContent(data) {
   const prodId = document.getElementById("prod-id");
   const prodDesc = document.getElementById("prod-desc");
 
-  prodName.textContent = data.product_name ?? "No Record Found";
-  prodId.textContent = data.product_number;
-  prodDesc.textContent = data.product_description;
+  prodName.textContent = data.description ?? "No Record Found";
+  prodId.textContent = data.property_number;
+  // prodDesc.textContent = data.product_description;
 }
