@@ -1,0 +1,1 @@
+ALTER TABLE activity_log ADD COLUMN description TEXT NOT NULL AFTER action_type;

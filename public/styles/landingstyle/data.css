@@ -1,0 +1,12 @@
+
+table{
+    border: solid 2px black;
+}
+.content-area{
+    
+border:solid 2px black;
+}
+table, th, td {
+    padding:5px;
+    border: 1px solid;
+}

@@ -23,7 +23,7 @@
             <p><small id="prod-id"></small></p>
             <p id="prod-desc"></p>
             <button id="scan-again">Scan Again</button>
-            <a href="/inventory-system/pages/login.php">Edit</a>
+            <a href="pages/login.php">Edit</a>
         </dialog>
     </main>
     <!-- <div class="bg-wrapper">

@@ -95,3 +95,23 @@ body {
 .label {
   font-weight: bold;
 }
+
+.inventory-table th a {
+    color: #007bff;
+    text-decoration: none;
+    display: block;
+    padding: 8px;
+}
+
+.inventory-table th a:hover {
+    background-color: #f8f9fa;
+}
+
+.inventory-table th {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.inventory-table th:hover {
+    background-color: #f1f1f1;
+}

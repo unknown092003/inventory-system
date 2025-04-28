@@ -1,0 +1,29 @@
+*{
+}
+.home{
+    text-align: center;
+    width: 100vw;
+    background: linear-gradient(to right, #1622a7, #dc4d00);
+    /* background-color:#ddd; */
+    border: solid 1px black;
+    width: 100%;
+    padding-top: 50px;
+    margin: 0;
+}
+.home h1 {
+    margin-bottom: 50px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 30px;
+    color: white;
+}
+body{
+    width: 100vw;
+}
+
+table{
+    margin: 0 auto;
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+    border: solid 1px black;
+}

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/inventory-system/public/styles/landing.css">
+    <title>Inventory</title>
+</head>
+<body>
+<div class="header">
+    <h1>OFFICE OF CIVIL DEFENSE</h1>
+    <img src="/inventory-system/public/img/ocd.png" alt="">
+</div>
+
+<div class="main-container">
+    <div class="left-nav">
+        <h1>INVENTORY SYSTEM</h1>
+        <ul>
+            <li><a href="?page=home">Home</a></li>
+            <li><a href="?page=list">List</a></li>
+            <li><a href="?page=create">Create</a></li>
+            <li><a href="?page=data">Data</a></li>
+            <li><a href="?page=edit">Edit</a></li>
+        </ul>
+    </div>
+
+    <div class="content-area">
+        <?php
+        $page = $_GET['page'] ?? 'landing';
+        
+        switch($page) {
+            case 'home':
+                include 'landing/home.php';
+                break;
+            case 'list' :
+                include 'list.php';
+                break;
+            case 'create':
+                include 'landing/create.php';
+                break;
+            case 'data':
+                include 'landing/data.php';
+                break;
+            case 'edit':
+                include 'landing/edit.php';
+                break;
+            case 'landing':
+            default:
+                echo '<div class="default-content"><h2>Welcome to Inventory System</h2></div>';
+        }
+        ?>
+    </div>
+</div>
+</body>
+</html>
