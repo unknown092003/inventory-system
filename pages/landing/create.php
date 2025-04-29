@@ -26,7 +26,7 @@
         <input type="text" name="acquisition_date_costs">
 
         <label>Person Accountable:</label>
-        <input type="text" name="accountable_person" required>
+        <input type="text" name="person_accountable" required>
 
         <label>Status:</label>
         <input type="text" name="status" required>
@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 :model_number, 
                 :serial_number, 
                 :acquisition_date_costs, 
-                :accountable_person, 
+                :person_accountable, 
                 :status, 
                 :inventory_date
             )
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':model_number' => $_POST['model_number'],
             ':serial_number' => $_POST['serial_number'],
             ':acquisition_date_costs' => $_POST['acquisition_date_costs'],
-            ':accountable_person' => $_POST['accountable_person'],
+            ':person_accountable' => $_POST['person_accountable'],
             ':status' => $_POST['status'],
             ':inventory_date' => $_POST['inventory_date']
         ]);
@@ -100,17 +100,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':action_type' => 'create',
             ':table_name' => 'inventory',
             ':record_id' => $lastInsertId,
-            ':user' => $_POST['accountable_person'],
-            ':description' => 'Created new inventory item: ' . $_POST['description']
+            ':user' => $_POST['person_accountable'], // FIXED
+            ':description' => $_POST['description']
         ]);
         
-        } catch (PDOException $e) {
+    } catch (PDOException $e) {
         // Error handling
         echo "<p>Error: " . htmlspecialchars($e->getMessage()) . "</p>";
-        }
+    }
 
-        // Close connection
-        $conn = null;}
-        ?>
-</body>
+    // Close connection
+    $conn = null;
+}
+?>
+
 </html>

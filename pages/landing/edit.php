@@ -42,6 +42,7 @@
               <th>Description</th>
               <th>Model Number</th>
               <th>Serial Number</th>
+              <th>person accountable<th>
               <th>Actions</th>
            </tr>
         </thead>
@@ -52,6 +53,8 @@
               <td><?= htmlspecialchars($item['description']) ?></td>
               <td><?= htmlspecialchars($item['model_number']) ?></td>
               <td><?= htmlspecialchars($item['serial_number']) ?></td>
+              <td><?= htmlspecialchars($item['person_accountable']) ?></td>
+
               <td>
                  <a href="/inventory-system/pages/landing/edit-item.php?property_number=<?= urlencode($item['property_number']) ?>" class="edit-btn">Edit</a>
               </td>
@@ -74,49 +77,6 @@
   $logs = $logStmt->fetchAll(PDO::FETCH_ASSOC);
   ?>
   
-  <table class="activity-log-table">
-    <thead>
-      <tr>
-        <th>Log ID</th>
-        <th>Action</th>
-        <th>Timestamp</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php if (empty($logs)): ?>
-      <tr>
-        <td colspan="3">No activity logs available.</td>
-      </tr>
-      <?php else: ?>
-      <?php foreach ($logs as $log): ?>
-      <tr>
-        <td><?= htmlspecialchars($log['id'] ?? '') ?></td>
-        <td><?= htmlspecialchars($log['action'] ?? '') ?></td>
-        <td><?= htmlspecialchars($log['timestamp'] ?? '') ?></td>
-      </tr>
-      <?php endforeach; ?>
-      <?php endif; ?>
-    </tbody>
-</table>
-
-<?php
- // Log activity with prepared statement
- $lastInsertId = $conn->lastInsertId();
- $logStmt = $conn->prepare("INSERT INTO activity_log
-     (action_type, table_name, record_id, user, description, timestamp)
-     VALUES
-     (:action_type, :table_name, :record_id, :user, :description, NOW())");
  
- $logStmt->execute([
-     ':action_type' => 'create',
-     ':table_name' => 'inventory',
-     ':record_id' => $lastInsertId,
-     ':user' => $_POST['accountable_person'],
-     ':description' => 'Created new inventory item: ' . $_POST['description']
- ]);
- 
-?>
-
-  
  </body>
  </html>

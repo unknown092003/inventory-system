@@ -60,17 +60,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     // Log detailed activity
-    $stmt = $pdo->prepare("INSERT INTO activity_log
-                (action_type, table_name, record_id, old_data, new_data, user)
-                VALUES (:action, :table, :id, :old, :new, :user)");
+    $logstmt = $pdo->prepare("INSERT INTO activity_log
+            (action_type, table_name, record_id, user, description, timestamp)
+            VALUES
+            (:action_type, :table_name, :record_id, :user, :description, NOW())");
                 
-    $stmt->execute([
-        ':action' => 'update',
-        ':table' => 'inventory',
-        ':id' => $item['id'],
-        ':old' => json_encode($oldData),
-        ':new' => json_encode($newData),
-        ':user' => $_POST['person_accountable']
+    $logstmt->execute([
+        ':action_type' => 'edit',
+        ':table_name' => 'inventory',
+        ':record_id' => $item['id'],
+        ':user' => '' . $_POST['person_accountable'],
+        ':description' => ' ' . $_POST['description']
     ]);
 
     header("Location: edit.php?success=1");
@@ -130,10 +130,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <div class="form-group">
             <label>Date:</label>
-            <input type="text" name="person_accountable" value="<?= htmlspecialchars($item['signature_of_inventory_team_date']) ?>">
+            <input type="text" name="" value="<?= htmlspecialchars($item['signature_of_inventory_team_date']) ?>">
         </div>
         
         <button type="submit" class="save-btn">Save Changes</button>
     </form>
+
 </body>
 </html>
