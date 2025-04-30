@@ -50,6 +50,9 @@ main div#container {
 }
 
 dialog {
+  background-color: black;
+  color: white;
+  border: 2px solid white;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -58,7 +61,6 @@ dialog {
   width: 100%;
   max-width: 30rem;
   border-radius: 0.3rem;
-  border: none;
 }
 
 dialog::backdrop {
@@ -69,101 +71,28 @@ dialog p:has(> small) {
   margin-block: 1rem;
 }
 
-dialog p#prod-desc {
-  margin-bottom: 1rem;
+/* dialog p#prod-desc {
   width: 100%;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
+} */
 
 dialog button {
   padding: 0.5rem;
   font-size: inherit;
   background: #1622a7;
   color: #ffffff;
+  border: none;
   border-radius: 0.3rem;
+  margin: 10px;
 }
 
-/* * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+dialog p, h2 {
+  border: 1px solid white;
+  margin: 2px;
+  padding: 5px;
+  word-wrap: break-word;
 }
 
-body {
-  background: linear-gradient(to right, #1622a7, #dc4d00);
-  margin: 0;
-  display: flex;
-  height: 100vh;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
 
-.bg-wrapper {
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.logo-bg {
-  position: absolute;
-  max-width: 100%;
-  max-height: 100%;
-  width: auto;
-  height: auto;
-  object-fit: contain;
-  z-index: 0;
-}
-
-.black-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  opacity: 0.55;
-  z-index: 1;
-}
-
-.qr-area {
-  text-align: center;
-  z-index: 3;
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 2px solid #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  margin: auto;
-  gap: 0.75rem;
-  padding: 1rem;
-  position: absolute;
-  width: 100%;
-  max-width: 40rem;
-}
-
-#reader {
-  width: 100%;
-  margin: auto;
-  border: 1px solid #ccc;
-  position: relative;
-  aspect-ratio: 1/1;
-}
-
-#reader video {
-  width: 100% !important;
-  aspect-ratio: 1/1 !important;
-}
-
-#reader canvas {
-  width: 100% !important;
-  aspect-ratio: 1/1 !important;
-}
-.qr-area button {
-  margin-left: 50%;
-} */

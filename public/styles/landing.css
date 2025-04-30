@@ -50,6 +50,7 @@ body {
 /* Left navigation styling */
 .left-nav {
     width: 250px;
+    min-width: 100px;
     background: #f0f0f0;
     padding: 20px;
     border-right: 1px solid #ddd;
@@ -58,11 +59,23 @@ body {
     top: 15vh; /* Starts below header */
     overflow-y: auto;
 }
-
+li a {
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
 .left-nav h1 {
-    font-size: 1.2rem;
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     margin-bottom: 20px;
     color: #333;
+}
+h1 hr {
+    height: 4px;
+    background-color: black;
+    width: 100%;
+    border: none;
 }
 
 .left-nav ul {

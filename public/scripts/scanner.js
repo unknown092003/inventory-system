@@ -1,5 +1,5 @@
 const html5QrCode = new Html5Qrcode("reader");
-
+// document.querySelector("dialog").showModal();
 html5QrCode
   .start(
     {
@@ -49,11 +49,21 @@ function onScanError(errorMessage) {
 }
 
 function setContent(data) {
-  const prodName = document.getElementById("prod-name");
-  const prodId = document.getElementById("prod-id");
+  const prodNum = document.getElementById("prod-num");
   const prodDesc = document.getElementById("prod-desc");
+  const modal = document.getElementById("model");
+  const serial = document.getElementById("serial");
+  const accquisitionDate = document.getElementById("accquisition-date");
+  const personAcc = document.getElementById("person-acc");
+  const status = document.getElementById("status");
+  const sign = document.getElementById("sign");
 
-  prodName.textContent = data.description ?? "No Record Found";
-  prodId.textContent = data.property_number;
-  // prodDesc.textContent = data.product_description;
+  prodNum.textContent = "Product Number:" + data.property_number ?? "No Record Found";
+  prodDesc.textContent = data.description;
+  modal.textContent = data.model_number;
+  serial.textContent = data.serial_number;
+  accquisitionDate.textContent = data.acquisition_date_cost;
+  personAcc.textContent = data.person_accountable;
+  status.textContent = data.status;
+  sign.textContent = data.signature_of_inventory_team_date;
 }

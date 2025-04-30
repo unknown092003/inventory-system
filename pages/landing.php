@@ -14,7 +14,7 @@
 
 <div class="main-container">
     <div class="left-nav">
-        <h1>INVENTORY SYSTEM</h1>
+        <h1>INVENTORY SYSTEM<hr></h1>
         <ul>
             <li><a href="?page=home">Home</a></li>
             <li><a href="?page=list">List</a></li>

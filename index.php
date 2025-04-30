@@ -19,9 +19,14 @@
             </div>
         </div>
         <dialog>
-            <h2 id="prod-name"></h2>
-            <p><small id="prod-id"></small></p>
+            <h2 id="prod-num"></h2>
             <p id="prod-desc"></p>
+            <p id="model"></p>
+            <p id="serial"></p>
+            <p id="accquisition-date"></p>
+            <p id="person-acc"></p>
+            <p id="status"></p>
+            <p id="sign"></p>
             <button id="scan-again">Scan Again</button>
             <a href="pages/login.php">Edit</a>
         </dialog>
