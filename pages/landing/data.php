@@ -9,14 +9,15 @@
     <h1>Inventory Database</h1>
 
     <?php
-    $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
+$pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
 
-    // Prepare and execute the query to fetch all data
-    $sql = "SELECT * FROM inventory";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute();
-    $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    ?>
+// This now orders from latest to oldest based on date
+$sql = "SELECT * FROM inventory ORDER BY signature_of_inventory_team_date DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 
     <table class="inventory-table">
         <thead>

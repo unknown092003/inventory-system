@@ -29,7 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         serial_number = ?,
         acquisition_date_cost = ?,
         person_accountable = ?,
-        status = ?
+        status = ?,
+        signature_of_inventory_team_date = ?
         WHERE id = ?");
         
     $stmt->execute([
@@ -40,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_POST['acquisition_date_cost'],
         $_POST['person_accountable'],
         $_POST['status'],
+        $_POST['signature_of_inventory_team_date'],
         $item['id']
     ]);
     
@@ -56,7 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'serial_number' => $_POST['serial_number'],
         'acquisition_date_cost' => $_POST['acquisition_date_cost'],
         'person_accountable' => $_POST['person_accountable'],
-        'status' => $_POST['status']
+        'status' => $_POST['status'],
+        'date' => $_POST['signature_of_inventory_team_date'],
     ];
 
     // Log detailed activity
@@ -73,8 +76,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ':description' => ' ' . $_POST['description']
     ]);
 
-    header("Location: edit.php?success=1");
-    exit();
+    // Update property number and re-fetch item with new data
+    $propertyNumber = $_POST['property_number'];
+    $stmt = $pdo->prepare("SELECT * FROM inventory WHERE property_number = ?");
+    $stmt->execute([$propertyNumber]);
+    $item = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    // Auto-generate QR code if missing
+    $qrPath = $_SERVER['DOCUMENT_ROOT'] . '/inventory-system/qr/' . $propertyNumber . '.png';
+    if (!file_exists($qrPath)) {
+        $qrResponse = file_get_contents("http://localhost/inventory-system/generate_qr.php?property_number=" . urlencode($propertyNumber));
+        if ($qrResponse === false) {
+            die("Failed to generate QR code. Please check the QR generation script.");
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -130,11 +145,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         <div class="form-group">
             <label>Date:</label>
-            <input type="text" name="" value="<?= htmlspecialchars($item['signature_of_inventory_team_date']) ?>">
+            <input type="date" name="signature_of_inventory_team_date" value="<?= htmlspecialchars($item['signature_of_inventory_team_date']) ?>">
         </div>
         
         <button type="submit" class="save-btn">Save Changes</button>
     </form>
 
+    <?php if (isset($showSuccess)): ?>
+    <div class="success-banner">
+        Changes saved successfully! Updated QR code:
+        <?php if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/inventory-system/qr/' . $item['property_number'] . '.png')): ?>
+            <img src="/inventory-system/qr/<?= htmlspecialchars($item['property_number']) ?>.png" alt="QR Code" class="qr-image">
+        <?php else: ?>
+            <p class="qr-missing">QR code not generated yet. <a href="/inventory-system/generate_qr.php?property_number=<?= $item['property_number'] ?>">Generate Now</a></p>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <div class="qr-section">
+        <h2>QR Sticker</h2>
+        <?php if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/inventory-system/qr/' . $item['property_number'] . '.png')): ?>
+            <img src="/inventory-system/qr/<?= htmlspecialchars($item['property_number']) ?>.png" alt="QR Code" class="qr-image">
+        <?php else: ?>
+            <p class="qr-missing">QR code not generated yet</p>
+        <?php endif; ?>
+        <a href="/inventory-system/generate_qr.php?property_number=<?= $item['property_number'] ?>" class="generate-qr-btn">Generate QR</a>
+    </div>
+
+    <script src="/inventory-system/public/scripts/qr-generator.js"></script>
 </body>
 </html>

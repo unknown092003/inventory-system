@@ -26,7 +26,7 @@
 
     <div class="content-area">
         <?php
-        $page = $_GET['page'] ?? 'landing';
+        $page = $_GET['page'] ?? 'home';
         
         switch($page) {
             case 'home':
@@ -44,9 +44,8 @@
             case 'edit':
                 include 'landing/edit.php';
                 break;
-            case 'landing':
             default:
-                echo '<div class="default-content"><h2>Welcome to Inventory System</h2></div>';
+                include 'landing/home.php';
         }
         ?>
     </div>
