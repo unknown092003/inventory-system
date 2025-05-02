@@ -21,6 +21,7 @@
             <li><a href="?page=create">Create</a></li>
             <li><a href="?page=data">Data</a></li>
             <li><a href="?page=edit">Edit</a></li>
+            <li><a href="landing/scan.php">Scan</a></li>
         </ul>
     </div>
 

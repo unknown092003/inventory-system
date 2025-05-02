@@ -4,20 +4,150 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data.css">
+    <title>Inventory Database</title>
+    <style>
+        .search-sort-container {
+            margin: 20px 0;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .search-box {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 250px;
+        }
+        .sort-select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: white;
+        }
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .inventory-table th, .inventory-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .inventory-table th {
+            background-color: #f2f2f2;
+        }
+        .button {
+            padding: 8px 12px;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            cursor: pointer;
+        }
+    </style>
 </head> 
 <body>
     <h1>Inventory Database</h1>
+    
+    <div class="search-sort-container">
+        <!-- Combined Search and Sort Form -->
+        <form method="GET" action="">
+            <!-- Hidden field to preserve page parameter -->
+            <input type="hidden" name="page" value="data">
+            
+            <!-- Search Input -->
+            <input type="text" name="search" class="search-box" 
+                   placeholder="Search inventory..." 
+                   value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+            
+            <!-- Sort Dropdown -->
+            <select name="sort" class="sort-select">
+                <option value="date_desc" <?= ($_GET['sort'] ?? 'date_desc') === 'date_desc' ? 'selected' : '' ?>>
+                    Newest First
+                </option>
+                <option value="date_asc" <?= ($_GET['sort'] ?? '') === 'date_asc' ? 'selected' : '' ?>>
+                    Oldest First
+                </option>
+                <option value="property_asc" <?= ($_GET['sort'] ?? '') === 'property_asc' ? 'selected' : '' ?>>
+                    Property Number (A-Z)
+                </option>
+                <option value="property_desc" <?= ($_GET['sort'] ?? '') === 'property_desc' ? 'selected' : '' ?>>
+                    Property Number (Z-A)
+                </option>
+                <option value="person_asc" <?= ($_GET['sort'] ?? '') === 'person_asc' ? 'selected' : '' ?>>
+                    Accountable Person (A-Z)
+                </option>
+                <option value="person_desc" <?= ($_GET['sort'] ?? '') === 'person_desc' ? 'selected' : '' ?>>
+                    Accountable Person (Z-A)
+                </option>
+            </select>
+            
+            <button type="submit">Apply</button>
+            
+            <!-- Clear button when filters are active -->
+            <?php if (isset($_GET['search']) || (isset($_GET['sort']) && $_GET['sort'] != 'date_desc')): ?>
+                <a href="?page=data" class="button">Clear Filters</a>
+            <?php endif; ?>
+        </form>
+    </div>
 
     <?php
-$pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
-
-// This now orders from latest to oldest based on date
-$sql = "SELECT * FROM inventory ORDER BY signature_of_inventory_team_date DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
-
+    $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
+    
+    // Base query
+    $sql = "SELECT * FROM inventory WHERE 1=1";
+    $params = [];
+    
+    // Search functionality
+    if (!empty($_GET['search'])) {
+        $searchTerm = '%' . $_GET['search'] . '%';
+        $sql .= " AND (
+            property_number LIKE :search OR
+            description LIKE :search OR
+            model_number LIKE :search OR
+            serial_number LIKE :search OR
+            person_accountable LIKE :search OR
+            status LIKE :search
+        )";
+        $params[':search'] = $searchTerm;
+    }
+    
+    // Sorting functionality
+    $sortOption = $_GET['sort'] ?? 'date_desc';
+    switch ($sortOption) {
+        case 'date_asc':
+            $sql .= " ORDER BY signature_of_inventory_team_date ASC";
+            break;
+        case 'property_asc':
+            $sql .= " ORDER BY property_number ASC";
+            break;
+        case 'property_desc':
+            $sql .= " ORDER BY property_number DESC";
+            break;
+        case 'person_asc':
+            $sql .= " ORDER BY person_accountable ASC";
+            break;
+        case 'person_desc':
+            $sql .= " ORDER BY person_accountable DESC";
+            break;
+        default: // date_desc
+            $sql .= " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+    }
+    
+    try {
+        // Prepare and execute query
+        $stmt = $pdo->prepare($sql);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+        $stmt->execute();
+        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        die("Database error: " . htmlspecialchars($e->getMessage()));
+    }
+    ?>
 
     <table class="inventory-table">
         <thead>
@@ -33,18 +163,24 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($items as $item): ?>
-            <tr>
-                <td><?= htmlspecialchars($item['property_number']) ?></td>
-                <td><?= htmlspecialchars($item['description']) ?></td>
-                <td><?= htmlspecialchars($item['model_number']) ?></td>
-                <td><?= htmlspecialchars($item['serial_number']) ?></td>
-                <td><?= htmlspecialchars($item['acquisition_date_cost']) ?></td>
-                <td><?= htmlspecialchars($item['person_accountable']) ?></td>
-                <td><?= htmlspecialchars($item['status']) ?></td>
-                <td><?= htmlspecialchars($item['signature_of_inventory_team_date']) ?></td>
-            </tr>
-            <?php endforeach; ?>
+            <?php if (count($items) > 0): ?>
+                <?php foreach ($items as $item): ?>
+                <tr>
+                    <td><?= htmlspecialchars($item['property_number']) ?></td>
+                    <td><?= htmlspecialchars($item['description']) ?></td>
+                    <td><?= htmlspecialchars($item['model_number']) ?></td>
+                    <td><?= htmlspecialchars($item['serial_number']) ?></td>
+                    <td><?= htmlspecialchars($item['acquisition_date_cost']) ?></td>
+                    <td><?= htmlspecialchars($item['person_accountable']) ?></td>
+                    <td><?= htmlspecialchars($item['status']) ?></td>
+                    <td><?= htmlspecialchars($item['signature_of_inventory_team_date']) ?></td>
+                </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="8" style="text-align: center;">No inventory items found</td>
+                </tr>
+            <?php endif; ?>
         </tbody>
     </table>
 </body>

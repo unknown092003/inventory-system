@@ -1,69 +1,83 @@
+// scanner.js
 const html5QrCode = new Html5Qrcode("reader");
-// document.querySelector("dialog").showModal();
-html5QrCode
-  .start(
-    {
-      facingMode: "environment",
-    },
-    {
-      fps: 10,
-      qrbox: {
-        width: 200,
-        height: 200,
-      },
-    },
-    onScanSuccess,
-    onScanError
-  )
-  .catch((err) => {
-    console.error(`Unable to start scanning: ${err}`);
-    document.getElementById("message").innerText =
-      "Unable to start scanning. Please check your camera permissions.";
-  });
+const dialog = document.querySelector('dialog');
+const scanAgainBtn = document.getElementById('scan-again');
+const viewDataBtn = document.getElementById('view-data');
 
-function onScanSuccess(decodedText, decodedResult) {
-  const form = new FormData();
-  form.append("productNumber", decodedText);
-
-  fetch("/inventory-system/item.php", {
-    method: "POST",
-    body: form,
-  })
-    .then((res) => {
-      html5QrCode.pause();
-      return res.json();
-    })
-    .then((data) => {
-      // alert(JSON.stringify(data));
-      setContent(data);
-      document.querySelector("dialog").showModal();
-      document.getElementById("scan-again").addEventListener("click", () => {
-        document.querySelector("dialog").close();
-        html5QrCode.resume();
-      });
+// Function to start scanning
+function startScanner() {
+    html5QrCode.start(
+        { facingMode: "environment" },
+        {
+            fps: 20,
+            qrbox: { width: 250, height: 250 }
+        },
+        (decodedText, decodedResult) => {
+            // Stop scanner when QR is detected
+            html5QrCode.stop().then(() => {
+                // Fetch item data from server
+                fetchItemData(decodedText);
+            }).catch(err => {
+                console.error("Error stopping scanner:", err);
+            });
+        },
+        (errorMessage) => {
+            // Parse error, ignore it.
+        })
+    .catch((err) => {
+        console.error("Error starting scanner:", err);
     });
 }
 
-function onScanError(errorMessage) {
-  console.warn(`QR Code scan error: ${errorMessage}`);
+// Function to fetch item data
+function fetchItemData(propertyNumber) {
+    fetch(`/inventory-system/api/getItem.php?property_number=${encodeURIComponent(propertyNumber)}`)
+        .then(response => response.json())
+        .then(data => {
+            if(data.error) {
+                document.getElementById('message').textContent = data.error;
+                return;
+            }
+            
+            // Populate dialog with data
+            document.getElementById('prod-num').textContent = `Property Number: ${data.property_number}`;
+            document.getElementById('prod-desc').textContent = `Description: ${data.description}`;
+            document.getElementById('model').textContent = `Model: ${data.model_number}`;
+            document.getElementById('serial').textContent = `Serial: ${data.serial_number}`;
+            document.getElementById('accquisition-date').textContent = `Acquired: ${data.acquisition_date_cost}`;
+            document.getElementById('person-acc').textContent = `Accountable: ${data.person_accountable}`;
+            document.getElementById('status').textContent = `Status: ${data.status}`;
+            document.getElementById('sign').textContent = `Last Updated: ${data.signature_of_inventory_team_date}`;
+            
+            // Set property number as data attribute for view button
+            viewDataBtn.setAttribute('data-property-number', data.property_number);
+            
+            // Show dialog
+            dialog.showModal();
+        })
+        .catch(error => {
+            document.getElementById('message').textContent = "Error fetching item data";
+            console.error("Error:", error);
+        });
 }
 
-function setContent(data) {
-  const prodNum = document.getElementById("prod-num");
-  const prodDesc = document.getElementById("prod-desc");
-  const modal = document.getElementById("model");
-  const serial = document.getElementById("serial");
-  const accquisitionDate = document.getElementById("accquisition-date");
-  const personAcc = document.getElementById("person-acc");
-  const status = document.getElementById("status");
-  const sign = document.getElementById("sign");
+// Scan again button
+scanAgainBtn.addEventListener('click', () => {
+    dialog.close();
+    startScanner();
+});
 
-  prodNum.textContent = "Product Number:" + data.property_number ?? "No Record Found";
-  prodDesc.textContent = data.description;
-  modal.textContent = data.model_number;
-  serial.textContent = data.serial_number;
-  accquisitionDate.textContent = data.acquisition_date_cost;
-  personAcc.textContent = data.person_accountable;
-  status.textContent = data.status;
-  sign.textContent = data.signature_of_inventory_team_date;
-}
+// View Data button - redirect to data.php with search parameter
+viewDataBtn.addEventListener('click', () => {
+    const propertyNumber = viewDataBtn.getAttribute('data-property-number');
+    window.location.href = `/inventory-system/pages/landing/data.php?page=data&search=${encodeURIComponent(propertyNumber)}`;
+});
+
+// Start scanner when page loads
+startScanner();
+// Add this to your scanner.js
+document.getElementById('edit-item').addEventListener('click', (e) => {
+  e.preventDefault();
+  const propertyNumber = document.getElementById('prod-num').textContent.replace('Property Number: ', '');
+  window.location.href = `/inventory-system/pages/landing/edit-item.php?property_number=${encodeURIComponent(propertyNumber)}`;
+});
