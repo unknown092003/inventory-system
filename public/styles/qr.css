@@ -56,9 +56,10 @@ main div#container {
 }
 
 dialog {
-  background: linear-gradient(to right, #1622a7, #dc4d00);
+  /* background: linear-gradient(to right, #1622a7, #dc4d00); */
+  background-color: rgba(0, 0, 0, 0.5);
   color: rgb(0, 0, 0);
-  border: 2px solid white;
+  /* border: 2px solid black; */
   position: absolute;
   top: 50%;
   left: 50%;
@@ -84,7 +85,7 @@ dialog p#prod-desc {
   text-overflow: ellipsis;
 }
 
-dialog button {
+/* dialog button {
   padding: 0.5rem;
   font-size: inherit;
   background: #1622a7;
@@ -92,7 +93,7 @@ dialog button {
   border: none;
   border-radius: 0.3rem;
   margin: 10px;
-}
+} */
 
 dialog p, h2 {
   border: 1px solid white;
@@ -118,7 +119,7 @@ dialog p, h2 {
 }
 
 /* Scan again button as circular image icon */
-.scan-again-btn {
+/* .scan-again-btn {
     width: 50px;
     height: 50px;
     background: url('/inventory-system/public/img/scan-icon.png') no-repeat center center;
@@ -127,7 +128,7 @@ dialog p, h2 {
     border-radius: 50%;
     cursor: pointer;
     transition: transform 0.3s ease;
-}
+} */
 
 .scan-again-btn:hover {
     transform: scale(1.1);
@@ -148,22 +149,77 @@ dialog::backdrop {
 
 dialog h2 {
   margin-top: 0;
-  color: #1622a7;
+  color: black;
+  background-color: white;
+  border-radius: 4px;
 }
 
 dialog p {
   margin: 10px 0;
   padding: 8px;
-  background-color: #f5f5f5;
+  background-color: white;
   border-radius: 4px;
 }
+.dialog-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
+.dialog-actions #edit-item {
+  background-color: #dc4d00;
+  color: black;
+  padding: 9px;
+  width: 100%;
+  margin: 5px;
+  text-align: center;
+  text-decoration: none;
+  border: 1px solid white;
+  font-weight: bold;
+}
+#edit-item:hover {
+  background-color: #e08e62;
+}
+
+.dialog-actions #view-data {
+  background-color: #1622a7;
+  color: black;
+  margin: 5px;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+  border: 1px solid white ;
+  font-weight: bold;
+}
+#view-data:hover {
+  background-color: #4951ad;
+}
+#scan-again {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(to right, #1622a7, #dc4d00);
+  border: 1px solid white;
+  padding: 10px;
+  margin-top: 5px;
+  width: 50%;
+  font-weight: bold;
+  cursor: pointer;
+}
+/* #scan-again:hover {
+  background-color: rgba(236, 234, 234, 0.2);
+} */
+/* #scan-again {
+  display: flex;
+  justify-content: center;
+} */
+/*
 .dialog-buttons {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
-.dialog-actions {
+ .dialog-actions {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
@@ -175,7 +231,7 @@ dialog p {
   border-radius: 5px;
   text-decoration: none;
   text-align: center;
-  flex: 1;
+   flex: 1; 
 }
 
 .dialog-actions .primary {
@@ -199,4 +255,4 @@ dialog p {
 .dialog-actions #scan-again img {
   width: 40px;
   height: 40px;
-}
+} */

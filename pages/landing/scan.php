@@ -35,16 +35,18 @@
     <p id="sign"></p>
     
     <div class="dialog-actions">
-        <button id="scan-again">
-            <img src="/inventory-system/public/img/scan-icon.png" alt="Scan Again">
-        </button>
+
         
         <a href="#" id="edit-item" class="button">Edit</a>
         
         <button id="view-data" class="button primary">
             View Data
         </button>
-    </div>
+        </div> 
+       <button id="scan-again">
+        Scan Again
+            <!-- <img src="/inventory-system/public/img/scan-icon.png" alt="Scan Again"> -->
+        </button>
 </dialog>
 
     </main>
