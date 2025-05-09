@@ -36,13 +36,13 @@
     
     <div class="dialog-actions">
         <button id="scan-again">
-            <img src="/inventory-system/public/img/scan-icon.png" alt="Scan Again">
+            Scan Again<!-- <img src="/inventory-system/public/img/scan-icon.png" alt="Scan Again"> -->
         </button>
         
-        <a href="#" id="edit-item" class="button">Edit</a>
+        <!-- <a href="#" id="edit-item" class="button">Edit</a> -->
         
         <button id="view-data" class="button primary">
-            View Data
+            <!-- View Data -->
         </button>
     </div>
 </dialog>

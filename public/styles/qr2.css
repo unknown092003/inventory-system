@@ -97,7 +97,7 @@ dialog p#prod-desc {
 
 dialog p, h2 {
   border: 1px solid white;
-  margin: 1px;
+  margin: 2px;
   padding: 5px;
   word-wrap: break-word;
 }
@@ -155,7 +155,7 @@ dialog h2 {
 }
 
 dialog p {
-  margin: 10px 0 0 0;
+  margin: 10px 0;
   padding: 8px;
   background-color: white;
   border-radius: 4px;
@@ -171,7 +171,7 @@ dialog p {
   color: black;
   padding: 9px;
   width: 100%;
-  /* margin: 5px; */
+  margin: 5px;
   text-align: center;
   text-decoration: none;
   border: 1px solid white;
@@ -181,7 +181,7 @@ dialog p {
   background-color: #e08e62;
 }
 
-/* .dialog-actions #view-data {
+.dialog-actions #view-data {
   background-color: #1622a7;
   color: black;
   margin: 5px;
@@ -190,23 +190,18 @@ dialog p {
   cursor: pointer;
   border: 1px solid white ;
   font-weight: bold;
-} */
- #view-data {
-  display: none;
- }
+}
 #view-data:hover {
   background-color: #4951ad;
 }
 #scan-again {
   position: absolute;
   left: 50%;
-  top: 100%;
-  /* transform: translateY(-50%); */
   transform: translateX(-50%);
   background: linear-gradient(to right, #1622a7, #dc4d00);
   border: 1px solid white;
   padding: 10px;
-  /* margin-top: 5px; */
+  margin-top: 5px;
   width: 50%;
   font-weight: bold;
   cursor: pointer;
