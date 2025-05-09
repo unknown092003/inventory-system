@@ -13,42 +13,41 @@
     <main>
         <div id="container">
             <div class="qr-area">
-                <h1>Scan</h1>
+                <div class="header-container">
+                    <div class="header-container">
+                        <h1>Scan</h1>
+                    </div>
+                        <button class="home-btn" onclick="window.location.href='../landing.php'">HOME</button>
+                    </div>
                 <div id="reader"></div>
                 <p id="message"></p>
             </div>
         </div>
-        <dialog>
-            <h2 id="prod-num"></h2>
-            <p id="prod-desc"></p>
-            <p id="model"></p>
-            <p id="serial"></p>
-            <p id="accquisition-date"></p>
-            <p id="person-acc"></p>
-            <p id="status"></p>
-            <p id="sign"></p>
-            <button id="scan-again">Scan Again</button>
-            <a href="pages/login.php">Edit</a>
-        </dialog>
+        .
+        <dialog id="item-dialog">
+    <h2 id="prod-num"></h2>
+    <p id="prod-desc"></p>
+    <p id="model"></p>
+    <p id="serial"></p>
+    <p id="accquisition-date"></p>
+    <p id="person-acc"></p>
+    <p id="status"></p>
+    <p id="sign"></p>
+    
+    <div class="dialog-actions">
+        <button id="scan-again">
+            <img src="/inventory-system/public/img/scan-icon.png" alt="Scan Again">
+        </button>
+        
+        <a href="#" id="edit-item" class="button">Edit</a>
+        
+        <button id="view-data" class="button primary">
+            View Data
+        </button>
+    </div>
+</dialog>
+
     </main>
-    <!-- <div class="bg-wrapper">
-        <img class="logo-bg" src="/inventory-system/public/img/ocd.png" alt="Logo Background" />
-        <div class="black-overlay"></div>
-    </div>
-
-    <div class="qr-area">
-        <h1>Scan</h1>
-        <div id="reader"></div>
-        <div id="result" style="text-align: center; margin-top: 20px; color: black;"></div>
-    </div>
-
-    <dialog>
-        <h2 id="prod-name"></h2>
-        <p><small id="prod-id"></small></p>
-        <p id="prod-desc"></p>
-        <button id="scan-again">Scan Again</button>
-    </dialog> -->
-
     <script src="/inventory-system/public/scripts/scanner.js"></script>
 </body>
 

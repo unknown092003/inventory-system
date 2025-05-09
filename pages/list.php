@@ -5,11 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/inventory-system/public/styles/list.css">
     <title>Document</title>
 </head>
 <body>
-    <div class="">
+    <div class="list-nav">
         <a href="list.php">Print</a>
+        <a href="landing.php">Home</a>
     </div>
 
 
@@ -67,7 +69,7 @@
     
     // Display the generated stickers on the webpage
     echo '<div class="sticker-preview">
-    <style>img{margin-top: 10px};</style>
+    <style>img{margin-top: 3px;}</style>
     ';
     foreach ($res as $row) {
         $outputPath = '/inventory-system/qr/' . $row["property_number"] . '.png';

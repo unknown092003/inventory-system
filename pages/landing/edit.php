@@ -60,23 +60,10 @@
               </td>
            </tr>
            <?php endforeach; ?>
+           <tr>
+              <td colspan="6">No items found.</td>
+           </tr>
         </tbody>
     </table>
-    <h2>Activity Logs</h2>
-  <?php
-  $logSql = "SELECT * FROM activity_log ORDER BY timestamp DESC";
-  $logStmt = $pdo->prepare($logSql);
-  $logStmt->execute();
-  $logs = $logStmt->fetchAll(PDO::FETCH_ASSOC);
-  ?>
-
-  <?php 
-  $logSql = "SELECT * FROM activity_log ORDER BY action DESC";
-  $logStmot = $pdo->prepare($logSql);
-  $logStmt->execute();
-  $logs = $logStmt->fetchAll(PDO::FETCH_ASSOC);
-  ?>
-  
- 
  </body>
  </html>

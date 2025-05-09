@@ -12,7 +12,7 @@ function startScanner() {
             fps: 20,
             qrbox: { width: 250, height: 250 }
         },
-        (decodedText, decodedResult) => {
+        (decodedText) => {
             // Stop scanner when QR is detected
             html5QrCode.stop().then(() => {
                 // Fetch item data from server
@@ -21,7 +21,7 @@ function startScanner() {
                 console.error("Error stopping scanner:", err);
             });
         },
-        (errorMessage) => {
+        () => {
             // Parse error, ignore it.
         })
     .catch((err) => {
@@ -76,8 +76,11 @@ viewDataBtn.addEventListener('click', () => {
 // Start scanner when page loads
 startScanner();
 // Add this to your scanner.js
-document.getElementById('edit-item').addEventListener('click', (e) => {
-  e.preventDefault();
-  const propertyNumber = document.getElementById('prod-num').textContent.replace('Property Number: ', '');
-  window.location.href = `/inventory-system/pages/landing/edit-item.php?property_number=${encodeURIComponent(propertyNumber)}`;
-});
+const editItemBtn = document.getElementById('edit-item');
+if (editItemBtn) {
+    editItemBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const propertyNumber = document.getElementById('prod-num').textContent.replace('Property Number: ', '');
+        window.location.href = `/inventory-system/pages/landing/edit-item.php?property_number=${encodeURIComponent(propertyNumber)}`;
+    });
+}
