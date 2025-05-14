@@ -5,7 +5,41 @@ body {
     padding: 20px;
     background-color: #f5f5f5;
 }
+.main-header {
+    display: flex;
+    justify-content: center;
+}
+.main-header img {
+    width: 100px;
+    height: 100px;
+}
+.main-header-text {
+    text-align: center;
+    margin:0 10px;
+}
+.main-header-text h1,p,h2 {
+    margin: 0;
+}
+h2 hr {
+    background-color: blue;
+    height: 2px;
+    margin: 0
+}
+.main-header-two {
+    margin: 40px auto;
+    text-align: center;
+    /* margin: 40px 0; */
+    font-size: 12px;
+    max-width: fit-content;
+}
+.main-header-two p {
+    margin: 15px 0 0 0;
+}
+#hr2 {
+    margin: 0 auto;
+    width: 90%;
 
+}
 .inventory-container {
     max-width: 100%;
     overflow-x: auto;
@@ -54,7 +88,7 @@ body {
     margin-bottom: 20px;
 }
 
-h1 {
+.header-group h1 {
     color: #1622a7;
     margin: 0;
 }

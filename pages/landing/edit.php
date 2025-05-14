@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data.css">
  </head>
  <body>
-    <h1>Edit Inventory Items</h1>
+    <h1 id="name_edit">Edit Inventory Items</h1>
  
     <!-- Search Form -->
-    <form method="GET" action="" style="margin-bottom: 20px;">
-        <input type="text" name="search" placeholder="Search items..."
+    <form class="form" method="GET" action="" style="margin-bottom: 20px;">
+        <input type="text" name="search" id="search" placeholder="Search items..."
              value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-        <button type="submit">Search</button>
+        <button id="search_button" type="submit">Search</button>
     </form>
  
     <?php

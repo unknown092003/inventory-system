@@ -8,6 +8,22 @@
    
 </head>
 <body>
+    <div class="main-header">
+        <img src="/inventory-system/public/img/ocd.png" alt="OCD Logo" class="logo">
+        <div class="main-header-text">
+            <p>REPUBLIC OF THE PHILIPPINES</p>
+            <p><strong>DEPARTMENT OF NATIONAL DEFENSE</strong></p>
+            <h1>OFFICE OF CIVIL DEFENSE</h1>
+            <h2>CORDILLERA ADMINISTRATIVE REGION<hr></h2>
+            <p>NO.55 FIRST ROAD, QUEZON HILL PROPER, BAGUIO CITY, 2600</p>
+        </div>
+        <img src="/inventory-system/public/img/bp.png" alt="Bagong Pilipinas">
+    </div>
+    <div class="main-header-two">
+        <p><strong>REPORT ON THE PHYSICAL COUNT OF PROPERTY, PLANT AND EQUIPMENT</p>
+        <p>Information, Communication adn Technology Equipment(10605030)</strong><hr id="hr2"></p>
+        <h2></h2>
+    </div>
     <div class="header-group">
         <h1>Inventory Management System</h1>
     </div>
@@ -16,16 +32,16 @@
         <table class="inventory-table">
             <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Property Number</th>
-                    <th>Description</th>
-                    <th>Model Number</th>
-                    <th>Acquisition Date</th>
-                    <th>Accountable Person</th>
-                    <th>Inventory Date</th>
-                    <th>Cost</th>
-                    <th>Cost Level</th>
-                    <th>Remarks</th>
+                    <th>ARTICLE</th>
+                    <th>DESCRIPTION</th>
+                    <th>ACQUISITION DATE</th>
+                    <th>NEW PROPERTY NUMBER</th>
+                    <th>UNIT OF MEASURE</th>
+                    <th>UNIT VALUE</th>
+                    <th>QUANTITY Per PROPERTY CARD</th>
+                    <th>QUANTITY Per PHYSICAL COUNT</th>
+                    <th></th>
+                    <th>REMARKS</th>
                 </tr>
             </thead>
             <tbody>

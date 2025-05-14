@@ -3,11 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data.css">
     <title>Inventory Database</title>
-    <style>
-     
-    </style>
+    <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data.css">
 </head> 
 <body>
     <h1>Inventory Database</h1>
@@ -45,7 +42,7 @@
                 </option>
             </select>
             
-            <button type="submit">Apply</button>
+            <button id="apply" type="submit">Apply</button>
             
             <!-- Clear button when filters are active -->
             <?php if (isset($_GET['search']) || (isset($_GET['sort']) && $_GET['sort'] != 'date_desc')): ?>
