@@ -18,7 +18,7 @@ body {
     width: 100%;
     border-collapse: collapse;
     min-width: 1200px;
-    border: solid 1px black;
+
 }
 
 .inventory-table th {
