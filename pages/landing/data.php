@@ -6,46 +6,7 @@
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data.css">
     <title>Inventory Database</title>
     <style>
-        .search-sort-container {
-            margin: 20px 0;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .search-box {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            min-width: 250px;
-        }
-        .sort-select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: white;
-        }
-        .inventory-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        .inventory-table th, .inventory-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .inventory-table th {
-            background-color: #f2f2f2;
-        }
-        .button {
-            padding: 8px 12px;
-            background-color: #f2f2f2;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-decoration: none;
-            color: #333;
-            cursor: pointer;
-        }
+     
     </style>
 </head> 
 <body>
