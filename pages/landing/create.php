@@ -19,17 +19,22 @@
         <label>Model number:</label>
         <input type="text" name="model_number">
 
-        <label>Serial Number:</label>
-        <input type="text" name="serial_number">
+        <label>Acquisition date:</label>
+        <input type="date" name="acquisition_date">
 
-        <label>Acquisition date/cost:</label>
-        <input type="text" name="acquisition_date_costs">
+        <label>Cost:</label>
+        <input type="number" name="cost">
 
         <label>Person Accountable:</label>
         <input type="text" name="person_accountable" required>
 
-        <label>Status:</label>
-        <input type="text" name="status" required>
+
+        <label>Remarks:</label>
+                <select name="remarks">
+                    <option value="service">service</option>
+                    <option value="unservice">unservice</option>
+                    <option value="dispose">dispose</option>
+                </select>
 
         <label>Signature of Inventory Team/Date:</label>
         <input type="date" name="inventory_date">
@@ -55,20 +60,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             INSERT INTO inventory (
                 property_number, 
                 description, 
-                model_number, 
-                serial_number, 
-                acquisition_date_cost, 
+                model_number,  
+                acquisition_date, 
                 person_accountable, 
-                status, 
-                signature_of_inventory_team_date
+                signature_of_inventory_team_date,
+                cost,
+                remarks
             ) VALUES (
                 :property_number, 
                 :description, 
                 :model_number, 
-                :serial_number, 
-                :acquisition_date_costs, 
+                :acquisition_date,
+                :cost, 
                 :person_accountable, 
-                :status, 
+                :remarks, 
                 :inventory_date
             )
         ";
@@ -79,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':property_number' => $_POST['property_number'],
             ':description' => $_POST['description'],
             ':model_number' => $_POST['model_number'],
-            ':serial_number' => $_POST['serial_number'],
-            ':acquisition_date_costs' => $_POST['acquisition_date_costs'],
+            ':acquisition_date' => $_POST['acquisition_date'],
+            ':cost' => $_POST['cost'],
             ':person_accountable' => $_POST['person_accountable'],
-            ':status' => $_POST['status'],
+            ':remarks' => $_POST['remarks'],
             ':inventory_date' => $_POST['inventory_date']
         ]);
 

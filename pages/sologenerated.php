@@ -44,8 +44,9 @@ if (!empty($res)) {
     $im->annotateImage($draw, 600, 95, 0, $row["property_number"]);
     $im->annotateImage($draw, 600, 160, 0, $row["description"]);
     $im->annotateImage($draw, 600, 225, 0, $row["model_number"]);
-    $im->annotateImage($draw, 600, 288, 0, $row["serial_number"]);
-    $im->annotateImage($draw, 590, 350, 0, $row["acquisition_date_cost"]);
+    $im->annotateImage($draw, 590, 350, 0, $row["acquisition_date"]);
+    $im->annotateImage($draw, 590, 410, 0, $row["cost"]);
+    $im->annotateImage($draw, 590, 350, 0, $row["acquisition_date"]);
     $im->annotateImage($draw, 600, 410, 0, $row["person_accountable"]);
     $im->annotateImage($draw, 600, 475, 0, $row["status"]);
     $im->annotateImage($draw, 600, 535, 0, $row["signature_of_inventory_team_date"]);

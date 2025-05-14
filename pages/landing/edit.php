@@ -41,9 +41,8 @@
               <th>Property Number</th>
               <th>Description</th>
               <th>Model Number</th>
-              <th>Serial Number</th>
-              <th>person accountable<th>
-              <th>Actions</th>
+              <th>person accountable</th>
+              <th>remarks</th>
            </tr>
         </thead>
         <tbody>
@@ -52,11 +51,12 @@
               <td><?= htmlspecialchars($item['property_number']) ?></td>
               <td><?= htmlspecialchars($item['description']) ?></td>
               <td><?= htmlspecialchars($item['model_number']) ?></td>
-              <td><?= htmlspecialchars($item['serial_number']) ?></td>
               <td><?= htmlspecialchars($item['person_accountable']) ?></td>
+              <td><?= htmlspecialchars($item['status']) ?></td>
 
               <td>
                  <a href="/inventory-system/pages/landing/edit-item.php?property_number=<?= urlencode($item['property_number']) ?>" class="edit-btn">Edit</a>
+                 <a href="/inventory-system/pages/landing/delete-item.php?property_number=<?= urlencode($item['property_number']) ?>" class="delete-btn">Delete</a>
               </td>
            </tr>
            <?php endforeach; ?>

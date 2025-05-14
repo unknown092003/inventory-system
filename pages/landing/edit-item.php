@@ -40,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             property_number = ?,
             description = ?,
             model_number = ?,
-            serial_number = ?,
-            acquisition_date_cost = ?,
+            -- serial_number = ?,
+            acquisition_date = ?,
             person_accountable = ?,
             status = ?,
             signature_of_inventory_team_date = ?
@@ -51,8 +51,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['property_number'],
             $_POST['description'],
             $_POST['model_number'],
-            $_POST['serial_number'],
-            $_POST['acquisition_date_cost'],
+            // $_POST['serial_number'],
+            $_POST['acquisition_date'],
             $_POST['person_accountable'],
             $_POST['status'],
             $_POST['signature_of_inventory_team_date'],
@@ -252,14 +252,10 @@ unset($_SESSION['error_message']);
                 <input type="text" name="model_number" value="<?= htmlspecialchars($item['model_number']) ?>">
             </div>
             
-            <div class="form-group">
-                <label>Serial Number:</label>
-                <input type="text" name="serial_number" value="<?= htmlspecialchars($item['serial_number']) ?>">
-            </div>
-            
+           
             <div class="form-group">
                 <label>Acquisition Date/Cost:</label>
-                <input type="text" name="acquisition_date_cost" value="<?= htmlspecialchars($item['acquisition_date_cost']) ?>">
+                <input type="date" name="acquisition_date" value="<?= htmlspecialchars($item['acquisition_date']) ?>">
             </div>
             
             <div class="form-group">
