@@ -40,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             property_number = ?,
             description = ?,
             model_number = ?,
-            -- serial_number = ?,
             acquisition_date = ?,
+            cost = ?,
             person_accountable = ?,
-            status = ?,
+            remarks = ?,
             signature_of_inventory_team_date = ?
             WHERE id = ?");
             
@@ -51,10 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['property_number'],
             $_POST['description'],
             $_POST['model_number'],
-            // $_POST['serial_number'],
             $_POST['acquisition_date'],
+            $_POST['cost'],
             $_POST['person_accountable'],
-            $_POST['status'],
+            $_POST['remarks'],
             $_POST['signature_of_inventory_team_date'],
             $item['id']
         ]);
@@ -254,8 +254,13 @@ unset($_SESSION['error_message']);
             
            
             <div class="form-group">
-                <label>Acquisition Date/Cost:</label>
+                <label>Acquisition Date:</label>
                 <input type="date" name="acquisition_date" value="<?= htmlspecialchars($item['acquisition_date']) ?>">
+            </div>
+
+            <div class="form-group">
+                <label>Unit Value:</label>
+                <input type="number" name="cost" value="<?= htmlspecialchars($item['cost']) ?>">
             </div>
             
             <div class="form-group">
@@ -264,11 +269,11 @@ unset($_SESSION['error_message']);
             </div>
             
             <div class="form-group">
-                <label>Status:</label>
-                <select name="status">
-                    <option value="service" <?= $item['status'] === 'service' ? 'selected' : '' ?>>service</option>
-                    <option value="unservice" <?= $item['status'] === 'unservice' ? 'selected' : '' ?>>unservice</option>
-                    <option value="dispose" <?= $item['status'] === 'dispose' ? 'selected' : '' ?>>dispose</option>
+                <label>remarks:</label>
+                <select name="remarks">
+                    <option value="service" <?= $item['remarks'] === 'service' ? 'selected' : '' ?>>service</option>
+                    <option value="unservice" <?= $item['remarks'] === 'unservice' ? 'selected' : '' ?>>unservice</option>
+                    <option value="dispose" <?= $item['remarks'] === 'dispose' ? 'selected' : '' ?>>dispose</option>
                 </select>
             </div>
             

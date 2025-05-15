@@ -52,7 +52,7 @@
               <td><?= htmlspecialchars($item['description']) ?></td>
               <td><?= htmlspecialchars($item['model_number']) ?></td>
               <td><?= htmlspecialchars($item['person_accountable']) ?></td>
-              <td><?= htmlspecialchars($item['status']) ?></td>
+              <td><?= htmlspecialchars($item['remarks']) ?></td>
 
               <td>
                  <a href="/inventory-system/pages/landing/edit-item.php?property_number=<?= urlencode($item['property_number']) ?>" class="edit-btn">Edit</a>

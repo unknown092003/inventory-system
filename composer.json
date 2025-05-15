@@ -14,6 +14,7 @@
     ],
     "require": {
         "bacon/bacon-qr-code": "^3.0",
-        "dompdf/dompdf": "^3.1"
+        "dompdf/dompdf": "^3.1",
+        "phpoffice/phpspreadsheet": "^4.2"
     }
 }
