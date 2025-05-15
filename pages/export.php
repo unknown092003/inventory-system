@@ -71,12 +71,12 @@
                         $costClass = ($cost >= 5000) ? 'high-cost' : 'low-cost';
                         
                         echo "<tr>";
-                        echo "<td>" . htmlspecialchars($row['id']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['person_accountable']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['property_number']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['acquisition_date']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['description']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['model_number']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['acquisition_date']) . "</td>";
-                        echo "<td>" . htmlspecialchars($row['person_accountable']) . "</td>";
+                        echo "<td>" . htmlspecialchars($row['id']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['signature_of_inventory_team_date']) . "</td>";
                         echo "<td class='numeric-cell " . $costClass . "'>" . number_format($cost, 2) . "</td>";
                         echo "<td>" . $costLevel . "</td>";
