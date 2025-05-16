@@ -67,7 +67,7 @@
             model_number LIKE :search OR
             serial_number LIKE :search OR
             person_accountable LIKE :search OR
-            status LIKE :search
+            remarks LIKE :search
         )";
         $params[':search'] = $searchTerm;
     }
@@ -113,10 +113,10 @@
                 <th>Property Number</th>
                 <th>Description</th>
                 <th>Model Number</th>
-                <th>Serial Number</th>
-                <th>Acquisition Date/Cost</th>
+                <th>Unit Value</th>
+                <th>Acquisition Date</th>
                 <th>Accountable Person</th>
-                <th>Status</th>
+                <th>remarks</th>
                 <th>Date</th>
             </tr>
         </thead>
@@ -127,10 +127,10 @@
                     <td><?= htmlspecialchars($item['property_number']) ?></td>
                     <td><?= htmlspecialchars($item['description']) ?></td>
                     <td><?= htmlspecialchars($item['model_number']) ?></td>
-                    <td><?= htmlspecialchars($item['serial_number']) ?></td>
-                    <td><?= htmlspecialchars($item['acquisition_date_cost']) ?></td>
+                    <td><?= htmlspecialchars($item['cost']) ?></td>
+                    <td><?= htmlspecialchars($item['acquisition_date']) ?></td>
                     <td><?= htmlspecialchars($item['person_accountable']) ?></td>
-                    <td><?= htmlspecialchars($item['status']) ?></td>
+                    <td><?= htmlspecialchars($item['remarks']) ?></td>
                     <td><?= htmlspecialchars($item['signature_of_inventory_team_date']) ?></td>
                 </tr>
                 <?php endforeach; ?>

@@ -23,7 +23,7 @@
         <input type="date" name="acquisition_date">
 
         <label>Cost:</label>
-        <input type="number" name="cost">
+        <input type="double" name="cost">
 
         <label>Person Accountable:</label>
         <input type="text" name="person_accountable" required>
@@ -62,10 +62,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 description, 
                 model_number,  
                 acquisition_date, 
-                person_accountable, 
-                signature_of_inventory_team_date,
                 cost,
-                remarks
+                person_accountable, 
+                remarks,
+                signature_of_inventory_team_date
             ) VALUES (
                 :property_number, 
                 :description, 

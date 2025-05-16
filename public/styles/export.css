@@ -119,3 +119,6 @@ button:hover {
 .low-value {
     color: #388e3c;
 }
+@media print {
+    body { font-size: 30px; }
+}
