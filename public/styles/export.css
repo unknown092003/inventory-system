@@ -120,5 +120,5 @@ button:hover {
     color: #388e3c;
 }
 @media print {
-    body { font-size: 30px; }
+    body { font-size: 12px; }
 }
