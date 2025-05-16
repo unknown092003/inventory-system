@@ -49,6 +49,15 @@
                 <a href="?page=data" class="button">Clear Filters</a>
             <?php endif; ?>
         </form>
+
+        <button onclick="redirectToExport()">View Layout</button>
+        <script>
+            function redirectToExport() {
+            const search = encodeURIComponent('<?= $_GET['search'] ?? '' ?>');
+            const sort = encodeURIComponent('<?= $_GET['sort'] ?? 'date_desc' ?>');
+            window.location.href = `export.php?search=${search}&sort=${sort}`;
+            }
+        </script>
     </div>
 
     <?php
@@ -65,7 +74,7 @@
             property_number LIKE :search OR
             description LIKE :search OR
             model_number LIKE :search OR
-            serial_number LIKE :search OR
+            remarks LIKE :search OR
             person_accountable LIKE :search OR
             remarks LIKE :search
         )";

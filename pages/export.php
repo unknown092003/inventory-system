@@ -32,23 +32,22 @@
             width: 100%;
             overflow-x: visible;
         }
-        
-        /* .inventory-table {
-            width: auto;
-            min-width: 100%;
-            table-layout: auto;
-        }
-         */
-        /* Force columns to show all content */
-        /* .inventory-table td, .inventory-table th {
-            white-space: nowrap;
-            overflow: visible;
-            text-overflow: clip;
-        } */
     </style>
 </head>
 <body>
+    <div class="nav">
+    <div class="header-group">
+        <h1>Inventory Management System</h1>
+        <div class="controls">
+            <button id="exportPdfBtn">Export to PDF</button>
+            <button id="exportBtn">Export to Excel</button>
+            <button id="printBtn">Print Report</button>
+            <button id="exportWordBtn">Export to Word</button>
+        </div>
+    </div>
+    </div>
 <div id="exportContent">
+    <div class="mainheader">
     <div class="main-header">
         <img src="/inventory-system/public/img/ocd.png" alt="OCD Logo" class="logo">
         <div class="main-header-text">
@@ -64,8 +63,12 @@
         <p><strong>REPORT ON THE PHYSICAL COUNT OF PROPERTY, PLANT AND EQUIPMENT</p>
         <p>Information, Communication and Technology Equipment(10605030)</strong><hr id="hr2"></p>
     </div>
-    
+    </div>
+
     <div class="inventory-container">
+    <table id="inventoryTable" class="inventory-table" style="width: auto;">
+        <!-- table content -->
+        <div class="inventory-container">
         <table id="inventoryTable" class="inventory-table">
             <thead>
                 <tr>
@@ -93,8 +96,53 @@
                     $conn = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     
-                    // Query to fetch inventory data sorted by cost ascending
-                    $stmt = $conn->prepare("SELECT * FROM inventory ORDER BY cost ASC");
+                    // Get search and sort parameters from URL
+                    $search = isset($_GET['search']) ? $_GET['search'] : '';
+                    $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_desc';
+                    
+                    // Build the query with search and sort
+                    $sql = "SELECT * FROM inventory WHERE 1=1";
+                    $params = [];
+                    
+                    // Add search condition if search term exists
+                    if (!empty($search)) {
+                        $searchTerm = '%' . $search . '%';
+                        $sql .= " AND (
+                            property_number LIKE :search OR
+                            description LIKE :search OR
+                            model_number LIKE :search OR
+                            remarks LIKE :search OR
+                            person_accountable LIKE :search
+                        )";
+                        $params[':search'] = $searchTerm;
+                    }
+                    
+                    // Add sorting based on parameter
+                    switch ($sort) {
+                        case 'date_asc':
+                            $sql .= " ORDER BY signature_of_inventory_team_date ASC";
+                            break;
+                        case 'property_asc':
+                            $sql .= " ORDER BY property_number ASC";
+                            break;
+                        case 'property_desc':
+                            $sql .= " ORDER BY property_number DESC";
+                            break;
+                        case 'person_asc':
+                            $sql .= " ORDER BY person_accountable ASC";
+                            break;
+                        case 'person_desc':
+                            $sql .= " ORDER BY person_accountable DESC";
+                            break;
+                        default: // date_desc
+                            $sql .= " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+                    }
+                    
+                    // Prepare and execute query
+                    $stmt = $conn->prepare($sql);
+                    foreach ($params as $key => $value) {
+                        $stmt->bindValue($key, $value);
+                    }
                     $stmt->execute();
                     
                     // Set the fetch mode to associative array
@@ -120,6 +168,11 @@
                         echo "<td>" . htmlspecialchars($row['remarks']) . "</td>";
                         echo "</tr>";
                     }
+                    
+                    // Show message if no results found
+                    if ($stmt->rowCount() === 0) {
+                        echo "<tr><td colspan='10'>No inventory items found matching your search criteria</td></tr>";
+                    }
                 } catch(PDOException $e) {
                     echo "<tr><td colspan='10'>Connection failed: " . $e->getMessage() . "</td></tr>";
                 }
@@ -127,17 +180,11 @@
             </tbody>
         </table>
     </div>
+    </table>
 </div>
     
-    <div class="header-group">
-        <h1>Inventory Management System</h1>
-        <div class="controls">
-            <button id="exportPdfBtn">Export to PDF</button>
-            <button id="exportBtn">Export to Excel</button>
-            <button id="printBtn">Print Report</button>
-            <button id="exportWordBtn">Export to Word</button>
-        </div>
-    </div>
+   
+</div>
     
     <script>
     document.getElementById('exportBtn').addEventListener('click', function() {
@@ -174,33 +221,50 @@
     });
 
     document.getElementById('exportPdfBtn').addEventListener('click', function() {
-        const element = document.getElementById('exportContent');
-        const opt = {
-            margin: 0.3,
-            filename: 'OCD_Inventory_Report.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2,
-                scrollX: 0,
-                scrollY: 0,
-                width: document.getElementById('exportContent').scrollWidth, // Ensure full width is captured
-                windowWidth: document.getElementById('exportContent').scrollWidth
-            },
-            jsPDF: { 
-                unit: 'px', // Use pixels for better precision
-                format: [document.getElementById('exportContent').scrollWidth, 842], // Dynamically set width and height
-                orientation: 'landscape' // Use landscape for wider tables
-            }
-        };
-        
-        // Temporarily adjust body overflow for PDF generation
-        const originalOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'visible';
-        
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.body.style.overflow = originalOverflow;
-        });
+    const element = document.getElementById('exportContent');
+    
+    // Temporarily adjust styles for PDF generation
+    const originalStyles = {
+        bodyOverflow: document.body.style.overflow,
+        bodyWidth: document.body.style.width,
+        tableWidth: document.getElementById('inventoryTable').style.width
+    };
+    
+    document.body.style.overflow = 'visible';
+    document.body.style.width = 'auto';
+    document.getElementById('inventoryTable').style.width = 'auto';
+    
+    const opt = {
+        margin: 0,
+        filename: 'OCD_Inventory_Report.pdf',
+        image: { 
+            type: 'jpeg', 
+            quality: 1 
+        },
+        html2canvas: { 
+            scale: 2, // Increase scale for better quality
+            scrollX: 0,
+            scrollY: 0,
+            width: element.scrollWidth, // Ensure full width is captured
+            windowWidth: element.scrollWidth,
+            useCORS: true,
+            allowTaint: true
+        },
+        jsPDF: { 
+            unit: 'mm',
+            format: [297, 210], // A4 landscape dimensions in mm
+            orientation: 'landscape' // Ensure landscape orientation
+        }
+    };
+    
+    // Generate PDF
+    html2pdf().set(opt).from(element).save().then(() => {
+        // Restore original styles
+        document.body.style.overflow = originalStyles.bodyOverflow;
+        document.body.style.width = originalStyles.bodyWidth;
+        document.getElementById('inventoryTable').style.width = originalStyles.tableWidth;
     });
+});
 
     document.getElementById('printBtn').addEventListener('click', function() {
         window.print();
@@ -209,11 +273,9 @@
     document.getElementById('exportWordBtn').addEventListener('click', function() {
         const content = document.getElementById('exportContent').cloneNode(true);
         
-        // Remove any buttons from the content
         const buttons = content.querySelectorAll('button');
         buttons.forEach(button => button.remove());
         
-        // Convert to Word
         const converted = htmlDocx.asBlob(content.innerHTML);
         saveAs(converted, 'OCD_Inventory_Report.docx');
     });
