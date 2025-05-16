@@ -1,4 +1,7 @@
+<link rel="stylesheet" href="/inventory-system/public/styles/list.css">
+
 <a href="landing.php">Home</a>
+
 <?php
 require dirname(__FILE__, 2) . "/vendor/autoload.php";
 
@@ -99,7 +102,7 @@ try {
         // Display the generated sticker
         echo '<div class="sticker">';
         echo '<img src="/inventory-system/qr/' . basename($outputPath) . '" alt="Sticker for ' . $item["property_number"] . '">';
-        echo '<p>Generated: ' . $item["property_number"] . ' - ' . $item["description"] . '</p>';
+       
         echo '</div>';
 
     } catch (Exception $e) {
