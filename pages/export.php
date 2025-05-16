@@ -188,83 +188,75 @@
     
     <script>
     document.getElementById('exportBtn').addEventListener('click', function() {
-        // Create a clone of the export content
         const exportContent = document.getElementById('exportContent').cloneNode(true);
-        
-        // Remove any buttons that might be inside
         const buttons = exportContent.querySelectorAll('button');
         buttons.forEach(button => button.remove());
-        
-        // Create a temporary div for export
+
         const tempDiv = document.createElement('div');
+        tempDiv.style.textAlign = 'center'; // Center align the content
         tempDiv.appendChild(exportContent);
         document.body.appendChild(tempDiv);
-        
-        // Convert to Excel
+
         const wb = XLSX.utils.table_to_book(exportContent.querySelector('table'), {
             sheet: "Inventory",
             raw: true
         });
-        
-        // Generate filename with current date
+
         const today = new Date();
         const dateString = today.getFullYear() + '-' + 
                           (today.getMonth()+1).toString().padStart(2, '0') + '-' + 
                           today.getDate().toString().padStart(2, '0');
         const filename = `OCD_Inventory_Report_${dateString}.xlsx`;
-        
-        // Export to Excel
+
         XLSX.writeFile(wb, filename);
-        
-        // Clean up
         document.body.removeChild(tempDiv);
     });
 
     document.getElementById('exportPdfBtn').addEventListener('click', function() {
-    const element = document.getElementById('exportContent');
-    
-    // Temporarily adjust styles for PDF generation
-    const originalStyles = {
-        bodyOverflow: document.body.style.overflow,
-        bodyWidth: document.body.style.width,
-        tableWidth: document.getElementById('inventoryTable').style.width
-    };
-    
-    document.body.style.overflow = 'visible';
-    document.body.style.width = 'auto';
-    document.getElementById('inventoryTable').style.width = 'auto';
-    
-    const opt = {
-        margin: 0,
-        filename: 'OCD_Inventory_Report.pdf',
-        image: { 
-            type: 'jpeg', 
-            quality: 1 
-        },
-        html2canvas: { 
-            scale: 2, // Increase scale for better quality
-            scrollX: 0,
-            scrollY: 0,
-            width: element.scrollWidth, // Ensure full width is captured
-            windowWidth: element.scrollWidth,
-            useCORS: true,
-            allowTaint: true
-        },
-        jsPDF: { 
-            unit: 'mm',
-            format: [297, 210], // A4 landscape dimensions in mm
-            orientation: 'landscape' // Ensure landscape orientation
-        }
-    };
-    
-    // Generate PDF
-    html2pdf().set(opt).from(element).save().then(() => {
-        // Restore original styles
-        document.body.style.overflow = originalStyles.bodyOverflow;
-        document.body.style.width = originalStyles.bodyWidth;
-        document.getElementById('inventoryTable').style.width = originalStyles.tableWidth;
+        const element = document.getElementById('exportContent');
+        const originalStyles = {
+            bodyOverflow: document.body.style.overflow,
+            bodyWidth: document.body.style.width,
+            tableWidth: document.getElementById('inventoryTable').style.width,
+            tableMargin: document.getElementById('inventoryTable').style.margin,
+            tablePadding: document.getElementById('inventoryTable').style.padding
+        };
+
+        document.body.style.overflow = 'visible';
+        document.body.style.width = '100% auto';
+        const table = document.getElementById('inventoryTable');
+        table.style.width = '100%';
+        table.style.margin = '0 auto'; // Center the table
+        table.style.padding = '0 0px';
+
+        const opt = {
+            margin: 0,
+            filename: 'OCD_Inventory_Report.pdf',
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { 
+                scale: 1,
+                scrollX: 0,
+                scrollY: 0,
+                width: element.scrollWidth,
+                windowWidth: element.scrollWidth,
+                useCORS: true,
+                allowTaint: true
+            },
+            jsPDF: { 
+                unit: 'mm',
+                format: [297, 210],
+                orientation: 'landscape'
+            }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            document.body.style.overflow = originalStyles.bodyOverflow;
+            document.body.style.width = originalStyles.bodyWidth;
+            table.style.width = originalStyles.tableWidth;
+            table.style.margin = originalStyles.tableMargin;
+            table.style.padding = originalStyles.tablePadding;
+        });
     });
-});
 
     document.getElementById('printBtn').addEventListener('click', function() {
         window.print();
@@ -272,11 +264,14 @@
 
     document.getElementById('exportWordBtn').addEventListener('click', function() {
         const content = document.getElementById('exportContent').cloneNode(true);
-        
         const buttons = content.querySelectorAll('button');
         buttons.forEach(button => button.remove());
-        
-        const converted = htmlDocx.asBlob(content.innerHTML);
+
+        const wrapper = document.createElement('div');
+        wrapper.style.textAlign = 'center'; // Center align the content
+        wrapper.appendChild(content);
+
+        const converted = htmlDocx.asBlob(wrapper.innerHTML);
         saveAs(converted, 'OCD_Inventory_Report.docx');
     });
     </script>
