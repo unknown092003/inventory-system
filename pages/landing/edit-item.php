@@ -34,6 +34,9 @@ try {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Start transaction
+    $pdo->beginTransaction();
+    
     try {
         // Update database
         $stmt = $pdo->prepare("UPDATE inventory SET
@@ -58,7 +61,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['signature_of_inventory_team_date'],
             $item['id']
         ]);
-        
+
+        $updatedRows = $stmt->rowCount();
+        if ($updatedRows === 0) {
+            throw new PDOException("No rows were updated - possible concurrency issue");
+        }
+       
         // Log activity
         $logstmt = $pdo->prepare("INSERT INTO activity_log
                 (action_type, table_name, record_id, user, description, timestamp)
@@ -72,6 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':user' => $_POST['person_accountable'],
             ':description' => $_POST['description']
         ]);
+
+        // Commit the transaction
+        $pdo->commit();
 
         // For AJAX response
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
@@ -89,6 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
         
     } catch (PDOException $e) {
+        $pdo->rollBack();
+        
         // For AJAX response
         if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
             echo json_encode([
@@ -221,7 +234,7 @@ unset($_SESSION['error_message']);
                 <?= htmlspecialchars($successMessage) ?>
                 <div class="button-group" style="margin-top: 10px;">
                     <a href="edit.php?property_number=<?= urlencode($updatedPropertyNumber ?? $propertyNumber) ?>" class="button action-btn">Edit Again</a>
-                    <a href="/inventory-system/pages/sologenerated.php?property_number=<?= urlencode($updatedPropertyNumber ?? $propertyNumber) ?>" class="button qr-btn">Generate QR</a>
+                    <a href="/inventory-system/pages/sologenerated.php?property_number=<?= urlencode($updatedPropertyNumber ?? $propertyNumber) ?>&t=<?= time() ?>" class="button qr-btn">Generate QR</a>
                     <a href="/inventory-system/pages/landing/scan.php" class="button action-btn">Open Scanner</a>
                     <a href="/inventory-system/pages/landing/list.php" class="button back-btn">Back to List</a>
                 </div>
@@ -252,7 +265,6 @@ unset($_SESSION['error_message']);
                 <input type="text" name="model_number" value="<?= htmlspecialchars($item['model_number']) ?>">
             </div>
             
-           
             <div class="form-group">
                 <label>Acquisition Date:</label>
                 <input type="date" name="acquisition_date" value="<?= htmlspecialchars($item['acquisition_date']) ?>">
@@ -292,11 +304,11 @@ unset($_SESSION['error_message']);
         <div class="qr-section">
             <h2>QR Sticker</h2>
             <?php if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/inventory-system/qr/' . ($updatedPropertyNumber ?? $item['property_number']) . '.png')): ?>
-                <img src="/inventory-system/qr/<?= htmlspecialchars($updatedPropertyNumber ?? $item['property_number']) ?>.png" alt="QR Code" class="qr-image">
+                <img src="/inventory-system/qr/<?= htmlspecialchars($updatedPropertyNumber ?? $item['property_number']) ?>.png?t=<?= time() ?>" alt="QR Code" class="qr-image">
             <?php else: ?>
                 <p class="qr-missing">QR code not generated yet</p>
             <?php endif; ?>
-            <a href="/inventory-system/pages/sologenerated.php?property_number=<?= htmlspecialchars($updatedPropertyNumber ?? $item['property_number']) ?>" class="button qr-btn">Generate QR</a>
+            <a href="/inventory-system/pages/sologenerated.php?property_number=<?= htmlspecialchars($updatedPropertyNumber ?? $item['property_number']) ?>&t=<?= time() ?>" class="button qr-btn">Generate QR</a>
         </div>
     </div>
 
@@ -351,7 +363,7 @@ unset($_SESSION['error_message']);
 
                     if (originalPN !== newPN) {
                         document.querySelector('.qr-section .qr-btn').href = 
-                            `/inventory-system/pages/sologenerated.php?property_number=${encodeURIComponent(newPN)}`;
+                            `/inventory-system/pages/sologenerated.php?property_number=${encodeURIComponent(newPN)}&t=${Date.now()}`;
                         
                         if (document.querySelector('.qr-section .qr-image')) {
                             document.querySelector('.qr-section .qr-image').src = 
@@ -378,7 +390,7 @@ unset($_SESSION['error_message']);
     // Handle modal button actions
     document.getElementById('generateQR').addEventListener('click', function() {
         const newPN = document.querySelector('input[name="property_number"]').value;
-        window.location.href = `/inventory-system/pages/sologenerated.php?property_number=${encodeURIComponent(newPN)}`;
+        window.location.href = `/inventory-system/pages/sologenerated.php?property_number=${encodeURIComponent(newPN)}&t=${Date.now()}`;
     });
 
     document.getElementById('openScanner').addEventListener('click', function() {

@@ -1,4 +1,8 @@
+
 <link rel="stylesheet" href="/inventory-system/public/styles/list.css">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 
 <a href="landing.php">Home</a>
 
@@ -14,6 +18,7 @@ use BaconQrCode\Writer;
 // Database connection
 $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+$pdo->exec("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED");
 
 try {
     // Get the specific property number from the request
@@ -101,7 +106,7 @@ try {
 
         // Display the generated sticker
         echo '<div class="sticker">';
-        echo '<img src="/inventory-system/qr/' . basename($outputPath) . '" alt="Sticker for ' . $item["property_number"] . '">';
+        echo '<img src="/inventory-system/qr/' . basename($outputPath) . '?t=' . time() . '" alt="Sticker for ' . $item["property_number"] . '">';
        
         echo '</div>';
 
