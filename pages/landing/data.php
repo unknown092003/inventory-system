@@ -1,3 +1,8 @@
+<!-- <script>
+  setTimeout(() => {
+    location.reload();
+  }, 2000); // 30,000 ms = 30 seconds
+</script> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
