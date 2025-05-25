@@ -17,7 +17,7 @@
                     <div class="header-container">
                         <h1>Scan</h1>
                     </div>
-                        <button class="home-btn"><a href="pages/login.php">Login</a></button>
+                        <button class="home-btn"><a href="/inventory-system/pages/login.php">Login</a></button>
                     </div>
                 <div id="reader"></div>
                 <p id="message"></p>

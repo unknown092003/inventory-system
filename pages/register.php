@@ -1,3 +1,46 @@
+<?php
+require_once __DIR__ . '/../api/config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm_password']);
+    $full_name = trim($_POST['full_name']);
+
+    // Validate inputs
+    if (empty($username) || empty($password) || empty($confirm_password)) {
+        $error = "All fields are required!";
+    } elseif ($password !== $confirm_password) {
+        $error = "Passwords don't match!";
+    } else {
+        // Check if username exists
+        $stmt = $db->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->store_result();
+        
+        if ($stmt->num_rows > 0) {
+            $error = "Username already exists!";
+        } else {
+            // Hash password
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insert new user
+            $stmt = $db->prepare("INSERT INTO users (username, password, full_name) VALUES (?, ?, ?)");
+            $stmt->bind_param("sss", $username, $hashed_password, $full_name);
+            
+            if ($stmt->execute()) {
+                $success = "Registration successful! You can now login.";
+                // Optionally log this action if you want
+                $logger->logAction('user_created', 'New user registered', NULL, $username);
+            } else {
+                $error = "Registration failed: " . $db->error;
+            }
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -121,20 +164,19 @@
     <div class="register-form">
         <h1>Create Account</h1>
         
-        <?php
-        if (isset($_GET['error'])) {
-            echo '<div class="error-message">' . htmlspecialchars($_GET['error']) . '</div>';
-        }
-        if (isset($_GET['success'])) {
-            echo '<div class="success-message">' . htmlspecialchars($_GET['success']) . '</div>';
-        }
-        ?>
+        <?php if (isset($error)) echo "<p style='color:red'>$error</p>"; ?>
+        <?php if (isset($success)) echo "<p style='color:green'>$success</p>"; ?>
         
-        <form method="post" action="register_process.php">
-    <input type="text" name="fName" placeholder="First Name" required>
-    <input type="text" name="lName" placeholder="Last Name" required>
-    <input type="text" name="username" placeholder="Username" required>
-    <input type="password" name="password" placeholder="Password" required>
+        <form method="post">
+
+    <input type="text" placeholder="Full Name" name="full_name" value="<?= isset($_POST['full_name']) ? htmlspecialchars($_POST['full_name']) : '' ?>" required>
+
+    <input type="text" placeholder="Username" name="username" value="<?= isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>" required>
+
+    <input type="password" placeholder="Password" name="password" required>
+
+    <input type="password" placeholder="Confirm Password" name="confirm_password" required>
+
     <button type="submit" name="signUp">Register</button>
 </form>
         

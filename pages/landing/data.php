@@ -1,8 +1,3 @@
-<!-- <script>
-  setTimeout(() => {
-    location.reload();
-  }, 2000); // 30,000 ms = 30 seconds
-</script> -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,7 +12,6 @@
     <div class="search-sort-container">
         <!-- Combined Search and Sort Form -->
         <form method="GET" action="">
-            <!-- Hidden field to preserve page parameter -->
             <input type="hidden" name="page" value="data">
             
             <!-- Search Input -->
@@ -49,7 +43,6 @@
             
             <button id="apply" type="submit">Apply</button>
             
-            <!-- Clear button when filters are active -->
             <?php if (isset($_GET['search']) || (isset($_GET['sort']) && $_GET['sort'] != 'date_desc')): ?>
                 <a href="?page=data" class="button">Clear Filters</a>
             <?php endif; ?>
@@ -58,102 +51,205 @@
         <button onclick="redirectToExport()">View Layout</button>
         <script>
             function redirectToExport() {
-            const search = encodeURIComponent('<?= $_GET['search'] ?? '' ?>');
-            const sort = encodeURIComponent('<?= $_GET['sort'] ?? 'date_desc' ?>');
-            window.location.href = `export.php?search=${search}&sort=${sort}`;
+                // Get all current parameters EXCEPT 'page'
+                const params = new URLSearchParams(window.location.search);
+                params.delete('page'); // Remove pagination parameter
+                
+                // Convert to URL-encoded string
+                const queryString = params.toString();
+                
+                // Redirect with all current filters
+                window.location.href = `export.php?${queryString}`;
             }
         </script>
     </div>
 
     <?php
-    $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
-    
-    // Base query
-    $sql = "SELECT * FROM inventory WHERE 1=1";
-    $params = [];
-    
-    // Search functionality
+    require_once __DIR__ . '/../../api/config.php';
+    requireAuth();
+
+    // Initialize pagination variables
+    $per_page = 20;
+    $page = max(1, intval($_GET['page'] ?? 1));
+    $offset = ($page - 1) * $per_page;
+
+    // Build the base query
+    $base_query = "SELECT 
+        property_number, description, model_number, equipment_type, 
+        acquisition_date, cost, person_accountable, remarks,
+        signature_of_inventory_team_date
+        FROM inventory 
+        WHERE 1=1";
+
+    // Add search conditions
+    $search_condition = "";
     if (!empty($_GET['search'])) {
-        $searchTerm = '%' . $_GET['search'] . '%';
-        $sql .= " AND (
-            property_number LIKE :search OR
-            description LIKE :search OR
-            model_number LIKE :search OR
-            remarks LIKE :search OR
-            person_accountable LIKE :search OR
-            remarks LIKE :search
-        )";
-        $params[':search'] = $searchTerm;
+        $search = $db->real_escape_string($_GET['search']);
+        $search_condition = " AND (property_number LIKE '%$search%' 
+                   OR description LIKE '%$search%'
+                   OR model_number LIKE '%$search%'
+                   OR person_accountable LIKE '%$search%')";
     }
-    
-    // Sorting functionality
-    $sortOption = $_GET['sort'] ?? 'date_desc';
-    switch ($sortOption) {
-        case 'date_asc':
-            $sql .= " ORDER BY signature_of_inventory_team_date ASC";
-            break;
-        case 'property_asc':
-            $sql .= " ORDER BY property_number ASC";
-            break;
-        case 'property_desc':
-            $sql .= " ORDER BY property_number DESC";
-            break;
-        case 'person_asc':
-            $sql .= " ORDER BY person_accountable ASC";
-            break;
-        case 'person_desc':
-            $sql .= " ORDER BY person_accountable DESC";
-            break;
-        default: // date_desc
-            $sql .= " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-    }
-    
-    try {
-        // Prepare and execute query
-        $stmt = $pdo->prepare($sql);
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value);
+
+    // Add sorting
+    $sort_condition = " ORDER BY acquisition_date DESC";
+    if (!empty($_GET['sort'])) {
+        switch ($_GET['sort']) {
+            case 'date_asc':
+                $sort_condition = " ORDER BY signature_of_inventory_team_date ASC";
+                break;
+            case 'property_asc':
+                $sort_condition = " ORDER BY property_number ASC";
+                break;
+            case 'property_desc':
+                $sort_condition = " ORDER BY property_number DESC";
+                break;
+            case 'person_asc':
+                $sort_condition = " ORDER BY person_accountable ASC";
+                break;
+            case 'person_desc':
+                $sort_condition = " ORDER BY person_accountable DESC";
+                break;
+            case 'date_desc':
+            default:
+                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
         }
-        $stmt->execute();
-        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        die("Database error: " . htmlspecialchars($e->getMessage()));
+    }
+
+    // Get total count for pagination
+    $count_query = "SELECT COUNT(*) as total FROM inventory WHERE 1=1" . $search_condition;
+    $count_result = $db->query($count_query);
+
+    if ($count_result) {
+        $count_data = $count_result->fetch_assoc();
+        $total_items = $count_data['total'] ?? 0;
+        $total_pages = max(1, ceil($total_items / $per_page));
+    } else {
+        $total_items = 0;
+        $total_pages = 1;
+        $_SESSION['error'] = "Error counting inventory items: " . $db->error;
+    }
+
+    // Build and execute main query
+    $query = $base_query . $search_condition . $sort_condition . " LIMIT $offset, $per_page";
+    $items = $db->query($query);
+
+    if (!$items) {
+        $_SESSION['error'] = "Error loading inventory: " . $db->error;
+        $items = [];
     }
     ?>
 
-    <table class="inventory-table">
-        <thead>
-            <tr>
-                <th>Property Number</th>
-                <th>Description</th>
-                <th>Model Number</th>
-                <th>Unit Value</th>
-                <th>Acquisition Date</th>
-                <th>Accountable Person</th>
-                <th>remarks</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if (count($items) > 0): ?>
-                <?php foreach ($items as $item): ?>
-                <tr>
-                    <td><?= htmlspecialchars($item['property_number']) ?></td>
-                    <td><?= htmlspecialchars($item['description']) ?></td>
-                    <td><?= htmlspecialchars($item['model_number']) ?></td>
-                    <td><?= htmlspecialchars($item['cost']) ?></td>
-                    <td><?= htmlspecialchars($item['acquisition_date']) ?></td>
-                    <td><?= htmlspecialchars($item['person_accountable']) ?></td>
-                    <td><?= htmlspecialchars($item['remarks']) ?></td>
-                    <td><?= htmlspecialchars($item['signature_of_inventory_team_date']) ?></td>
+    <!-- Search Form -->
+    <form method="GET" style="margin-bottom: 20px;">
+        <input type="hidden" name="page" value="data">
+        <input type="text" name="search" placeholder="Search inventory..." 
+               value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+        <button type="submit">Search</button>
+        <?php if (!empty($_GET['search'])): ?>
+            <a href="home.php" style="margin-left: 10px;">Clear Search</a>
+        <?php endif; ?>
+    </form>
+
+    <!-- Display any errors -->
+    <?php if (isset($_SESSION['error'])): ?>
+        <div style="color: red; margin-bottom: 15px; padding: 10px; border: 1px solid red;">
+            <?= $_SESSION['error'] ?>
+            <?php unset($_SESSION['error']); ?>
+        </div>
+    <?php endif; ?>
+
+    <!-- Show results count -->
+    <div style="margin-bottom: 15px;">
+        Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
+    </div>
+
+    <!-- Pagination Top -->
+    <?php if ($total_pages > 1): ?>
+    <div class="pagination" style="margin-bottom: 20px;">
+        <?php if ($page > 1): ?>
+            <a href="?page=1&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" title="First">« First</a>
+            <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" title="Previous">‹ Previous</a>
+        <?php endif; ?>
+        
+        <?php 
+        $start_page = max(1, $page - 2);
+        $end_page = min($total_pages, $page + 2);
+        
+        for ($i = $start_page; $i <= $end_page; $i++): ?>
+            <a href="?page=<?= $i ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" 
+               style="<?= $i == $page ? 'font-weight:bold; background:#4CAF50; color:white;' : '' ?>">
+                <?= $i ?>
+            </a>
+        <?php endfor; ?>
+        
+        <?php if ($page < $total_pages): ?>
+            <a href="?page=<?= $page + 1 ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" title="Next">Next ›</a>
+            <a href="?page=<?= $total_pages ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" title="Last">Last »</a>
+        <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <div style="overflow-x: auto;">
+        <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th>Property #</th>
+                    <th>Description</th>
+                    <th>Model #</th>
+                    <th>Type</th>
+                    <th>Acquired</th>
+                    <th>Cost</th>
+                    <th>Accountable</th>
+                    <th>Status</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
                 </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="8" style="text-align: center;">No inventory items found</td>
-                </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                <?php if ($items && $items->num_rows > 0): ?>
+                    <?php while ($item = $items->fetch_assoc()): 
+                        $cost = number_format($item['cost'], 2);
+                        $acquired = date('M j, Y', strtotime($item['acquisition_date']));
+                        $updated = $item['signature_of_inventory_team_date'] ? 
+                            date('M j, Y', strtotime($item['signature_of_inventory_team_date'])) : 'N/A';
+                    ?>
+                    <tr>
+                        <td><?= htmlspecialchars($item['property_number']) ?></td>
+                        <td><?= htmlspecialchars($item['description']) ?></td>
+                        <td><?= htmlspecialchars($item['model_number'] ?? 'N/A') ?></td>
+                        <td><?= htmlspecialchars($item['equipment_type']) ?></td>
+                        <td><?= $acquired ?></td>
+                        <td style="text-align: right;">₱<?= $cost ?></td>
+                        <td><?= htmlspecialchars($item['person_accountable'] ?? 'N/A') ?></td>
+                        <td>
+                            <?php 
+                            $status_class = [
+                                'service' => 'status-service',
+                                'unservice' => 'status-unservice',
+                                'disposed' => 'status-disposed'
+                            ][$item['remarks']] ?? '';
+                            ?>
+                            <span class="status-badge <?= $status_class ?>">
+                                <?= ucfirst($item['remarks']) ?>
+                            </span>
+                        </td>
+                        <td><?= $updated ?></td>
+                        <td>
+                            <a href="edit.php?property_number=<?= urlencode($item['property_number']) ?>" 
+                               style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px;">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="10" style="text-align: center; padding: 20px;">No inventory items found</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
