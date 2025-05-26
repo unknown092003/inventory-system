@@ -25,8 +25,8 @@
     use BaconQrCode\Renderer\RendererStyle\RendererStyle;
     use BaconQrCode\Writer;
     
-    $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
-    $stmt = $pdo->query("SELECT * FROM inventory limit 1000;");
+    $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
+    $stmt = $pdo->query("SELECT * FROM inventory limit 10;");
     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     $renderer = new ImageRenderer(

@@ -40,7 +40,7 @@
         switch ($page) {
           case 'home': include 'landing/home.php'; break;
           case 'list': include 'list.php'; break;
-          case 'create': include 'landing/create.php'; break;
+          case 'create': include 'landing/equipment-type.php'; break;
           case 'data': include 'landing/data.php'; break;
           case 'edit': include 'landing/edit.php'; break;
           default: include 'landing/home.php';

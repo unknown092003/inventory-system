@@ -140,16 +140,7 @@
     }
     ?>
 
-    <!-- Search Form -->
-    <form method="GET" style="margin-bottom: 20px;">
-        <input type="hidden" name="page" value="data">
-        <input type="text" name="search" placeholder="Search inventory..." 
-               value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-        <button type="submit">Search</button>
-        <?php if (!empty($_GET['search'])): ?>
-            <a href="home.php" style="margin-left: 10px;">Clear Search</a>
-        <?php endif; ?>
-    </form>
+  
 
     <!-- Display any errors -->
     <?php if (isset($_SESSION['error'])): ?>
@@ -158,7 +149,7 @@
             <?php unset($_SESSION['error']); ?>
         </div>
     <?php endif; ?>
-
+    <a href="/inventory-system/pages/landing/data.php">full Screen</a>
     <!-- Show results count -->
     <div style="margin-bottom: 15px;">
         Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
@@ -167,6 +158,7 @@
     <!-- Pagination Top -->
     <?php if ($total_pages > 1): ?>
     <div class="pagination" style="margin-bottom: 20px;">
+        
         <?php if ($page > 1): ?>
             <a href="?page=1&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" title="First">« First</a>
             <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" title="Previous">‹ Previous</a>

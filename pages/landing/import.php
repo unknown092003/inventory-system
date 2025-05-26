@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../api/config.php';
+require_once __DIR__ . '/../../api/config.php';
 requireAuth();
 
 // Get and validate equipment type
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     // Validate file upload
     if ($_FILES['excel_file']['error'] !== UPLOAD_ERR_OK) {
         $_SESSION['import_error'] = "File upload error: " . $_FILES['excel_file']['error'];
-        header("Location: /inventory-system/pages/landing.php");
+        header("Location: home.php");
         exit();
     }
 
@@ -29,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
 
     if (!in_array($mime_type, $allowed_types)) {
         $_SESSION['import_error'] = "Invalid file type. Please upload an Excel file (.xls or .xlsx).";
-        header("Location:/inventory-system/pages/landing.php");
+        header("Location: home.php");
         exit();
     }
 
-    require_once __DIR__ .  '/../vendor/autoload.php';
+    require_once 'vendor/autoload.php';
     
     try {
         $file = $_FILES['excel_file']['tmp_name'];
@@ -202,7 +202,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         $_SESSION['import_error'] = "Import failed: " . $e->getMessage();
     }
 
-    header("Location: /inventory-system/pages/landing.php");
+    header("Location: home.php");
     exit();
 }
 ?>
@@ -253,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
 </head>
 <body>
     <h1>Import <?= htmlspecialchars($equipment_type) ?> Inventory</h1>
-    <a href="/inventory-system/pages/landing.php" style="display: inline-block; margin-bottom: 20px;">← Back to Dashboard</a>
+    <a href="home.php" style="display: inline-block; margin-bottom: 20px;">← Back to Dashboard</a>
     
     <div class="type-confirmation">
         <h3 style="margin-top: 0;">Equipment Type Confirmation</h3>
@@ -313,79 +313,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             <li>Existing items will be updated with the new data</li>
         </ul>
     </div>
-    <script>
-        document.getElementById('exportBtn').addEventListener('click', function() {
-    const exportContent = document.getElementById('exportContent').cloneNode(true);
-    const buttons = exportContent.querySelectorAll('button');
-    buttons.forEach(button => button.remove());
-
-    const tempDiv = document.createElement('div');
-    tempDiv.style.textAlign = 'center';
-    tempDiv.appendChild(exportContent);
-    document.body.appendChild(tempDiv);
-
-    const wb = XLSX.utils.table_to_book(exportContent.querySelector('table'), {
-        sheet: "Inventory",
-        raw: true
-    });
-
-    const today = new Date();
-    const dateString = today.getFullYear() + '-' + 
-                      (today.getMonth() + 1).toString().padStart(2, '0') + '-' + 
-                      today.getDate().toString().padStart(2, '0');
-    const filename = `OCD_Inventory_Report_${dateString}.xlsx`;
-
-    XLSX.writeFile(wb, filename);
-    document.body.removeChild(tempDiv);
-});
-
-document.getElementById('exportPdfBtn').addEventListener('click', function () {
-    const element = document.getElementById('exportContent');
-    element.style.width = element.scrollWidth + 'px';
-    element.style.transform = 'scale(0.84) translateX(-90px)';
-    element.style.transformOrigin = 'center top';
-
-    const opt = {
-        margin: 0,
-        filename: 'OCD_Inventory_Report.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: {
-            scale: 1,
-            scrollX: 0,
-            scrollY: -window.scrollY,
-            windowWidth: element.scrollWidth,
-            useCORS: true
-        },
-        jsPDF: {
-            unit: 'mm',
-            format: 'a4',
-            orientation: 'landscape'
-        }
-    };
-
-    html2pdf().set(opt).from(element).save().then(() => {
-        element.style.width = '';
-        element.style.transform = '';
-    });
-});
-
-document.getElementById('printBtn').addEventListener('click', function() {
-    window.print();
-});
-
-document.getElementById('exportWordBtn').addEventListener('click', function() {
-    const content = document.getElementById('exportContent').cloneNode(true);
-    const buttons = content.querySelectorAll('button');
-    buttons.forEach(button => button.remove());
-
-    const wrapper = document.createElement('div');
-    wrapper.style.textAlign = 'center';
-    wrapper.appendChild(content);
-
-    const converted = htmlDocx.asBlob(wrapper.innerHTML);
-    saveAs(converted, 'OCD_Inventory_Report.docx');
-});
-
-    </script>
 </body>
 </html>
