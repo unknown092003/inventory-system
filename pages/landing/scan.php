@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="/inventory-system/public/scripts/html5-qrcode.min.js"></script>
-    <link rel="stylesheet" href="/inventory-system/public/styles/qr.css">
+    <link rel="stylesheet" href="/inventory-system/public/styles/qr2.css">
     <title>Scan</title>
 </head>
 
@@ -24,7 +24,7 @@
             </div>
         </div>
         .
-        <dialog id="item-dialog">
+<dialog id="item-dialog">
     <h2 id="prod-num"></h2>
     <p id="prod-desc"></p>
     <p id="model"></p>

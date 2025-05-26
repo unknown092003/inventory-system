@@ -11,13 +11,12 @@ h1, h2 {
     margin: 0;
 }
 
-
-
 .controls {
     display: flex;
     gap: 10px;
     justify-content: flex-end;
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 button {
@@ -28,6 +27,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    font-size: 14px;
 }
 
 button:hover {
@@ -44,51 +44,107 @@ button:hover {
 .main-header img {
     width: 80px;
     height: 80px;
+    object-fit: contain;
 }
 
 .main-header-text {
     text-align: center;
+    flex-grow: 1;
 }
 
 .main-header-text h1 {
     font-size: 24px;
     font-weight: bold;
+    margin: 5px 0;
 }
 
 .main-header-two {
-    margin: 40px 0;
+    margin: 20px 0;
     text-align: center;
     font-size: 16px;
-    max-width: fit-content;
+}
+
+.main-header-two p {
+    margin: 5px 0;
 }
 
 .main-header-two hr {
-    width: 90%;
-    margin: 15px auto;
+    width: 100%;
+    margin: 15px 0;
     border: 0;
     border-top: 2px solid #1622a7;
 }
 
-/* Table Styles */
+/* Table Styles - Optimized for Export */
 .inventory-container {
     width: 100%;
     overflow-x: auto;
     background-color: white;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
 }
 
 .inventory-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
+    table-layout: fixed;
 }
 
 .inventory-table th,
 .inventory-table td {
-    padding: 10px;
+    padding: 8px 6px;
     border: 1px solid #ddd;
     text-align: left;
     vertical-align: middle;
+    word-wrap: break-word;
+}
+
+/* Column Width Adjustments */
+.inventory-table th:nth-child(1), /* Person Accountable */
+.inventory-table td:nth-child(1) {
+    width: 15%;
+}
+
+.inventory-table th:nth-child(2), /* Property Number */
+.inventory-table td:nth-child(2) {
+    width: 10%;
+}
+
+.inventory-table th:nth-child(3), /* Acquisition Date */
+.inventory-table td:nth-child(3) {
+    width: 8%;
+    white-space: nowrap;
+}
+
+.inventory-table th:nth-child(4), /* Description */
+.inventory-table td:nth-child(4) {
+    width: 20%;
+}
+
+.inventory-table th:nth-child(5), /* Model Number */
+.inventory-table td:nth-child(5) {
+    width: 10%;
+}
+
+.inventory-table th:nth-child(6), /* ID */
+.inventory-table td:nth-child(6) {
+    width: 5%;
+}
+
+.inventory-table th:nth-child(7), /* Cost */
+.inventory-table td:nth-child(7) {
+    width: 10%;
+}
+
+.inventory-table th:nth-child(8), /* Cost Level */
+.inventory-table td:nth-child(8) {
+    width: 8%;
+}
+
+.inventory-table th:nth-child(9), /* Remarks */
+.inventory-table td:nth-child(9) {
+    width: 14%;
 }
 
 .inventory-table th {
@@ -97,6 +153,7 @@ button:hover {
     position: sticky;
     top: 0;
     z-index: 1;
+    font-weight: normal;
 }
 
 .inventory-table tr:nth-child(even) {
@@ -106,6 +163,7 @@ button:hover {
 /* Numeric Styling */
 .numeric-cell {
     text-align: right;
+    font-family: 'Courier New', monospace;
 }
 
 .high-cost {
@@ -119,60 +177,104 @@ button:hover {
 
 /* Responsive Design */
 @media screen and (max-width: 768px) {
-    .header-group {
-        flex-direction: column;
-        align-items: center;
-    }
-
     .main-header {
         flex-direction: column;
-        align-items: center;
     }
-
+    
     .main-header img {
-        width: 70px;
-        height: 70px;
-    }
-
-    .main-header-text h1 {
-        font-size: 18px;
-    }
-
-    .inventory-table th, .inventory-table td {
-        font-size: 12px;
-        padding: 6px;
-    }
-
-    .controls {
-        flex-direction: column;
-        margin-top: 20px;
-    }
-
-    button {
-        width: 100%;
         margin-bottom: 10px;
+    }
+    
+    .inventory-table {
+        font-size: 12px;
+    }
+    
+    .inventory-table th, 
+    .inventory-table td {
+        padding: 6px 4px;
     }
 }
 
-/* Print Styles */
+/* Print Styles - Optimized for PDF/Word Export */
 @media print {
     body {
-        font-size: 12px;
+        font-size: 10pt;
         padding: 0;
-        margin: 0;
+        background: white;
     }
-
-    .inventory-table th, .inventory-table td {
-        padding: 5px;
-        font-size: 10px;
-    }
-
-    button {
+    
+    .controls {
         display: none;
     }
-
-    .inventory-container {
-        width: 100%;
-        overflow: visible;
+    
+    .inventory-table {
+        page-break-inside: avoid;
     }
+    
+    .inventory-table th,
+    .inventory-table td {
+        padding: 4px 3px;
+        font-size: 9pt;
+    }
+    
+    .main-header img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .main-header-text h1 {
+        font-size: 14pt;
+    }
+    
+    /* Ensure table doesn't break across pages */
+    tr {
+        page-break-inside: avoid;
+    }
+}
+
+/* Additional Export-specific Styles */
+.export-page {
+    size: A4 landscape;
+    margin: 0;
+}
+
+.export-table {
+    font-size: 9pt;
+}
+
+@media print {
+    body {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-size: 9pt;
+    }
+    
+    .inventory-table {
+        width: 100% !important;
+        table-layout: auto;
+    }
+    
+    .inventory-table td, 
+    .inventory-table th {
+        padding: 3px;
+        font-size: 8pt;
+        word-wrap: break-word;
+        white-space: normal !important;
+    }
+    
+    /* Specific column adjustments */
+    .inventory-table td:nth-child(4), /* Description */
+    .inventory-table td:nth-child(9) { /* Remarks */
+        max-width: 150px;
+        white-space: normal;
+        word-break: break-word;
+    }
+}
+
+/* For PDF export specifically */
+.pdf-export {
+    transform: scale(0.8);
+    transform-origin: top left;
+    width: 125%;
 }

@@ -1,0 +1,627 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: May 26, 2025 at 02:35 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `inventory_system`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `activity_log`
+--
+
+CREATE TABLE `activity_log` (
+  `id` int(11) NOT NULL,
+  `timestamp` datetime DEFAULT current_timestamp(),
+  `action` varchar(20) NOT NULL,
+  `description` text NOT NULL,
+  `property_number` varchar(50) DEFAULT NULL,
+  `user` varchar(50) NOT NULL,
+  `details` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `activity_log`
+--
+
+INSERT INTO `activity_log` (`id`, `timestamp`, `action`, `description`, `property_number`, `user`, `details`) VALUES
+(1, '2025-05-24 20:26:43', 'user_created', 'New user registered', NULL, 'unknown092003', ''),
+(2, '2025-05-24 20:26:53', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(3, '2025-05-24 20:42:46', 'imported', 'Imported 62 inventory items', NULL, 'unknown092003', ''),
+(4, '2025-05-24 20:45:53', 'created', 'Added ICT equipment', 'this is custom made', 'unknown092003', ''),
+(5, '2025-05-24 20:54:15', 'edited', 'Updated ICT equipment', 'this is edited', 'unknown092003', '{\"old\":{\"id\":\"115\",\"property_number\":\"SPHV-2020-1-06-05-030-03-0004-2017\",\"description\":\"Computer Monitor, Monitor,Asus 21.5\\\", SN: G4LMTFO13087\",\"model_number\":\"SPHV-2024-09-009\",\"acquisition_date\":\"2024-09-27\",\"person_accountable\":\"BARRY ESTOCAPIO\",\"signature_of_inventory_team_date\":null,\"cost\":\"6850.00\",\"remarks\":\"service\",\"equipment_type\":\"ICT\"},\"new\":{\"property_number\":\"this is edited\",\"description\":\"Computer Monitor, Monitor,Asus 21.5\\\", SN: G4LMTFO13087\",\"equipment_type\":\"ICT\",\"remarks\":\"disposed\"}}'),
+(6, '2025-05-24 20:58:44', 'imported', 'Imported 62 inventory items', NULL, 'unknown092003', ''),
+(7, '2025-05-24 21:00:08', 'user_created', 'New user registered', NULL, 'jessenfox', ''),
+(8, '2025-05-24 21:00:20', 'login', 'User logged in', NULL, 'jessenfox', ''),
+(9, '2025-05-24 21:00:53', 'edited', 'Updated Furniture equipment', 'SPHV-2016-1-06-05-030-03-0002-2017', 'jessenfox', '{\"old\":{\"id\":\"5\",\"property_number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"model_number\":\"SPHV-2024-09-009\",\"acquisition_date\":\"2024-09-27\",\"person_accountable\":\"BARRY ESTOCAPIO\",\"signature_of_inventory_team_date\":null,\"cost\":\"7000.00\",\"remarks\":\"service\",\"equipment_type\":\"ICT\"},\"new\":{\"property_number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"equipment_type\":\"Furniture\",\"remarks\":\"unservice\"}}'),
+(10, '2025-05-24 21:17:59', 'edited', 'ICT', 'SPHV-2017-1-06-05-030-04-0010-2017', 'jessenfox', '{\"old\":{\"Property Number\":\"SPHV-2017-1-06-05-030-04-0010-2017\",\"Description\":\"Laptop, Asus UX305FA-FC248 Asus UX305FA-FC248 F4N0CIJ11693S184\",\"Model Number\":\"SPHV-2024-09-012\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"34995.00\"},\"new\":{\"Property Number\":\"SPHV-2017-1-06-05-030-04-0010-2017\",\"Description\":\"OLD but New laptop\",\"Model Number\":\"\",\"Equipment Type\":\"ICT\",\"Status\":\"disposed\",\"Cost\":\"\"}}'),
+(11, '2025-05-24 21:24:15', 'edited', 'Machine', 'SPHV-2016-1-06-05-030-03-0002-2017', 'jessenfox', '{\"old\":{\"Property Number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"Description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"Furniture\",\"Status\":\"unservice\",\"Cost\":\"7000.00\"},\"new\":{\"Property Number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"Description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"Machine\",\"Status\":\"unservice\",\"Cost\":\"900000\"}}'),
+(12, '2025-05-24 21:26:30', 'edited', 'Machine', 'SPHV-2016-1-06-05-030-03-0002-2017', 'jessenfox', '{\"old\":{\"Property Number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"Description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"Machine\",\"Status\":\"unservice\",\"Cost\":\"900000.00\"},\"new\":{\"Property Number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"Description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"Machine\",\"Status\":\"unservice\",\"Cost\":\"500\"}}'),
+(13, '2025-05-24 21:27:40', 'edited', 'ICT', 'SPHV-2020-1-06-05-030-03-0019-2017', 'jessenfox', '{\"old\":{\"Property Number\":\"SPHV-2020-1-06-05-030-03-0019-2017\",\"Description\":\"Computer Monitor, Monitor, Samsung, 24\\\", SN: CW5ZH4TN702740X\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"7200.00\"},\"new\":{\"Property Number\":\"SPHV-2020-1-06-05-030-03-0019-2017\",\"Description\":\"Computer Monitor, Monitor, Samsung, 24\\\", SN: CW5ZH4TN702740X\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"0\"}}'),
+(14, '2025-05-24 21:28:02', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(15, '2025-05-24 21:49:05', 'imported', 'ICT Equipment', NULL, 'unknown092003', 'Imported ICT Equipment equipment'),
+(16, '2025-05-24 21:49:45', 'edited', 'ICT', 'SPHV-2016-1-06-05-030-03-0002-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"Description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"7000.00\"},\"new\":{\"Property Number\":\"SPHV-2016-1-06-05-030-03-0002-2017\",\"Description\":\"Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"ICT\",\"Status\":\"unservice\",\"Cost\":\"3000\"}}'),
+(17, '2025-05-24 21:51:14', 'created', 'Machinery', NULL, 'unknown092003', 'Added new Machinery equipment'),
+(18, '2025-05-24 21:51:50', 'login', 'User logged in', NULL, 'jessenfox', ''),
+(19, '2025-05-24 21:52:31', 'edited', 'Machine', 'machine 123080312', 'jessenfox', '{\"old\":{\"Property Number\":\"machine 123080312\",\"Description\":\"AI BOX\",\"Model Number\":\"UNKNOWN092003\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"\"},\"new\":{\"Property Number\":\"machine 123080312\",\"Description\":\"AI BOX\",\"Model Number\":\"UNKNOWN092003\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"199999\"}}'),
+(20, '2025-05-25 12:51:33', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(21, '2025-05-25 13:06:57', 'imported', 'ICT Equipment', NULL, 'unknown092003', 'Imported ICT Equipment equipment'),
+(22, '2025-05-25 13:08:54', 'edited', 'ICT', 'SPHV-2022-1-06-05-030-02-0002-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2022-1-06-05-030-02-0002-2017\",\"Description\":\"Computer CPU, CPU, Deepcool SN: DC2020062900688\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"45000.00\"},\"new\":{\"Property Number\":\"SPHV-2022-1-06-05-030-02-0002-2017\",\"Description\":\"Computer CPU, CPU, Deepcool SN: DC2020062900688\",\"Model Number\":\"SPHV-2024-09-009\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"10000\"}}'),
+(23, '2025-05-25 13:10:43', 'created', 'Communications', NULL, 'unknown092003', 'Added new Communications equipment'),
+(24, '2025-05-25 13:11:11', 'edited', 'ICT', 'Grand Property Number', 'unknown092003', '{\"old\":{\"Property Number\":\"Grand Property Number\",\"Description\":\"test adding inputs on create nav\",\"Model Number\":\"34567890\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"\"},\"new\":{\"Property Number\":\"Grand Property Number\",\"Description\":\"test adding inputs on create nav\",\"Model Number\":\"34567890\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"0.00\"}}'),
+(25, '2025-05-25 13:23:25', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(26, '2025-05-25 13:49:16', 'imported', 'ICT Equipment', NULL, 'unknown092003', 'Imported ICT Equipment equipment'),
+(27, '2025-05-25 13:49:51', 'edited', 'ICT', 'property_number', 'unknown092003', '{\"old\":{\"Property Number\":\"property_number\",\"Description\":\"description\",\"Model Number\":\"model_number\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"0.00\"},\"new\":{\"Property Number\":\"property_number\",\"Description\":\"description\",\"Model Number\":\"model_number\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"0.00\"}}'),
+(28, '2025-05-25 15:26:58', 'created', 'Furniture', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', 'Item created via import'),
+(29, '2025-05-25 15:26:59', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-02-0001-2017', 'unknown092003', 'Item created via import'),
+(30, '2025-05-25 15:26:59', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-02-0002-2017', 'unknown092003', 'Item created via import'),
+(31, '2025-05-25 15:26:59', 'created', 'Furniture', 'SPHV-2016-1-06-05-030-03-0002-2017', 'unknown092003', 'Item created via import'),
+(32, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-03-0004-2017', 'unknown092003', 'Item created via import'),
+(33, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-03-0019-2017', 'unknown092003', 'Item created via import'),
+(34, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-20-0006-2017', 'unknown092003', 'Item created via import'),
+(35, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-04-0001-2017', 'unknown092003', 'Item created via import'),
+(36, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-04-0002-2017', 'unknown092003', 'Item created via import'),
+(37, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-04-0003-2017', 'unknown092003', 'Item created via import'),
+(38, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-04-0004-2017', 'unknown092003', 'Item created via import'),
+(39, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-04-0005-2017', 'unknown092003', 'Item created via import'),
+(40, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-04-0006-2017', 'unknown092003', 'Item created via import'),
+(41, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-04-0007-2017', 'unknown092003', 'Item created via import'),
+(42, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-04-0008-2017', 'unknown092003', 'Item created via import'),
+(43, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0009-2017', 'unknown092003', 'Item created via import'),
+(44, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0010-2017', 'unknown092003', 'Item created via import'),
+(45, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0011-2017', 'unknown092003', 'Item created via import'),
+(46, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0012-2017', 'unknown092003', 'Item created via import'),
+(47, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0013-2017', 'unknown092003', 'Item created via import'),
+(48, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0014-2017', 'unknown092003', 'Item created via import'),
+(49, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0015-2017', 'unknown092003', 'Item created via import'),
+(50, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2017-1-06-05-030-04-0016-2017', 'unknown092003', 'Item created via import'),
+(51, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-07-0001-2017', 'unknown092003', 'Item created via import'),
+(52, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-07-0002-2017', 'unknown092003', 'Item created via import'),
+(53, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-07-0003-2017', 'unknown092003', 'Item created via import'),
+(54, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0004-2017', 'unknown092003', 'Item created via import'),
+(55, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0005-2017', 'unknown092003', 'Item created via import'),
+(56, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0006-2017', 'unknown092003', 'Item created via import'),
+(57, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0007-2017', 'unknown092003', 'Item created via import'),
+(58, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0008-2017', 'unknown092003', 'Item created via import'),
+(59, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0009-2017', 'unknown092003', 'Item created via import'),
+(60, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0010-2017', 'unknown092003', 'Item created via import'),
+(61, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-07-0011-2017', 'unknown092003', 'Item created via import'),
+(62, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-07-0012-2017', 'unknown092003', 'Item created via import'),
+(63, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-07-0013-2017', 'unknown092003', 'Item created via import'),
+(64, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-07-0014-2017', 'unknown092003', 'Item created via import'),
+(65, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0015-2017', 'unknown092003', 'Item created via import'),
+(66, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0016-2017', 'unknown092003', 'Item created via import'),
+(67, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0017-2017', 'unknown092003', 'Item created via import'),
+(68, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0018-2017', 'unknown092003', 'Item created via import'),
+(69, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0019-2017', 'unknown092003', 'Item created via import'),
+(70, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0020-2017', 'unknown092003', 'Item created via import'),
+(71, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-07-0021-2017', 'unknown092003', 'Item created via import'),
+(72, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2024-1-06-05-030-07-0022-2017', 'unknown092003', 'Item created via import'),
+(73, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2024-1-06-05-030-07-0023-2017', 'unknown092003', 'Item created via import'),
+(74, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2024-1-06-05-030-07-0024-2017', 'unknown092003', 'Item created via import'),
+(75, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2024-1-06-05-030-07-0025-2017', 'unknown092003', 'Item created via import'),
+(76, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2024-1-06-05-030-07-0026-2017', 'unknown092003', 'Item created via import'),
+(77, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2025-1-06-05-030-07-0027-2017', 'unknown092003', 'Item created via import'),
+(78, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2025-1-06-05-030-07-0028-2017', 'unknown092003', 'Item created via import'),
+(79, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-12-0001-2017', 'unknown092003', 'Item created via import'),
+(80, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-12-0002-2017', 'unknown092003', 'Item created via import'),
+(81, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2018-1-06-05-030-05-0001-2017', 'unknown092003', 'Item created via import'),
+(82, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2021-1-06-05-030-05-0002-2017', 'unknown092003', 'Item created via import'),
+(83, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2021-1-06-05-030-05-0003-2017', 'unknown092003', 'Item created via import'),
+(84, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2021-1-06-05-030-05-0004-2017', 'unknown092003', 'Item created via import'),
+(85, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2023-1-06-05-030-19-0028-2017', 'unknown092003', 'Item created via import'),
+(86, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2023-1-06-05-030-19-0029-2017', 'unknown092003', 'Item created via import'),
+(87, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2020-1-06-05-030-17-0002-2017', 'unknown092003', 'Item created via import'),
+(88, '2025-05-25 15:27:00', 'created', 'Furniture', 'SPHV-2022-1-06-05-030-18-0001-2017', 'unknown092003', 'Item created via import'),
+(89, '2025-05-25 15:27:25', 'edited', 'ICT', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; \\nCPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Furniture\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(90, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', 'Item created via import'),
+(91, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-02-0001-2017', 'unknown092003', 'Item created via import'),
+(92, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-02-0002-2017', 'unknown092003', 'Item created via import'),
+(93, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2016-1-06-05-030-03-0002-2017', 'unknown092003', 'Item created via import'),
+(94, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-03-0004-2017', 'unknown092003', 'Item created via import'),
+(95, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-03-0019-2017', 'unknown092003', 'Item created via import'),
+(96, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-20-0006-2017', 'unknown092003', 'Item created via import'),
+(97, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0001-2017', 'unknown092003', 'Item created via import'),
+(98, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0002-2017', 'unknown092003', 'Item created via import'),
+(99, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0003-2017', 'unknown092003', 'Item created via import'),
+(100, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0004-2017', 'unknown092003', 'Item created via import'),
+(101, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0005-2017', 'unknown092003', 'Item created via import'),
+(102, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0006-2017', 'unknown092003', 'Item created via import'),
+(103, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-04-0007-2017', 'unknown092003', 'Item created via import'),
+(104, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-04-0008-2017', 'unknown092003', 'Item created via import'),
+(105, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0009-2017', 'unknown092003', 'Item created via import'),
+(106, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0010-2017', 'unknown092003', 'Item created via import'),
+(107, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0011-2017', 'unknown092003', 'Item created via import'),
+(108, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0012-2017', 'unknown092003', 'Item created via import'),
+(109, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0013-2017', 'unknown092003', 'Item created via import'),
+(110, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0014-2017', 'unknown092003', 'Item created via import'),
+(111, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0015-2017', 'unknown092003', 'Item created via import'),
+(112, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0016-2017', 'unknown092003', 'Item created via import'),
+(113, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0001-2017', 'unknown092003', 'Item created via import'),
+(114, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0002-2017', 'unknown092003', 'Item created via import'),
+(115, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0003-2017', 'unknown092003', 'Item created via import'),
+(116, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0004-2017', 'unknown092003', 'Item created via import'),
+(117, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0005-2017', 'unknown092003', 'Item created via import'),
+(118, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0006-2017', 'unknown092003', 'Item created via import'),
+(119, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0007-2017', 'unknown092003', 'Item created via import'),
+(120, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0008-2017', 'unknown092003', 'Item created via import'),
+(121, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0009-2017', 'unknown092003', 'Item created via import'),
+(122, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0010-2017', 'unknown092003', 'Item created via import'),
+(123, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0011-2017', 'unknown092003', 'Item created via import'),
+(124, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0012-2017', 'unknown092003', 'Item created via import'),
+(125, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0013-2017', 'unknown092003', 'Item created via import'),
+(126, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0014-2017', 'unknown092003', 'Item created via import'),
+(127, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0015-2017', 'unknown092003', 'Item created via import'),
+(128, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0016-2017', 'unknown092003', 'Item created via import'),
+(129, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0017-2017', 'unknown092003', 'Item created via import'),
+(130, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0018-2017', 'unknown092003', 'Item created via import'),
+(131, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0019-2017', 'unknown092003', 'Item created via import'),
+(132, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0020-2017', 'unknown092003', 'Item created via import'),
+(133, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0021-2017', 'unknown092003', 'Item created via import'),
+(134, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0022-2017', 'unknown092003', 'Item created via import'),
+(135, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0023-2017', 'unknown092003', 'Item created via import'),
+(136, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0024-2017', 'unknown092003', 'Item created via import'),
+(137, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0025-2017', 'unknown092003', 'Item created via import'),
+(138, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0026-2017', 'unknown092003', 'Item created via import'),
+(139, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2025-1-06-05-030-07-0027-2017', 'unknown092003', 'Item created via import'),
+(140, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2025-1-06-05-030-07-0028-2017', 'unknown092003', 'Item created via import'),
+(141, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-12-0001-2017', 'unknown092003', 'Item created via import'),
+(142, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-12-0002-2017', 'unknown092003', 'Item created via import'),
+(143, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2018-1-06-05-030-05-0001-2017', 'unknown092003', 'Item created via import'),
+(144, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2021-1-06-05-030-05-0002-2017', 'unknown092003', 'Item created via import'),
+(145, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2021-1-06-05-030-05-0003-2017', 'unknown092003', 'Item created via import'),
+(146, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2021-1-06-05-030-05-0004-2017', 'unknown092003', 'Item created via import'),
+(147, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2023-1-06-05-030-19-0028-2017', 'unknown092003', 'Item created via import'),
+(148, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2023-1-06-05-030-19-0029-2017', 'unknown092003', 'Item created via import'),
+(149, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2020-1-06-05-030-17-0002-2017', 'unknown092003', 'Item created via import'),
+(150, '2025-05-25 16:04:05', 'created', 'Office', 'SPHV-2022-1-06-05-030-18-0001-2017', 'unknown092003', 'Item created via import'),
+(151, '2025-05-25 16:05:17', 'edited', 'Machine', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; \\nCPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(152, '2025-05-25 16:53:33', 'login', 'User logged in', NULL, 'jessenfox', ''),
+(153, '2025-05-25 16:55:06', 'created', 'Construction', NULL, 'jessenfox', 'Added new Construction equipment'),
+(154, '2025-05-25 16:55:20', 'created', 'Communications', NULL, 'jessenfox', 'Added new Communications equipment'),
+(155, '2025-05-25 16:55:40', 'created', 'Furniture', NULL, 'jessenfox', 'Added new Furniture equipment'),
+(156, '2025-05-25 16:56:01', 'edited', 'ICT', 'Grand Property Number', 'jessenfox', '{\"old\":{\"Property Number\":\"Grand Property Number\",\"Description\":\"asdf\",\"Model Number\":\"one\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"\"},\"new\":{\"Property Number\":\"Grand Property Number\",\"Description\":\"asdf\",\"Model Number\":\"one\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"78978978978978907890.89\"}}'),
+(157, '2025-05-25 17:08:11', 'edited', 'ICT', 'SPHV-2022-1-06-05-030-07-0003-2017', 'jessenfox', '{\"old\":{\"Property Number\":\"SPHV-2022-1-06-05-030-07-0003-2017\",\"Description\":\"Printer, Epson L3210, SN: XAGMC06918\",\"Model Number\":\"SPHV-2024-09-010\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"7850.00\"},\"new\":{\"Property Number\":\"SPHV-2022-1-06-05-030-07-0003-2017\",\"Description\":\"Printer, Epson L3210, SN: XAGMC06918\",\"Model Number\":\"SPHV-2024-09-010\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"10850.00\"}}'),
+(158, '2025-05-25 17:08:43', 'edited', 'ICT', 'SPHV-2022-1-06-05-030-07-0003-2017', 'jessenfox', '{\"old\":{\"Property Number\":\"SPHV-2022-1-06-05-030-07-0003-2017\",\"Description\":\"Printer, Epson L3210, SN: XAGMC06918\",\"Model Number\":\"SPHV-2024-09-010\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"10850.00\"},\"new\":{\"Property Number\":\"SPHV-2022-1-06-05-030-07-0003-2017\",\"Description\":\"Printer, Epson L3210, SN: XAGMC06918\",\"Model Number\":\"SPHV-2024-09-010\",\"Equipment Type\":\"ICT\",\"Status\":\"disposed\",\"Cost\":\"10850.00\"}}'),
+(159, '2025-05-25 17:39:16', 'created', 'Office', NULL, 'jessenfox', 'Added new Office equipment'),
+(160, '2025-05-25 17:39:27', 'edited', 'ICT', 'Grand Property Number', 'jessenfox', '{\"old\":{\"Property Number\":\"Grand Property Number\",\"Description\":\"asdf\",\"Model Number\":\"one\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"\"},\"new\":{\"Property Number\":\"Grand Property Number\",\"Description\":\"asdf\",\"Model Number\":\"one\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"0.00\"}}'),
+(161, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2023-1-06-05-030-01-0013-2017', 'jessenfox', 'Item created via import'),
+(162, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-02-0001-2017', 'jessenfox', 'Item created via import'),
+(163, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-02-0002-2017', 'jessenfox', 'Item created via import'),
+(164, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2016-1-06-05-030-03-0002-2017', 'jessenfox', 'Item created via import'),
+(165, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-03-0004-2017', 'jessenfox', 'Item created via import'),
+(166, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-03-0019-2017', 'jessenfox', 'Item created via import'),
+(167, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-20-0006-2017', 'jessenfox', 'Item created via import'),
+(168, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0001-2017', 'jessenfox', 'Item created via import'),
+(169, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0002-2017', 'jessenfox', 'Item created via import'),
+(170, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0003-2017', 'jessenfox', 'Item created via import'),
+(171, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0004-2017', 'jessenfox', 'Item created via import'),
+(172, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0005-2017', 'jessenfox', 'Item created via import'),
+(173, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-04-0006-2017', 'jessenfox', 'Item created via import'),
+(174, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-04-0007-2017', 'jessenfox', 'Item created via import'),
+(175, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-04-0008-2017', 'jessenfox', 'Item created via import'),
+(176, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0009-2017', 'jessenfox', 'Item created via import'),
+(177, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0010-2017', 'jessenfox', 'Item created via import'),
+(178, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0011-2017', 'jessenfox', 'Item created via import'),
+(179, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0012-2017', 'jessenfox', 'Item created via import'),
+(180, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0013-2017', 'jessenfox', 'Item created via import'),
+(181, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0014-2017', 'jessenfox', 'Item created via import'),
+(182, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0015-2017', 'jessenfox', 'Item created via import'),
+(183, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2017-1-06-05-030-04-0016-2017', 'jessenfox', 'Item created via import'),
+(184, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0001-2017', 'jessenfox', 'Item created via import'),
+(185, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0002-2017', 'jessenfox', 'Item created via import'),
+(186, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0003-2017', 'jessenfox', 'Item created via import'),
+(187, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0004-2017', 'jessenfox', 'Item created via import'),
+(188, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0005-2017', 'jessenfox', 'Item created via import'),
+(189, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0006-2017', 'jessenfox', 'Item created via import'),
+(190, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0007-2017', 'jessenfox', 'Item created via import'),
+(191, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0008-2017', 'jessenfox', 'Item created via import'),
+(192, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0009-2017', 'jessenfox', 'Item created via import'),
+(193, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0010-2017', 'jessenfox', 'Item created via import'),
+(194, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0011-2017', 'jessenfox', 'Item created via import'),
+(195, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0012-2017', 'jessenfox', 'Item created via import'),
+(196, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-07-0013-2017', 'jessenfox', 'Item created via import'),
+(197, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-07-0014-2017', 'jessenfox', 'Item created via import'),
+(198, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0015-2017', 'jessenfox', 'Item created via import'),
+(199, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0016-2017', 'jessenfox', 'Item created via import'),
+(200, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0017-2017', 'jessenfox', 'Item created via import'),
+(201, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0018-2017', 'jessenfox', 'Item created via import'),
+(202, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0019-2017', 'jessenfox', 'Item created via import'),
+(203, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0020-2017', 'jessenfox', 'Item created via import'),
+(204, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-07-0021-2017', 'jessenfox', 'Item created via import'),
+(205, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0022-2017', 'jessenfox', 'Item created via import'),
+(206, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0023-2017', 'jessenfox', 'Item created via import'),
+(207, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0024-2017', 'jessenfox', 'Item created via import'),
+(208, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0025-2017', 'jessenfox', 'Item created via import'),
+(209, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2024-1-06-05-030-07-0026-2017', 'jessenfox', 'Item created via import'),
+(210, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2025-1-06-05-030-07-0027-2017', 'jessenfox', 'Item created via import'),
+(211, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2025-1-06-05-030-07-0028-2017', 'jessenfox', 'Item created via import'),
+(212, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-12-0001-2017', 'jessenfox', 'Item created via import'),
+(213, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-12-0002-2017', 'jessenfox', 'Item created via import'),
+(214, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2018-1-06-05-030-05-0001-2017', 'jessenfox', 'Item created via import'),
+(215, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2021-1-06-05-030-05-0002-2017', 'jessenfox', 'Item created via import'),
+(216, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2021-1-06-05-030-05-0003-2017', 'jessenfox', 'Item created via import'),
+(217, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2021-1-06-05-030-05-0004-2017', 'jessenfox', 'Item created via import'),
+(218, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2023-1-06-05-030-19-0028-2017', 'jessenfox', 'Item created via import'),
+(219, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2023-1-06-05-030-19-0029-2017', 'jessenfox', 'Item created via import'),
+(220, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2020-1-06-05-030-17-0002-2017', 'jessenfox', 'Item created via import'),
+(221, '2025-05-25 17:40:52', 'created', 'Office', 'SPHV-2022-1-06-05-030-18-0001-2017', 'jessenfox', 'Item created via import'),
+(222, '2025-05-25 18:09:55', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(223, '2025-05-25 18:18:20', 'user_created', 'New user registered', NULL, 'macus', ''),
+(224, '2025-05-25 18:18:48', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(225, '2025-05-25 18:20:56', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(226, '2025-05-25 18:21:36', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(227, '2025-05-25 19:48:17', 'edited', 'ICT', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; \\nCPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(228, '2025-05-25 19:49:24', 'edited', 'ICT', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(229, '2025-05-25 19:49:54', 'edited', 'ICT', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"ICT\",\"Status\":\"service\",\"Cost\":\"100\"}}'),
+(230, '2025-05-25 20:22:40', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(231, '2025-05-25 20:25:19', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(232, '2025-05-25 20:49:46', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(233, '2025-05-25 21:02:15', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(234, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', 'Item created via import'),
+(235, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-02-0001-2017', 'unknown092003', 'Item created via import'),
+(236, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-02-0002-2017', 'unknown092003', 'Item created via import'),
+(237, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2016-1-06-05-030-03-0002-2017', 'unknown092003', 'Item created via import'),
+(238, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-03-0004-2017', 'unknown092003', 'Item created via import'),
+(239, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-03-0019-2017', 'unknown092003', 'Item created via import'),
+(240, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-20-0006-2017', 'unknown092003', 'Item created via import'),
+(241, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-04-0001-2017', 'unknown092003', 'Item created via import'),
+(242, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-04-0002-2017', 'unknown092003', 'Item created via import'),
+(243, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-04-0003-2017', 'unknown092003', 'Item created via import'),
+(244, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-04-0004-2017', 'unknown092003', 'Item created via import'),
+(245, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-04-0005-2017', 'unknown092003', 'Item created via import'),
+(246, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-04-0006-2017', 'unknown092003', 'Item created via import'),
+(247, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-04-0007-2017', 'unknown092003', 'Item created via import'),
+(248, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-04-0008-2017', 'unknown092003', 'Item created via import'),
+(249, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0009-2017', 'unknown092003', 'Item created via import'),
+(250, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0010-2017', 'unknown092003', 'Item created via import'),
+(251, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0011-2017', 'unknown092003', 'Item created via import'),
+(252, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0012-2017', 'unknown092003', 'Item created via import'),
+(253, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0013-2017', 'unknown092003', 'Item created via import'),
+(254, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0014-2017', 'unknown092003', 'Item created via import'),
+(255, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0015-2017', 'unknown092003', 'Item created via import'),
+(256, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2017-1-06-05-030-04-0016-2017', 'unknown092003', 'Item created via import'),
+(257, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-07-0001-2017', 'unknown092003', 'Item created via import'),
+(258, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-07-0002-2017', 'unknown092003', 'Item created via import'),
+(259, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-07-0003-2017', 'unknown092003', 'Item created via import'),
+(260, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0004-2017', 'unknown092003', 'Item created via import'),
+(261, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0005-2017', 'unknown092003', 'Item created via import'),
+(262, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0006-2017', 'unknown092003', 'Item created via import'),
+(263, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0007-2017', 'unknown092003', 'Item created via import'),
+(264, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0008-2017', 'unknown092003', 'Item created via import'),
+(265, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0009-2017', 'unknown092003', 'Item created via import'),
+(266, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0010-2017', 'unknown092003', 'Item created via import'),
+(267, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-07-0011-2017', 'unknown092003', 'Item created via import'),
+(268, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-07-0012-2017', 'unknown092003', 'Item created via import'),
+(269, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-07-0013-2017', 'unknown092003', 'Item created via import'),
+(270, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-07-0014-2017', 'unknown092003', 'Item created via import'),
+(271, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0015-2017', 'unknown092003', 'Item created via import'),
+(272, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0016-2017', 'unknown092003', 'Item created via import'),
+(273, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0017-2017', 'unknown092003', 'Item created via import'),
+(274, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0018-2017', 'unknown092003', 'Item created via import'),
+(275, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0019-2017', 'unknown092003', 'Item created via import'),
+(276, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0020-2017', 'unknown092003', 'Item created via import'),
+(277, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-07-0021-2017', 'unknown092003', 'Item created via import'),
+(278, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2024-1-06-05-030-07-0022-2017', 'unknown092003', 'Item created via import'),
+(279, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2024-1-06-05-030-07-0023-2017', 'unknown092003', 'Item created via import'),
+(280, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2024-1-06-05-030-07-0024-2017', 'unknown092003', 'Item created via import'),
+(281, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2024-1-06-05-030-07-0025-2017', 'unknown092003', 'Item created via import'),
+(282, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2024-1-06-05-030-07-0026-2017', 'unknown092003', 'Item created via import'),
+(283, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2025-1-06-05-030-07-0027-2017', 'unknown092003', 'Item created via import'),
+(284, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2025-1-06-05-030-07-0028-2017', 'unknown092003', 'Item created via import'),
+(285, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-12-0001-2017', 'unknown092003', 'Item created via import'),
+(286, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-12-0002-2017', 'unknown092003', 'Item created via import'),
+(287, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2018-1-06-05-030-05-0001-2017', 'unknown092003', 'Item created via import'),
+(288, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2021-1-06-05-030-05-0002-2017', 'unknown092003', 'Item created via import'),
+(289, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2021-1-06-05-030-05-0003-2017', 'unknown092003', 'Item created via import'),
+(290, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2021-1-06-05-030-05-0004-2017', 'unknown092003', 'Item created via import'),
+(291, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2023-1-06-05-030-19-0028-2017', 'unknown092003', 'Item created via import'),
+(292, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2023-1-06-05-030-19-0029-2017', 'unknown092003', 'Item created via import'),
+(293, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2020-1-06-05-030-17-0002-2017', 'unknown092003', 'Item created via import'),
+(294, '2025-05-25 21:08:29', 'created', 'Machinery', 'SPHV-2022-1-06-05-030-18-0001-2017', 'unknown092003', 'Item created via import'),
+(295, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', 'Item updated via import'),
+(296, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-02-0001-2017', 'unknown092003', 'Item updated via import'),
+(297, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-02-0002-2017', 'unknown092003', 'Item updated via import'),
+(298, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2016-1-06-05-030-03-0002-2017', 'unknown092003', 'Item updated via import'),
+(299, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-03-0004-2017', 'unknown092003', 'Item updated via import'),
+(300, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-03-0019-2017', 'unknown092003', 'Item updated via import'),
+(301, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-20-0006-2017', 'unknown092003', 'Item updated via import'),
+(302, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0001-2017', 'unknown092003', 'Item updated via import'),
+(303, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0002-2017', 'unknown092003', 'Item updated via import'),
+(304, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0003-2017', 'unknown092003', 'Item updated via import'),
+(305, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0004-2017', 'unknown092003', 'Item updated via import'),
+(306, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0005-2017', 'unknown092003', 'Item updated via import'),
+(307, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0006-2017', 'unknown092003', 'Item updated via import'),
+(308, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-04-0007-2017', 'unknown092003', 'Item updated via import'),
+(309, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-04-0008-2017', 'unknown092003', 'Item updated via import'),
+(310, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0009-2017', 'unknown092003', 'Item updated via import'),
+(311, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0010-2017', 'unknown092003', 'Item updated via import'),
+(312, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0011-2017', 'unknown092003', 'Item updated via import'),
+(313, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0012-2017', 'unknown092003', 'Item updated via import'),
+(314, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0013-2017', 'unknown092003', 'Item updated via import'),
+(315, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0014-2017', 'unknown092003', 'Item updated via import');
+INSERT INTO `activity_log` (`id`, `timestamp`, `action`, `description`, `property_number`, `user`, `details`) VALUES
+(316, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0015-2017', 'unknown092003', 'Item updated via import'),
+(317, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0016-2017', 'unknown092003', 'Item updated via import'),
+(318, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0001-2017', 'unknown092003', 'Item updated via import'),
+(319, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0002-2017', 'unknown092003', 'Item updated via import'),
+(320, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0003-2017', 'unknown092003', 'Item updated via import'),
+(321, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0004-2017', 'unknown092003', 'Item updated via import'),
+(322, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0005-2017', 'unknown092003', 'Item updated via import'),
+(323, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0006-2017', 'unknown092003', 'Item updated via import'),
+(324, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0007-2017', 'unknown092003', 'Item updated via import'),
+(325, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0008-2017', 'unknown092003', 'Item updated via import'),
+(326, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0009-2017', 'unknown092003', 'Item updated via import'),
+(327, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0010-2017', 'unknown092003', 'Item updated via import'),
+(328, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0011-2017', 'unknown092003', 'Item updated via import'),
+(329, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0012-2017', 'unknown092003', 'Item updated via import'),
+(330, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0013-2017', 'unknown092003', 'Item updated via import'),
+(331, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0014-2017', 'unknown092003', 'Item updated via import'),
+(332, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0015-2017', 'unknown092003', 'Item updated via import'),
+(333, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0016-2017', 'unknown092003', 'Item updated via import'),
+(334, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0017-2017', 'unknown092003', 'Item updated via import'),
+(335, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0018-2017', 'unknown092003', 'Item updated via import'),
+(336, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0019-2017', 'unknown092003', 'Item updated via import'),
+(337, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0020-2017', 'unknown092003', 'Item updated via import'),
+(338, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0021-2017', 'unknown092003', 'Item updated via import'),
+(339, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0022-2017', 'unknown092003', 'Item updated via import'),
+(340, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0023-2017', 'unknown092003', 'Item updated via import'),
+(341, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0024-2017', 'unknown092003', 'Item updated via import'),
+(342, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0025-2017', 'unknown092003', 'Item updated via import'),
+(343, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0026-2017', 'unknown092003', 'Item updated via import'),
+(344, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2025-1-06-05-030-07-0027-2017', 'unknown092003', 'Item updated via import'),
+(345, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2025-1-06-05-030-07-0028-2017', 'unknown092003', 'Item updated via import'),
+(346, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-12-0001-2017', 'unknown092003', 'Item updated via import'),
+(347, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-12-0002-2017', 'unknown092003', 'Item updated via import'),
+(348, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-05-0001-2017', 'unknown092003', 'Item updated via import'),
+(349, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2021-1-06-05-030-05-0002-2017', 'unknown092003', 'Item updated via import'),
+(350, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2021-1-06-05-030-05-0003-2017', 'unknown092003', 'Item updated via import'),
+(351, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2021-1-06-05-030-05-0004-2017', 'unknown092003', 'Item updated via import'),
+(352, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2023-1-06-05-030-19-0028-2017', 'unknown092003', 'Item updated via import'),
+(353, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2023-1-06-05-030-19-0029-2017', 'unknown092003', 'Item updated via import'),
+(354, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-17-0002-2017', 'unknown092003', 'Item updated via import'),
+(355, '2025-05-25 21:10:34', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-18-0001-2017', 'unknown092003', 'Item updated via import'),
+(356, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', 'Item updated via import'),
+(357, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-02-0001-2017', 'unknown092003', 'Item updated via import'),
+(358, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-02-0002-2017', 'unknown092003', 'Item updated via import'),
+(359, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2016-1-06-05-030-03-0002-2017', 'unknown092003', 'Item updated via import'),
+(360, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-03-0004-2017', 'unknown092003', 'Item updated via import'),
+(361, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-03-0019-2017', 'unknown092003', 'Item updated via import'),
+(362, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-20-0006-2017', 'unknown092003', 'Item updated via import'),
+(363, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0001-2017', 'unknown092003', 'Item updated via import'),
+(364, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0002-2017', 'unknown092003', 'Item updated via import'),
+(365, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0003-2017', 'unknown092003', 'Item updated via import'),
+(366, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0004-2017', 'unknown092003', 'Item updated via import'),
+(367, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0005-2017', 'unknown092003', 'Item updated via import'),
+(368, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-04-0006-2017', 'unknown092003', 'Item updated via import'),
+(369, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-04-0007-2017', 'unknown092003', 'Item updated via import'),
+(370, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-04-0008-2017', 'unknown092003', 'Item updated via import'),
+(371, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0009-2017', 'unknown092003', 'Item updated via import'),
+(372, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0010-2017', 'unknown092003', 'Item updated via import'),
+(373, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0011-2017', 'unknown092003', 'Item updated via import'),
+(374, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0012-2017', 'unknown092003', 'Item updated via import'),
+(375, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0013-2017', 'unknown092003', 'Item updated via import'),
+(376, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0014-2017', 'unknown092003', 'Item updated via import'),
+(377, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0015-2017', 'unknown092003', 'Item updated via import'),
+(378, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2017-1-06-05-030-04-0016-2017', 'unknown092003', 'Item updated via import'),
+(379, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0001-2017', 'unknown092003', 'Item updated via import'),
+(380, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0002-2017', 'unknown092003', 'Item updated via import'),
+(381, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0003-2017', 'unknown092003', 'Item updated via import'),
+(382, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0004-2017', 'unknown092003', 'Item updated via import'),
+(383, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0005-2017', 'unknown092003', 'Item updated via import'),
+(384, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0006-2017', 'unknown092003', 'Item updated via import'),
+(385, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0007-2017', 'unknown092003', 'Item updated via import'),
+(386, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0008-2017', 'unknown092003', 'Item updated via import'),
+(387, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0009-2017', 'unknown092003', 'Item updated via import'),
+(388, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0010-2017', 'unknown092003', 'Item updated via import'),
+(389, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0011-2017', 'unknown092003', 'Item updated via import'),
+(390, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0012-2017', 'unknown092003', 'Item updated via import'),
+(391, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-07-0013-2017', 'unknown092003', 'Item updated via import'),
+(392, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-07-0014-2017', 'unknown092003', 'Item updated via import'),
+(393, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0015-2017', 'unknown092003', 'Item updated via import'),
+(394, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0016-2017', 'unknown092003', 'Item updated via import'),
+(395, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0017-2017', 'unknown092003', 'Item updated via import'),
+(396, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0018-2017', 'unknown092003', 'Item updated via import'),
+(397, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0019-2017', 'unknown092003', 'Item updated via import'),
+(398, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0020-2017', 'unknown092003', 'Item updated via import'),
+(399, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-07-0021-2017', 'unknown092003', 'Item updated via import'),
+(400, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0022-2017', 'unknown092003', 'Item updated via import'),
+(401, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0023-2017', 'unknown092003', 'Item updated via import'),
+(402, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0024-2017', 'unknown092003', 'Item updated via import'),
+(403, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0025-2017', 'unknown092003', 'Item updated via import'),
+(404, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2024-1-06-05-030-07-0026-2017', 'unknown092003', 'Item updated via import'),
+(405, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2025-1-06-05-030-07-0027-2017', 'unknown092003', 'Item updated via import'),
+(406, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2025-1-06-05-030-07-0028-2017', 'unknown092003', 'Item updated via import'),
+(407, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-12-0001-2017', 'unknown092003', 'Item updated via import'),
+(408, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-12-0002-2017', 'unknown092003', 'Item updated via import'),
+(409, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2018-1-06-05-030-05-0001-2017', 'unknown092003', 'Item updated via import'),
+(410, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2021-1-06-05-030-05-0002-2017', 'unknown092003', 'Item updated via import'),
+(411, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2021-1-06-05-030-05-0003-2017', 'unknown092003', 'Item updated via import'),
+(412, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2021-1-06-05-030-05-0004-2017', 'unknown092003', 'Item updated via import'),
+(413, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2023-1-06-05-030-19-0028-2017', 'unknown092003', 'Item updated via import'),
+(414, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2023-1-06-05-030-19-0029-2017', 'unknown092003', 'Item updated via import'),
+(415, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2020-1-06-05-030-17-0002-2017', 'unknown092003', 'Item updated via import'),
+(416, '2025-05-25 21:13:18', 'updated', 'Machinery', 'SPHV-2022-1-06-05-030-18-0001-2017', 'unknown092003', 'Item updated via import'),
+(417, '2025-05-26 08:10:04', 'login', 'User logged in', NULL, 'unknown092003', ''),
+(418, '2025-05-26 08:10:32', 'edited', 'Machine', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; \\nCPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(419, '2025-05-26 08:17:58', 'edited', 'Machine', 'SPHV-2023-1-06-05-030-01-0013-2017', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(420, '2025-05-26 08:20:31', 'edited', 'Machine', 'https://192.168.0.110/inventory-system/', 'unknown092003', '{\"old\":{\"Property Number\":\"SPHV-2023-1-06-05-030-01-0013-2017\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"36862.81\"},\"new\":{\"Property Number\":\"https:\\/\\/192.168.0.110\\/inventory-system\\/\",\"Description\":\"Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D\",\"Model Number\":\"SPHV-2024-09-008\",\"Equipment Type\":\"Machine\",\"Status\":\"service\",\"Cost\":\"36862.81\"}}'),
+(421, '2025-05-26 08:28:48', 'user_created', 'New user registered', NULL, 'JP', ''),
+(422, '2025-05-26 08:29:17', 'login', 'User logged in', NULL, 'JP', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory`
+--
+
+CREATE TABLE `inventory` (
+  `id` int(11) NOT NULL,
+  `property_number` varchar(50) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `model_number` varchar(50) DEFAULT NULL,
+  `acquisition_date` date DEFAULT NULL,
+  `person_accountable` varchar(100) DEFAULT NULL,
+  `signature_of_inventory_team_date` date DEFAULT NULL,
+  `cost` decimal(10,2) DEFAULT NULL,
+  `remarks` enum('service','unservice','disposed') DEFAULT NULL,
+  `equipment_type` enum('ICT','Machine','Furniture','Other') DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `inventory`
+--
+
+INSERT INTO `inventory` (`id`, `property_number`, `description`, `model_number`, `acquisition_date`, `person_accountable`, `signature_of_inventory_team_date`, `cost`, `remarks`, `equipment_type`) VALUES
+(1, 'https://192.168.0.110/inventory-system/', 'Monitor, Asus, C2221HE with mouse and keyboard, SN: N1LCQS028563; CPU, Asus Intel i7-11700, D700TC, SN: N9PFCG01000140D', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 36862.81, 'service', 'Machine'),
+(2, 'SPHV-2022-1-06-05-030-02-0001-2017', 'Computer CPU, GT Clone CPU, 2GB, AMD 3.8ghz, Quadcore SN: 223-06-12', 'SPHV-2024-09-014', '2024-09-27', 'RACHELLE GRACE CACAS', '2025-05-25', 30000.00, 'service', ''),
+(3, 'SPHV-2022-1-06-05-030-02-0002-2017', 'Computer CPU, CPU, Deepcool SN: DC2020062900688', 'SPHV-2024-09-009', '2024-09-27', 'BARRY ESTOCAPIO', '2025-05-25', 45000.00, 'service', ''),
+(4, 'SPHV-2016-1-06-05-030-03-0002-2017', 'Computer Monitor, Samsung LED SA100 Monitor SN: 6063HYCF408247X', 'SPHV-2024-09-009', '2024-09-27', 'BARRY ESTOCAPIO', '2025-05-25', 7000.00, 'service', ''),
+(5, 'SPHV-2020-1-06-05-030-03-0004-2017', 'Computer Monitor, Monitor,Asus 21.5\", SN: G4LMTFO13087', 'SPHV-2024-09-009', '2024-09-27', 'BARRY ESTOCAPIO', '2025-05-25', 6850.00, 'service', ''),
+(6, 'SPHV-2020-1-06-05-030-03-0019-2017', 'Computer Monitor, Monitor, Samsung, 24\", SN: CW5ZH4TN702740X', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 7200.00, 'service', ''),
+(7, 'SPHV-2022-1-06-05-030-20-0006-2017', 'External Hard Drive, Western Digital, 2TB\n SN: WXL2E203KMSM', 'SPHV-2024-09-019', '2024-09-27', 'EDEN CLAIRE CARBONEL', '2025-05-25', 8000.00, 'service', ''),
+(8, 'SPHV-2020-1-06-05-030-04-0001-2017', 'Laptop, Acer Travelmate B118 Model: N16Q15\n SN: NXVHPSP00L0300882A7600', 'SPHV-2024-09-011', '2024-09-27', 'FRITZ GERALD AGUILAR', '2025-05-25', 14900.00, 'service', ''),
+(9, 'SPHV-2020-1-06-05-030-04-0002-2017', 'Laptop, Acer Travelmate B118 Model: N16Q15\n SN: NXVHPSP00L0300881E7600', 'SPHV-2024-09-016', '2024-09-27', 'ARIANIE CHRISTIE ATOLBA', '2025-05-25', 14900.00, 'service', ''),
+(10, 'SPHV-2020-1-06-05-030-04-0003-2017', 'Laptop, Acer Travelmate B118 Model: N16Q15\n SN: NXVHPSP00L030087F17600', 'SPHV-2024-09-006', '2024-09-27', 'PAUL CHINAYOG', '2025-05-25', 14900.00, 'service', ''),
+(11, 'SPHV-2020-1-06-05-030-04-0004-2017', 'Laptop, Acer Travelmate B118 Model: N16Q15\n SN: NXVHPSP00L0300883D7600', 'SPHV-2024-09-018', '2024-09-27', 'ROLLY MANUEL', '2025-05-25', 14900.00, 'service', ''),
+(12, 'SPHV-2020-1-06-05-030-04-0005-2017', 'Laptop, Acer Travelmate B118 Model: N16Q15\n SN: NXVHPSP00L030087B97600', 'SPHV-2024-09-016', '2024-09-27', 'ARIANIE CHRISTIE ATOLBA', '2025-05-25', 14900.00, 'service', ''),
+(13, 'SPHV-2020-1-06-05-030-04-0006-2017', 'Laptop, Dell Inspiron 15, SN: D5S93P2', '', '2024-09-27', 'HAROLD LISING', '2025-05-25', 42253.59, 'service', ''),
+(14, 'SPHV-2022-1-06-05-030-04-0007-2017', 'Laptop, Asus Pro Notebook P2420L\n SN: FCNXCV22P67752A', 'SPHV-2024-09-016', '2024-09-27', 'ARIANIE CHRISTIE ATOLBA', '2025-05-25', 35650.24, 'service', ''),
+(15, 'SPHV-2022-1-06-05-030-04-0008-2017', 'Laptop HP Model 15/1305DX\n SN: 5CD5293FMC', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 32500.00, 'service', ''),
+(16, 'SPHV-2017-1-06-05-030-04-0009-2017', 'Laptop, HP Pavilion15 Notebook PCD100DX HP Pavilion 15 5CD4387XGQ', 'SPHV-2024-09-012', '2024-09-27', 'MAY HANNAH GALINGAN', '2025-05-25', 39462.00, 'service', ''),
+(17, 'SPHV-2017-1-06-05-030-04-0010-2017', 'Laptop, Asus UX305FA-FC248 Asus UX305FA-FC248 F4N0CIJ11693S184', 'SPHV-2024-09-012', '2024-09-27', 'MAY HANNAH GALINGAN', '2025-05-25', 34995.00, 'service', ''),
+(18, 'SPHV-2017-1-06-05-030-04-0011-2017', 'Laptop/Notebook, Laptop i5 Lenovo G400s (black) Lenovo G400s CB24931803', 'SPHV-2024-09-002', '2024-09-27', 'ENGR. JOSE IGNACIO VALERA', '2025-05-25', 33915.00, 'service', ''),
+(19, 'SPHV-2017-1-06-05-030-04-0012-2017', 'Laptop/Notebook, Laptop, Lenovo Lenovo G40 YB02477456', 'SPHV-2024-09-016', '2024-09-27', 'ARIANIE CHRISTIE ATOLBA', '2025-05-25', 34995.00, 'service', ''),
+(20, 'SPHV-2017-1-06-05-030-04-0013-2017', 'Laptop/Notebook, Laptop, Hp model: PAV 17-F113DX HP PAV 17-F113DX 5C437471N', 'SPHV-2024-09-014', '2024-09-27', 'RACHELLE GRACE CACAS', '2025-05-25', 33870.96, 'service', ''),
+(21, 'SPHV-2017-1-06-05-030-04-0014-2017', 'Laptop, MSI Prestige 15 with mouse, rapoo N100, and Type C Ethernet Adapter, SN: K2008N0078165', 'SPHV-2024-09-006', '2024-09-27', 'PAUL CHINAYOG', '2025-05-25', 32107.00, 'service', ''),
+(22, 'SPHV-2017-1-06-05-030-04-0015-2017', 'Laptop, MSI Prestige 15 with mouse, rapoo N100, and Type C Ethernet Adapter, SN: K2208N0078167', 'SPHV-2024-09-001', '2024-09-27', 'DIR. ALBERT MOGOL', '2025-05-25', 32107.00, 'service', ''),
+(23, 'SPHV-2017-1-06-05-030-04-0016-2017', 'Laptop, MSI Prestige 15 with mouse, rapoo N100, and Type C Ethernet Adapter, SN: K2208N0078186', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 32107.00, 'service', ''),
+(24, 'SPHV-2022-1-06-05-030-07-0001-2017', 'Printer, EcoTank L3210, SN: XAGM007130', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 7850.00, 'service', ''),
+(25, 'SPHV-2022-1-06-05-030-07-0002-2017', 'Printer, EcoTank L3210, SN: XAGM004639', 'SPHV-2024-09-012', '2024-09-27', 'MAY HANNAH GALINGAN', '2025-05-25', 7850.00, 'service', ''),
+(26, 'SPHV-2022-1-06-05-030-07-0003-2017', 'Printer, Epson L3210, SN: XAGMC06918', 'SPHV-2024-09-010', '2024-09-27', 'DIVINA BOSIKAW', '2025-05-25', 7850.00, 'service', ''),
+(27, 'SPHV-2020-1-06-05-030-07-0004-2017', 'Printer with scanner, Epson L5190, SN: X5NY074503', 'SPHV-2024-09-012', '2024-09-27', 'MAY HANNAH GALINGAN', '2025-05-25', 17000.00, 'service', ''),
+(28, 'SPHV-2020-1-06-05-030-07-0005-2017', 'Printer (Epson ECO I INK L3110), X93P249671', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 8000.00, 'service', ''),
+(29, 'SPHV-2020-1-06-05-030-07-0006-2017', 'Printer (Epson ECO I INK L3110), X93P24B487', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 8000.00, 'service', ''),
+(30, 'SPHV-2020-1-06-05-030-07-0007-2017', 'Printer, Epson L3110, SN: X93P246487', 'SPHV-2024-09-010', '2024-09-27', 'DIVINA BOSIKAW', '2025-05-25', 14900.00, 'service', ''),
+(31, 'SPHV-2020-1-06-05-030-07-0008-2017', 'Printer, with scanner; Epson ECO I INK L3110, X5DY504066', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 8600.00, 'service', ''),
+(32, 'SPHV-2020-1-06-05-030-07-0009-2017', 'Printer, with scanner; Epson ECO I INK L3110, X93P213735', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 8600.00, 'service', ''),
+(33, 'SPHV-2020-1-06-05-030-07-0010-2017', 'Printer, with scanner; Epson ECO I INK L3110, X93P189425', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 8600.00, 'service', ''),
+(34, 'SPHV-2022-1-06-05-030-07-0011-2017', 'Printer, with scanner; Epson ECO I INK L3110, X5BY504080', 'SPHV-2024-09-020', '2024-09-27', 'HAROLD LISING', '2025-05-25', 8600.00, 'service', ''),
+(35, 'SPHV-2022-1-06-05-030-07-0012-2017', 'Printer, Epson L3110, SN:X5DX352091', 'SPHV-2024-09-016', '2024-09-27', 'ARIANIE CHRISTIE ATOLBA', '2025-05-25', 7999.00, 'service', ''),
+(36, 'SPHV-2022-1-06-05-030-07-0013-2017', 'Printer, Epson L3110, SN:X5DY453176', 'SPHV-2024-09-012', '2024-09-27', 'MAY HANNAH GALINGAN', '2025-05-25', 7999.00, 'service', ''),
+(37, 'SPHV-2020-1-06-05-030-07-0014-2017', 'Printer, Epson L120 SN: TP3K724752', 'SPHV-2024-09-006', '2024-09-27', 'PAUL CHINAYOG', '2025-05-25', 5674.00, 'service', ''),
+(38, 'SPHV-2018-1-06-05-030-07-0015-2017', 'Printer, Epson Inkjet Epson L120\n SN: TP3K317445', 'SPHV-2024-09-006', '2024-09-27', 'PAUL CHINAYOG', '2025-05-25', 5674.00, 'service', ''),
+(39, 'SPHV-2018-1-06-05-030-07-0016-2017', 'Printer, Epson L120, SN: TP3K312041', 'SPHV-2024-09-012', '2024-09-27', 'MAY HANNAH GALINGAN', '2025-05-25', 5674.00, 'service', ''),
+(40, 'SPHV-2018-1-06-05-030-07-0017-2017', 'Printer, Epson L120, SN: TP3K313657', 'SPHV-2024-09-003', '2024-09-27', 'GUADALIVA PANITIO', '2025-05-25', 5674.00, 'service', ''),
+(41, 'SPHV-2018-1-06-05-030-07-0018-2017', 'Printer, Epson L 220, SN: VGWK186775', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 4500.00, 'service', ''),
+(42, 'SPHV-2018-1-06-05-030-07-0019-2017', 'Printer, Epson L 360, SN: VGFK429067', 'SPHV-2024-09-013', '2024-09-27', 'ANALYN ABUAN', '2025-05-25', 7425.00, 'service', ''),
+(43, 'SPHV-2018-1-06-05-030-07-0020-2017', 'Printer, Epson L 120, SN: TP3K639731', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 5674.00, 'service', ''),
+(44, 'SPHV-2018-1-06-05-030-07-0021-2017', 'Printer, Epson L120, SN: TP3K311259', 'SPHV-2024-09-015', '2024-09-27', 'PHOEBE ANN SISON', '2025-05-25', 5674.00, 'service', ''),
+(45, 'SPHV-2024-1-06-05-030-07-0022-2017', 'Printer, Epson L3210, SN:X8HV467453', 'SPHV-2024-09-005', '2024-09-27', 'STEPHANIE TRINIDAD', '2025-05-25', 9900.00, 'service', ''),
+(46, 'SPHV-2024-1-06-05-030-07-0023-2017', 'Printer, Epson L3210, SN:X8HV449332', 'SPHV-2024-09-003', '2024-09-27', 'GUADALIVA PANITIO', '2025-05-25', 9900.00, 'service', ''),
+(47, 'SPHV-2024-1-06-05-030-07-0024-2017', 'Printer, Epson L3210, SN:X8HV483337', 'SPHV-2024-09-008', '2024-09-27', 'MYKKEL DANVER ANCENO', '2025-05-25', 9900.00, 'service', ''),
+(48, 'SPHV-2024-1-06-05-030-07-0025-2017', 'Printer, brother, Model: MFC-74500DW, SN: E78947G4H202184', 'SPHV-2024-09-008', NULL, 'MYKKEL DANVER ANCENO', '2025-05-25', 38290.00, 'service', ''),
+(49, 'SPHV-2024-1-06-05-030-07-0026-2017', 'Printer, brother, Model: MFC-74500DW, SN: E78947G4H202110', 'SPHV-2024-09-008', NULL, 'MYKKEL DANVER ANCENO', '2025-05-25', 38290.00, 'service', ''),
+(50, 'SPHV-2025-1-06-05-030-07-0027-2017', 'A4 Wi-Fi Duplex All-in-One Ink Tank Printer with ADF\nSN:', 'SPHV-2025-03-007', NULL, 'PAUL CHINAYOG', '2025-05-25', 19000.00, 'service', ''),
+(51, 'SPHV-2025-1-06-05-030-07-0028-2017', 'A4 Wi-Fi Duplex All-in-One Ink Tank Printer with ADF\nSN:', 'SPHV-2025-03-007', NULL, 'PAUL CHINAYOG', '2025-05-25', 19000.00, 'service', ''),
+(52, 'SPHV-2022-1-06-05-030-12-0001-2017', 'SN:', 'SPHV-2024-09-009', '2024-09-27', 'BARRY ESTOCAPIO', '2025-05-25', 6799.00, 'service', ''),
+(53, 'SPHV-2022-1-06-05-030-12-0002-2017', 'Router, TP Link Wireless Router, dual band, 300mbps, with 2 gigabit ports', 'SPHV-2024-09-009', '2024-09-27', 'BARRY ESTOCAPIO', '2025-05-25', 6200.00, 'service', ''),
+(54, 'SPHV-2018-1-06-05-030-05-0001-2017', 'Tablet, Tablet, Apple iPad Mini Apple iPad Mini 223-18-12, SN: F9FPS4XYFCM8', 'SPHV-2024-09-007', '2024-09-27', 'JOAN BIMANO', '2025-05-25', 20000.00, 'service', ''),
+(55, 'SPHV-2021-1-06-05-030-05-0002-2017', 'Tablet, Samsung, Galaxy Tab A7 Lite\n IMEI1:359377788461506', 'SPHV-2024-09-018', '2024-09-27', 'ROLLY MANUEL', '2025-05-25', 14995.00, 'service', ''),
+(56, 'SPHV-2021-1-06-05-030-05-0003-2017', 'Tablet, Samsung, Galaxy Tab A7 Lite\n IMEI1:359377788458619', 'SPHV-2024-09-016', '2024-09-27', 'ARIANIE CHRISTIE ATOLBA', '2025-05-25', 14995.00, 'service', ''),
+(57, 'SPHV-2021-1-06-05-030-05-0004-2017', 'Tablet, Samsung, Galaxy Tab A7 Lite\n IMEI1:359377788463635', 'SPHV-2024-09-017', '2024-09-27', 'ALYSON BANAGAO', '2025-05-25', 14995.00, 'service', ''),
+(58, 'SPHV-2023-1-06-05-030-19-0028-2017', 'UPS/AVR,UPS, APC Back UPS Pro BR 650v, SN: 5B2245T28283', 'SPHV-2024-09-021', '2024-09-27', 'MA PATRICIA PELICANO', '2025-05-25', 11647.00, 'service', ''),
+(59, 'SPHV-2023-1-06-05-030-19-0029-2017', 'UPS, APC Back UPS Pro BR 650v, SN:5B2245T28239', 'SPHV-2024-09-009', '2024-09-27', 'BARRY ESTOCAPIO', '2025-05-25', 11647.00, 'service', ''),
+(60, 'SPHV-2020-1-06-05-030-17-0002-2017', 'Web Camera', 'SPHV-2024-09-004', '2024-09-27', 'FRANKIE CORTEZ', '2025-05-25', 6000.00, 'service', ''),
+(61, 'SPHV-2022-1-06-05-030-18-0001-2017', 'Scanner, Document Camera, 8mp, SN: M143LC100078, BAMBOSANG', 'SPHV-2024-09-010', '2024-09-27', 'DIVINA BOSIKAW', '2025-05-25', 9500.00, 'service', '');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `full_name` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`id`, `username`, `password`, `full_name`) VALUES
+(1, 'unknown092003', '$2y$10$6R1TXWTbhw50UMzYotgyWOp6ClLmG8BYSdTQMhrllkiFjKPoxvJJ.', 'erroljohpardillo'),
+(2, 'jessenfox', '$2y$10$ukoXylrTz0F4ZdzA3q7I4.NGrw2GFlWXnYdhuz/ATpVWH7sx18tDy', 'jessenfox'),
+(3, 'macus', '$2y$10$KGSJ8jW04/VDXlhSPCS/TeAsuZD5Utm/18Vqn/Ch5kwRl.Z.uQj6G', 'mark'),
+(4, 'JP', '$2y$10$gqCPxffiatFIMJ/Imp83me51p/qZgSdAhlaHqvzHMHkeEJ1JzMska', 'Jasper');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `inventory`
+--
+ALTER TABLE `inventory`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `property_number` (`property_number`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `activity_log`
+--
+ALTER TABLE `activity_log`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=423;
+
+--
+-- AUTO_INCREMENT for table `inventory`
+--
+ALTER TABLE `inventory`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

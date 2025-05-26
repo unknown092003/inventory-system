@@ -1,8 +1,23 @@
 <?php
-session_start();
-if (isset($_SESSION['user_id'])) {
-    header('Location: landing.php');
-    exit;
+require_once __DIR__ . '/../api/config.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $stmt = $db->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $user = $stmt->get_result()->fetch_assoc();
+
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['username'] = $user['username'];
+        $logger->logLogin($user['username']);
+        header("Location: /inventory-system/pages/landing.php");
+        exit();
+    } else {
+        $error = "Invalid credentials!";
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -18,16 +33,8 @@ if (isset($_SESSION['user_id'])) {
   <img class="logo-bg" src="/inventory-system/public/img/ocd.png" alt="Background Logo">
   <div class="login_form">
     <h1 style="text-align: center; margin-bottom: 2rem; color: #2d3748; font-size: 1.8rem">Log In</h1>
-    
-    <?php if (isset($_GET['error'])): ?>
-      <div class="error-message"><?= htmlspecialchars($_GET['error']) ?></div>
-    <?php endif; ?>
-    
-    <?php if (isset($_GET['success'])): ?>
-      <div class="success-message"><?= htmlspecialchars($_GET['success']) ?></div>
-    <?php endif; ?>
-    
-    <form method="post" action="login_process.php">
+    <?php if (isset($error)) echo "<p style='color:red'>$error</p>"; ?>
+    <form method="post">
       <input type="text" name="username" placeholder="Username" required>
       <input type="password" name="password" placeholder="Password" required>
       <button type="submit">Sign In</button>
