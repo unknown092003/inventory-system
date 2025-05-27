@@ -10,7 +10,7 @@
     min-height: 100vh;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
-    background-color: #0f0e0e;
+    /* background-color: #0f0e0e; */
   }
   
   
@@ -88,7 +88,7 @@
   
   .content-area {
     flex: 1;
-    padding: 20px;
+    padding: 10px;
     /* background-color: #9f9f9f; */
     min-height: calc(100vh - 15vh);
   }

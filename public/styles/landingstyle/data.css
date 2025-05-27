@@ -8,7 +8,7 @@ body {
     margin: 0 auto;
 }
 
-h1 {
+.inv-h1 {
     color: #2c3e50;
     text-align: center;
     margin-bottom: 30px;
@@ -126,7 +126,7 @@ button:hover {
     background-color: #2c3e50;
     color: white;
     position: sticky;
-    top: 0;
+    top: 80px;
 }
 
 .inventory-table tr:nth-child(even) {
@@ -140,6 +140,10 @@ button:hover {
 .inventory-table td {
     word-break: break-word;
     max-width: 300px;
+}
+tbody td {
+    text-align: center;
+    /* margin: 10px; */
 }
 
 /* Responsive Adjustments */
