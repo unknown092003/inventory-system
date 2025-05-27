@@ -37,48 +37,54 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
     <title>Inventory Dashboard</title>
 
     <style>
+        .header_home {
+            text-align: center;
+            /* background-color: #f2f2f2; */
+            padding: 20px;
+            border-bottom: 1px solid black;
+        }
+        .h2_act {
+            margin: 20px auto;
+        }
         #activity-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-#activity-table th, #activity-table td {
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-#activity-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 3px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
-.changed-field {
-    font-weight: bold;
-}
+            /* margin: 20px auto; */
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        #activity-table th, #activity-table td {
+            padding: 8px;
+            /* border: 1px solid #ddd; */
+            text-align: left;
+        }
+        #activity-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .changed-field {
+            font-weight: bold;
+        }
     </style>
 
 </head>
 <body>
     <!-- introduction of current log in user  -->
-    <h1>Inventory System</h1>
-    <p>Welcome, <?= htmlspecialchars($_SESSION['username']) ?> | 
-       <a href="logout.php">Logout</a></p>
-
-       <h2>Recent Activity</h2>
+    <div class="header_home">
+        <h1>Inventory System</h1>
+        <p>Welcome, <?= htmlspecialchars($_SESSION['username']) ?> | 
+        <a href="logout.php">Logout</a></p>
+    </div>
+       <h2 class="h2_act">Recent Activity</h2>
 <table border="1" cellpadding="5" id="activity-table">
     <tr>
         <th>Time</th>

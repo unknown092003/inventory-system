@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data.css">
 </head> 
 <body>
-    <h1>Inventory Database</h1>
+    <h1 class="inv-h1">Inventory Database</h1>
     
     <div class="search-sort-container">
         <!-- Combined Search and Sort Form -->
@@ -149,7 +149,7 @@
             <?php unset($_SESSION['error']); ?>
         </div>
     <?php endif; ?>
-    <a href="/inventory-system/pages/landing/data.php">full Screen</a>
+    <a class="full" href="/inventory-system/pages/landing/data.php">Full Screen</a>
     <!-- Show results count -->
     <div style="margin-bottom: 15px;">
         Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
@@ -169,7 +169,7 @@
         $end_page = min($total_pages, $page + 2);
         
         for ($i = $start_page; $i <= $end_page; $i++): ?>
-            <a href="?page=<?= $i ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" 
+            <a class="pages" href="?page=<?= $i ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" 
                style="<?= $i == $page ? 'font-weight:bold; background:#4CAF50; color:white;' : '' ?>">
                 <?= $i ?>
             </a>
@@ -229,7 +229,7 @@
                         <td><?= $updated ?></td>
                         <td>
                             <a href="edit.php?property_number=<?= urlencode($item['property_number']) ?>" 
-                               style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px;">
+                               style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px; " >
                                 Edit
                             </a>
                         </td>
