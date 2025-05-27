@@ -9,7 +9,7 @@
 body {
   background: linear-gradient(to right, #080c2d, #6a2402);
   min-height: 100vh;
-  padding: 1rem;
+
   position: relative;
   overflow: hidden;
 }
@@ -131,9 +131,7 @@ body {
     padding: 1.5rem;
   }
   
-  body {
-    padding: 1rem;
-  }
+
 }
 
 @media (max-width: 480px) {
