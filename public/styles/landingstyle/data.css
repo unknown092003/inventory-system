@@ -159,7 +159,7 @@ tbody td {
     background-color: #ddd;
     padding: 5px;
     border: 1px solid black;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
 }
 
 /* Responsive Adjustments */
