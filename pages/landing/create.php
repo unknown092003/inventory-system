@@ -73,13 +73,13 @@ $stmt = $db->prepare("INSERT INTO inventory (property_number, description, model
         </p>
         
         <p>
-            <!-- <label>Equipment Type:</label><br>
+            <label>Equipment Type:</label><br>
             <select name="equipment_type" required>
                 <option value="ICT">ICT Equipment</option>
                 <option value="Machine">Machine Equipment</option>
                 <option value="Furniture">Furniture</option>
                 <option value="Other">Other</option>
-            </select> -->
+            </select>
             <input type="hidden" name="equipment_type" value="<?= htmlspecialchars($equipment_type) ?>" required>
             <label>Equipment Type: <?= htmlspecialchars($equipment_type) ?></label>
             <!-- Show the selected type to user -->
