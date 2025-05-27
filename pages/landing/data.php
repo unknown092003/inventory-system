@@ -149,7 +149,7 @@
             <?php unset($_SESSION['error']); ?>
         </div>
     <?php endif; ?>
-    <a href="/inventory-system/pages/landing/data.php">Full Screen</a>
+    <a class="full" href="/inventory-system/pages/landing/data.php">Full Screen</a>
     <!-- Show results count -->
     <div style="margin-bottom: 15px;">
         Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
@@ -169,7 +169,7 @@
         $end_page = min($total_pages, $page + 2);
         
         for ($i = $start_page; $i <= $end_page; $i++): ?>
-            <a href="?page=<?= $i ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" 
+            <a class="pages" href="?page=<?= $i ?>&search=<?= urlencode($_GET['search'] ?? '') ?>&sort=<?= urlencode($_GET['sort'] ?? '') ?>" 
                style="<?= $i == $page ? 'font-weight:bold; background:#4CAF50; color:white;' : '' ?>">
                 <?= $i ?>
             </a>
@@ -185,7 +185,7 @@
     <div style="overflow-x: auto;">
         <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr style="margin:10px; background-color: #f2f2f2;">
+                <tr style="background-color: #f2f2f2;">
                     <th>Property #</th>
                     <th>Description</th>
                     <th>Model #</th>

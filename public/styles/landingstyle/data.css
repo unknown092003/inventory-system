@@ -145,6 +145,22 @@ tbody td {
     text-align: center;
     /* margin: 10px; */
 }
+.pages {
+    /* text-align: center; */
+    padding: 5px;
+    text-decoration: none;
+}
+.pagination {
+    text-align: center;
+}
+.full {
+    text-decoration: none;
+    color: black;
+    background-color: #ddd;
+    padding: 5px;
+    border: 1px solid black;
+    margin-bottom: 5px;
+}
 
 /* Responsive Adjustments */
 @media (max-width: 768px) {
