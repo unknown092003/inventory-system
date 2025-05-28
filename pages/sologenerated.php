@@ -16,7 +16,7 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 
 // Database connection
-$pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
+$pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->exec("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED");
 

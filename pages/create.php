@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $stmt = $db->prepare("INSERT INTO inventory (property_number, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("ssssssds", 
+    $stmt->bind_param("sssssssds", 
         $item['property_number'],
         $item['description'],
         $item['model_number'],

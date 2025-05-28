@@ -3,7 +3,7 @@
 header('Content-Type: application/json');
 
 try {
-    $pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
+    $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
     $propertyNumber = $_GET['property_number'] ?? '';
