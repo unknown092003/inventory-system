@@ -32,6 +32,7 @@
     <p id="accquisition-date"></p>
     <p id="person-acc"></p>
     <p id="status"></p>
+    <p id="et"></p>
     <p id="sign"></p>
     
     <div class="dialog-actions">

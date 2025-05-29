@@ -50,10 +50,11 @@ function fetchItemData(propertyNumber) {
             document.getElementById('prod-num').textContent = `Property Number: ${data.property_number}`;
             document.getElementById('prod-desc').textContent = `Description: ${data.description}`;
             document.getElementById('model').textContent = `Model: ${data.model_number}`;
-            document.getElementById('serial').textContent = `Serial: ${data.serial_number}`;
-            document.getElementById('accquisition-date').textContent = `Acquired: ${data.acquisition_date_cost}`;
+            document.getElementById('serial').textContent = `Cost: ${data.cost}`;
+            document.getElementById('accquisition-date').textContent = `Acquisition Date: ${data.acquisition_date}`;
             document.getElementById('person-acc').textContent = `Accountable: ${data.person_accountable}`;
-            document.getElementById('status').textContent = `Status: ${data.status}`;
+            document.getElementById('status').textContent = `Status: ${data.remarks}`;
+            document.getElementById('et').textContent = `Equipment_type: ${data.equipment_type}`;
             document.getElementById('sign').textContent = `Last Updated: ${data.signature_of_inventory_team_date}`;
             
             // Set property number as data attribute for view button
