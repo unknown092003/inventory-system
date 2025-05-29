@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Edit Inventory Item</h1>
-        <a href="home.php">Back to Dashboard</a>
+        <a href="landing.php">Back to Dashboard</a>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
 
 
