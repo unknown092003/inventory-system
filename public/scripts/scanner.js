@@ -19,6 +19,8 @@ function startScanner() {
                 fetchItemData(decodedText);
             }).catch(err => {
                 console.error("Error stopping scanner:", err);
+                // Restart scanner on error
+                startScanner();
             });
         },
         () => {
@@ -26,6 +28,8 @@ function startScanner() {
         })
     .catch((err) => {
         console.error("Error starting scanner:", err);
+        // Restart scanner on error
+        startScanner();
     });
 }
 
@@ -34,8 +38,11 @@ function fetchItemData(propertyNumber) {
     fetch(`/inventory-system/api/getItem.php?property_number=${encodeURIComponent(propertyNumber)}`)
         .then(response => response.json())
         .then(data => {
-            if(data.error) {
-                document.getElementById('message').textContent = data.error;
+            if (data.error || !data.property_number) {
+                document.getElementById('message').textContent = "No item detected.";
+                console.warn("No item detected or error:", data.error);
+                // Restart scanner
+                startScanner();
                 return;
             }
             
@@ -56,8 +63,10 @@ function fetchItemData(propertyNumber) {
             dialog.showModal();
         })
         .catch(error => {
-            document.getElementById('message').textContent = "Error fetching item data";
+            document.getElementById('message').textContent = "Error fetching item data.";
             console.error("Error:", error);
+            // Restart scanner
+            startScanner();
         });
 }
 

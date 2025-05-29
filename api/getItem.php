@@ -20,7 +20,7 @@ try {
     $item = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$item) {
-        echo json_encode(['error' => 'Item not found']);
+        echo json_encode(['error' => 'Item not found, please scan again']);
         exit;
     }
     
