@@ -158,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
             <div class="form-group">
-                <label>Description:</label>
+                <label>Descriptions:</label>
                 <input type="text" name="description" required>
             </div>
 
