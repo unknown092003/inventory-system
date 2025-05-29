@@ -1,0 +1,159 @@
+Base Styles
+/* 
+  */
+
+.inv-h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+}
+
+/* Search and Sort Container */
+.search-sort-container {
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-sort-container form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+}
+
+.search-box {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    min-width: 200px;
+    flex-grow: 1;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.sort-select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.sort-select:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+/* Buttons */
+.button, #apply, button {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+#apply {
+    background-color: #2c3e50;
+    color: white;
+}
+
+#apply:hover {
+    background-color: #1a252f;
+}
+
+.button {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.button:hover {
+    background-color: #c0392b;
+}
+
+.view_layout {
+    background-color: #3498db;
+    color: white;
+}
+
+.view_layout:hover {
+    background-color: #2980b9;
+}
+
+/* Table Styles */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 30px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+tbody td {
+    text-align: center;
+    /* margin: 10px; */
+}
+.pages {
+    /* text-align: center; */
+    padding: 5px;
+    text-decoration: none;
+}
+.pagination {
+    text-align: center;
+}
+.full {
+    text-decoration: none;
+    color: black;
+    background-color: #ddd;
+    padding: 5px;
+    border: 1px solid black;
+    /* margin-bottom: 5px; */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .search-sort-container form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box, .sort-select {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    body {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-sort-container {
+        gap: 10px;
+    }
+    
+    .button, #apply, button {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+    }
+    
+}
