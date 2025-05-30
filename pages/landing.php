@@ -23,13 +23,13 @@
       <h2>INVENTORY SYSTEM</h2>
       <hr />
       <ul>
-        <li><a href="?page=home">Home</a></li>
-        <li><a href="?page=list">List</a></li>
-        <li><a href="?page=create">Create</a></li>
-        <li><a href="?page=data">Data</a></li>
-        <li><a href="?page=edit">Edit</a></li>
-        <li><a href="landing/scan.php">Scan</a></li>
-        <li><a href="logout.php">Logout</a></li>
+        <li><a class="a" href="?page=home">Home</a></li>
+        <li><a class="a" href="?page=list">List</a></li>
+        <li><a class="a" href="?page=create">Create</a></li>
+        <li><a class="a" href="?page=data">Data</a></li>
+        <!-- <li><a href="?page=edit">Edit</a></li> -->
+        <li><a class="a" href="landing/scan.php">Scan</a></li>
+        <li><a class="logout" href="logout.php">Logout</a></li>
       </ul>
     </nav>
 
@@ -42,7 +42,7 @@
           case 'list': include 'list.php'; break;
           case 'create': include 'landing/equipment-type.php'; break;
           case 'data': include 'landing/data.php'; break;
-          case 'edit': include 'landing/edit.php'; break;
+          // case 'edit': include 'landing/edit.php'; break;
           default: include 'landing/home.php';
         }
       ?>

@@ -70,7 +70,7 @@ body {
   list-style: none;
 }
 
-.left-nav li a {
+.left-nav li .a {
   display: block;
   padding: 12px 15px;
   margin-bottom: 12px;
@@ -82,7 +82,7 @@ body {
   background-color: #f0f0f0;
 }
 
-.left-nav li a:hover {
+.left-nav li .a:hover {
   background-color: #1622a7;
   color: #ffffff;
   transform: translateX(5px);
@@ -113,6 +113,26 @@ body {
   display: none;
 }
 
+.left-nav li a.logout {
+  background-color: red;
+  display: block;
+  margin-top: 100px;
+  padding: 10px 14px;
+  /* margin-bottom: 12px; */
+  text-decoration: none;
+  color: white;
+  font-weight: bolder;
+  font-size: large;
+  border-radius: 8px;
+  transition: all 0.25s ease-in-out;
+  /* background-color: #f0f0f0; */
+}
+
+.left-nav li a.logout:hover {
+  background-color: #fd5f09;
+  color: #ffffff;
+  transform: translateX(5px);
+}
 /* Mobile Styles */
 @media (max-width: 768px) {
   .menu-toggle {

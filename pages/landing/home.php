@@ -37,42 +37,94 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
     <title>Inventory Dashboard</title>
 
     <style>
+        .welcome-message {
+            margin: 10px auto;
+            padding: 10px;
+            background: linear-gradient(to right, #1622a7, #dc4d00);
+            color: #fff;
+            text-align: center;
+            border-radius: 16px;
+            max-width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.6s ease;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .welcome-message p {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: 1px;
+            color: #ffeb8e;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
         .header_home {
             text-align: center;
-            /* background-color: #f2f2f2; */
-            padding: 20px;
-            border-bottom: 1px solid black;
+            font-weight: bold;
+            color: black;
+            /* padding: 15px; */
+            border-bottom: 1px solid #ccc;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            /* background: #1a1a1a; */
+            font-size: 20px;
         }
+
         .h2_act {
-            margin: 20px auto;
+            margin: 10px auto;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            color: #333;
         }
+
         #activity-table {
-            /* margin: 20px auto; */
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
+
         #activity-table th, #activity-table td {
-            padding: 8px;
-            /* border: 1px solid #ddd; */
+            padding: 12px 16px;
             text-align: left;
+            font-size: 15px;
+            border-bottom: 1px solid #e0e0e0;
         }
+
+        #activity-table th {
+            background-color: #f9f9f9;
+            font-weight: 600;
+            color: #333;
+        }
+
         #activity-table tr:nth-child(even) {
-            background-color: #f2f2f2;
+            background-color: #f4f6f8;
         }
+
         button {
-            background-color: #4CAF50;
+            background-color: #ff5722;
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
+            padding: 6px 14px;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #45a049;
+            background-color: #e64a19;
         }
+
         .changed-field {
             font-weight: bold;
+            color: #d84315;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 
@@ -81,8 +133,10 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
     <!-- introduction of current log in user  -->
     <div class="header_home">
         <h1>Inventory System</h1>
-        <p>Welcome, <?= htmlspecialchars($_SESSION['username']) ?> | 
-        <a href="logout.php">Logout</a></p>
+        <div class="welcome-message">
+            <p>Welcome, <?= htmlspecialchars($_SESSION['username']) ?>
+        </div>  
+        <!-- <a href="logout.php">Logout</a></p> -->
     </div>
        <h2 class="h2_act">Recent Activity</h2>
 <table border="1" cellpadding="5" id="activity-table">
