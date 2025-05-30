@@ -2,21 +2,15 @@
 require_once __DIR__ . '/../api/config.php';
 requireAuth();
 
-
-
 // Get the preselected equipment type
 $equipment_type = $_GET['type'] ?? '';
 $valid_types = ['Machinery', 'Construction', 'ICT Equipment', 'Communications', 'Military/Security', 'Office', 'DRRM Equipment', 'Furniture'];
-
-
 
 if (!in_array($equipment_type, $valid_types)) {
     $_SESSION['error'] = "Invalid equipment type selected";
     header("Location: equipment-type.php");
     exit();
 }
-
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $item = [
@@ -31,8 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'remarks' => $_POST['remarks'],
     ];
 
-
-
     $stmt = $db->prepare("INSERT INTO inventory (property_number, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("sssssssds", 
         $item['property_number'],
@@ -46,10 +38,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $item['remarks']
     );
 
-
-
     if ($stmt->execute()) {
+        // Log the creation
         $logger->logCreateItem($item['property_number'], $item['equipment_type'], $_SESSION['username']);
+        
+        // Include the QR generator
+        require_once __DIR__ . '/../api/qr_generator.php';
+        
+        // Generate the sticker
+        if (generateSticker($item['property_number'])) {
+            $_SESSION['success'] = "Item added and sticker generated successfully!";
+        } else {
+            $_SESSION['warning'] = "Item added but sticker generation failed";
+        }
+        
         header("Location: landing.php");
         exit();
     } else {
@@ -57,8 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -143,11 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Add New Inventory Item</h1>
         <a href="landing.php">Back to Dashboard</a>
 
-
-
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
-
-
 
         <form method="POST">
             <div class="form-group">
@@ -155,49 +151,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="property_number" required>
             </div>
 
-
-
             <div class="form-group">
                 <label>Descriptions:</label>
                 <input type="text" name="description" required>
             </div>
-
-
 
             <div class="form-group">
                 <label>Model Number (optional):</label>
                 <input type="text" name="model_number">
             </div>
 
-
-
             <div class="form-group">
                 <label>Acquisition Date:</label>
                 <input type="date" name="acquisition_date" required>
             </div>
-
-
 
             <div class="form-group">
                 <label>Person Accountable:</label>
                 <input type="text" name="person_accountable" required>
             </div>
 
-
-
             <div class="form-group">
                 <label>Signature Date:</label>
                 <input type="date" name="signature_of_inventory_team_date" required>
             </div>
 
-
-
             <div class="form-group">
                 <label>Cost:</label>
                 <input type="text" name="cost" required>
             </div>
-
-
 
             <div class="form-group">
                 <label>Equipment Type:</label>
@@ -207,8 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-
-
             <div class="form-group">
                 <label>Status:</label>
                 <select name="remarks" required>
@@ -217,8 +197,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <option value="disposed">Disposed</option>
                 </select>
             </div>
-
-
 
             <button type="submit">Save Item</button>
         </form>
