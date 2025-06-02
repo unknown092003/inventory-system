@@ -20,7 +20,7 @@ function isAuthenticated() {
 // Redirect to login if not authenticated
 function requireAuth() {
     if (!isAuthenticated()) {
-        header("Location: index.php");
+        header("Location: pages/login.php");
         exit();
     }
 }

@@ -34,6 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     }
 
     require_once __DIR__ .  '/../vendor/autoload.php';
+    // Include the QR generator functionality
+    require_once __DIR__ . '/../api/qr_generator.php';
     
     try {
         $file = $_FILES['excel_file']['tmp_name'];
@@ -170,6 +172,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                         "Item created via import"
                     );
                 }
+                
+                // Auto-generate sticker for this item
+                generateSticker($property_number);
+                
                 $success_rows[] = $row->getRowIndex();
             } else {
                 $errors[] = "Row {$row->getRowIndex()}: Database error - " . $stmt->error;
@@ -311,6 +317,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             <li>Do not close the browser during import</li>
             <li>You will receive a detailed summary after completion</li>
             <li>Existing items will be updated with the new data</li>
+            <li>Stickers will be automatically generated for all imported items</li>
         </ul>
     </div>
     <script>
