@@ -20,7 +20,7 @@
                    value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
             
             <!-- Sort Dropdown -->
-            <select name="sort" class="sort-select">
+            <select name="sort" class="sort-select"> 
                 <option value="date_desc" <?= ($_GET['sort'] ?? 'date_desc') === 'date_desc' ? 'selected' : '' ?>>
                     Newest First
                 </option>
@@ -48,7 +48,7 @@
             <?php endif; ?>
         </form>
 
-        <button onclick="redirectToExport()">View Layout</button>
+        <button class="view_layout" onclick="redirectToExport()">View Layout</button>
         <script>
             function redirectToExport() {
                 // Get all current parameters EXCEPT 'page'

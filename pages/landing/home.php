@@ -62,13 +62,11 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
             text-align: center;
             font-weight: bold;
             color: black;
-            /* padding: 15px; */
+            /* padding: 15px; ✅ Add this back */
             border-bottom: 1px solid #ccc;
             text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-            /* background: #1a1a1a; */
             font-size: 20px;
         }
-
         .h2_act {
             margin: 10px auto;
             font-size: 22px;
@@ -82,24 +80,32 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
             border-collapse: collapse;
             margin-bottom: 30px;
             background-color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); */
+            /* border-bottom: 1px solid black; */
         }
-
+        
         #activity-table th, #activity-table td {
             padding: 12px 16px;
             text-align: left;
             font-size: 15px;
-            border-bottom: 1px solid #e0e0e0;
+            border-right: 1px solid rgb(192, 192, 192);
         }
-
+        
         #activity-table th {
             background-color: #f9f9f9;
             font-weight: 600;
             color: #333;
         }
-
+                
+        #activity-table {
+            border: 1px solid rgb(0, 0, 0);
+        }
+        
         #activity-table tr:nth-child(even) {
             background-color: #f4f6f8;
+        }
+        #activity-table tr {
+            border: none !important;
         }
 
         button {
@@ -139,7 +145,7 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
         <!-- <a href="logout.php">Logout</a></p> -->
     </div>
        <h2 class="h2_act">Recent Activity</h2>
-<table border="1" cellpadding="5" id="activity-table">
+<table cellpadding="5" id="activity-table">
     <tr>
         <th>Time</th>
         <th>Action</th>
@@ -147,7 +153,7 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
         <th>User</th>
         <th>Details</th>
     </tr>
-    <?php foreach ($logger->getRecentLogs(10) as $log): 
+    <?php foreach ($logger->getRecentLogs(5) as $log): 
         $details = json_decode($log['details'] ?? '{}', true);
     ?>
     <tr>

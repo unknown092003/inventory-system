@@ -20,44 +20,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'acquisition_date' => $_POST['acquisition_date'],
         'person_accountable' => $_POST['person_accountable'],
         'signature_of_inventory_team_date' => $_POST['signature_of_inventory_team_date'],
-        'cost' => str_replace(',', '', $_POST['cost']), // Remove commas from cost
+        'cost' => str_replace(',', '', $_POST['cost']),
         'equipment_type' => $_POST['equipment_type'],
         'remarks' => $_POST['remarks'],
     ];
 
-    $stmt = $db->prepare("INSERT INTO inventory (property_number, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssssssds", 
-        $item['property_number'],
-        $item['description'],
-        $item['model_number'],
-        $item['acquisition_date'],
-        $item['person_accountable'],
-        $item['signature_of_inventory_team_date'],
-        $item['cost'],
-        $item['equipment_type'],
-        $item['remarks']
-    );
+    // 🔍 Check if property_number already exists
+    $checkStmt = $db->prepare("SELECT id FROM inventory WHERE property_number = ?");
+    $checkStmt->bind_param("s", $item['property_number']);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
 
-    if ($stmt->execute()) {
-        // Log the creation
-        $logger->logCreateItem($item['property_number'], $item['equipment_type'], $_SESSION['username']);
-        
-        // Include the QR generator
-        require_once __DIR__ . '/../api/qr_generator.php';
-        
-        // Generate the sticker
-        if (generateSticker($item['property_number'])) {
-            $_SESSION['success'] = "Item added and sticker generated successfully!";
-        } else {
-            $_SESSION['warning'] = "Item added but sticker generation failed";
-        }
-        
-        header("Location: landing.php");
-        exit();
+    if ($checkResult->num_rows > 0) {
+        $error = "Property Number already exists. Please use a different one.";
     } else {
-        $error = "Failed to add item: " . $db->error;
+        // Insert only if not duplicate
+        $stmt = $db->prepare("INSERT INTO inventory (property_number, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssds", 
+            $item['property_number'],
+            $item['description'],
+            $item['model_number'],
+            $item['acquisition_date'],
+            $item['person_accountable'],
+            $item['signature_of_inventory_team_date'],
+            $item['cost'],
+            $item['equipment_type'],
+            $item['remarks']
+        );
+
+        if ($stmt->execute()) {
+            $logger->logCreateItem($item['property_number'], $item['equipment_type'], $_SESSION['username']);
+            require_once __DIR__ . '/../api/qr_generator.php';
+
+            if (generateSticker($item['property_number'])) {
+                $_SESSION['success'] = "Item added and sticker generated successfully!";
+            } else {
+                $_SESSION['warning'] = "Item added but sticker generation failed";
+            }
+
+            header("Location: landing.php");
+            exit();
+        } else {
+            $error = "Failed to add item: " . $db->error;
+        }
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -143,7 +151,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h1>Add New Inventory Item</h1>
         <a href="landing.php">Back to Dashboard</a>
 
-        <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
+        <?php if (isset($error)) : ?>
+        <script>alert("<?= htmlspecialchars($error) ?>");</script>
+        <p class='error'><?= htmlspecialchars($error) ?></p>
+        <?php endif; ?>
+
 
         <form method="POST">
             <div class="form-group">
