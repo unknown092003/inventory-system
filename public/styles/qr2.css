@@ -181,7 +181,7 @@ dialog p {
   background-color: #e08e62;
 }
 
-.dialog-actions #view-data {
+/* .dialog-actions #view-data {
   background-color: #1622a7;
   color: black;
   margin: 5px;
@@ -193,7 +193,10 @@ dialog p {
 }
 #view-data:hover {
   background-color: #4951ad;
-}
+} */
+ #view-data {
+  display: none;
+ }
 #scan-again {
   position: absolute;
   left: 50%;

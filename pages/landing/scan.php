@@ -38,10 +38,10 @@
     <div class="dialog-actions">
 
         
-        <a href="#" id="edit-item" class="button">Edit</a>
+        <!-- <a href="#" id="edit-item" class="button">Edit</a> -->
         
         <button id="view-data" class="button primary">
-            View Data
+            
         </button>
         </div> 
        <button id="scan-again">
