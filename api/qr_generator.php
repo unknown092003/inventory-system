@@ -8,13 +8,34 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 
 function generateSticker($propertyNumber) {
-    $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
-    $stmt = $pdo->prepare("SELECT * FROM inventory WHERE property_number = ?");
-    $stmt->execute([$propertyNumber]);
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
+    global $db;
+    
+    // Use existing connection if available, otherwise create a new one
+    if (!isset($db) || $db->connect_error) {
+        $db = new mysqli('localhost', 'root', '', 'inventory_system');
+        if ($db->connect_error) {
+            error_log("Database connection failed: " . $db->connect_error);
+            return false;
+        }
+    }
+    
+    // Prepare and execute query using mysqli
+    $stmt = $db->prepare("SELECT * FROM inventory WHERE property_number = ?");
+    $stmt->bind_param("s", $propertyNumber);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+    $stmt->close();
+    
     if (!$row) {
+        error_log("Record not found for property number: " . $propertyNumber);
         return false; // Record not found
+    }
+    
+    // Create QR directory if it doesn't exist
+    $qrDir = dirname(__FILE__, 2) . '/qr';
+    if (!file_exists($qrDir)) {
+        mkdir($qrDir, 0755, true);
     }
 
     $renderer = new ImageRenderer(
@@ -52,7 +73,8 @@ function generateSticker($propertyNumber) {
         $im->writeImage($outputPath);
         $im->clear();
         $im->destroy();
-
+        
+        error_log("Sticker generated successfully for: " . $propertyNumber);
         return true;
     } catch (Exception $e) {
         error_log("Sticker generation failed: " . $e->getMessage());
