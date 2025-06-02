@@ -295,7 +295,7 @@ unset($_SESSION['error_message']);
             </div>
             
             <div class="button-group">
-                <a href="/inventory-system/pages/landing/scan.php" class="button back-btn">Back to Scanner</a>
+                <!-- <a href="/inventory-system/pages/landing/scan.php" class="button back-btn">Back to Scanner</a> -->
                 <a href="/inventory-system/pages/landing.php?page=edit" class="button back-btn">Back to List</a>
                 <button type="submit" class="button save-btn">Save Changes</button>
             </div>

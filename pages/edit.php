@@ -118,13 +118,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         a {
             text-decoration: none;
-            color: #007BFF;
+            color: white;
             display: block;
             text-align: center;
             margin-bottom: 20px;
         }
         a:hover {
-            text-decoration: underline;
+            background-color: #0056b3;
+        }
+        .back-dashboard {
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30%;
+            background-color: #007BFF;
+            padding: 7px;
+            border-radius: 4px;
         }
         .container {
             max-width: 600px;
@@ -160,8 +169,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .button-group {
             display: flex;
-            justify-content: space-between;
             margin-top: 20px;
+            justify-content: center;
+        }
+        .back-btn {
+            width: 30%;
+            background-color: #007BFF;
+            padding: 7px;
+            margin-left: 10px;
+            border-radius: 4px;
+        }
+        /* .back-btn:hover {
+            background-color: #0056b3;
+        } */
+        .save-btn{
+            width: 100%;
+            font-weight: bold;
+            font-size: large;
         }
         button {
             background-color: #007BFF;
@@ -220,7 +244,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="container">
         <h1>Edit Inventory Item</h1>
-        <a href="landing.php">Back to Dashboard</a>
+        <a href="landing.php" class="back-dashboard">Back to Dashboard</a>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
 
 
@@ -301,8 +325,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="button-group">
                 <a href="/inventory-system/pages/landing/scan.php" class="button back-btn">Back to Scanner</a>
                 <a href="/inventory-system/pages/landing.php?page=edit" class="button back-btn">Back to List</a>
-                <button type="submit" class="button save-btn">Save Changes</button>
             </div>
+                <button type="submit" class="button save-btn">Save Changes</button>
+            
         </form>
 
 
