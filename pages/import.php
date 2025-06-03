@@ -297,18 +297,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     </div>
     
     <div class="upload-form">
-        <form method="POST" enctype="multipart/form-data">
+        <form method="POST" enctype="multipart/form-data" id="importForm">
             <div>
                 <label for="excel_file" style="display: block; margin-bottom: 5px; font-weight: bold;">
                     Select Excel File:
                 </label>
                 <input type="file" id="excel_file" name="excel_file" accept=".xls,.xlsx" required>
             </div>
-            <button type="submit" style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px;">
+            
+            <div id="progressContainer" style="display: none; margin: 15px 0;">
+                <div style="width: 100%; background-color: #f3f3f3; border-radius: 5px; overflow: hidden;">
+                    <div id="progressBar" style="height: 24px; width: 0; background-color: #4CAF50; text-align: center; line-height: 24px; color: white;">0%</div>
+                </div>
+                <p id="progressStatus" style="margin-top: 5px; text-align: center;">Preparing import...</p>
+            </div>
+            <button type="submit" id="submitBtn" style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px;">
                 Import <?= htmlspecialchars($equipment_type) ?> Items
             </button>
         </form>
     </div>
+    
+    <script>
+        document.getElementById('importForm').addEventListener('submit', function(e) {
+            // Show progress bar when form is submitted
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').innerHTML = 'Processing...';
+            
+            // Simulate progress for import and sticker generation
+            let progress = 0;
+            const progressBar = document.getElementById('progressBar');
+            const progressStatus = document.getElementById('progressStatus');
+            
+            const interval = setInterval(function() {
+                // Increment progress with better distribution
+                if (progress < 60) {
+                    progress += 5;
+                } else if (progress < 85) {
+                    progress += 2;
+                } else if (progress < 99) {
+                    progress += 1;
+                } else {
+                    progress = 100;
+                    clearInterval(interval);
+                    progressStatus.innerHTML = "Finalizing... Please wait, this might take a few minutes.";
+                }
+                
+                if (progress >= 70 && progress < 99) {
+                    progressStatus.innerHTML = "Generating stickers...";
+                } else if (progress >= 40 && progress < 70) {
+                    progressStatus.innerHTML = "Processing data...";
+                } else if (progress < 40) {
+                    progressStatus.innerHTML = "Uploading file...";
+                }
+                
+                progressBar.style.width = progress + '%';
+                progressBar.innerHTML = progress + '%';
+            }, 400);
+        });
+    </script>
     
     <div style="margin-top: 30px; padding: 15px; background: #fff3e0; border-radius: 5px;">
         <h3>Important Notes</h3>
