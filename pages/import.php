@@ -136,6 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     $property_number
                 );
             } else {
+                // Make sure equipment_type is not empty
+                if (empty($equipment_type)) {
+                    $equipment_type = $_GET['type'] ?? 'Unknown';
+                }
+                
                 $stmt = $db->prepare("
                     INSERT INTO inventory 
                     (property_number, description, model_number, acquisition_date, 
