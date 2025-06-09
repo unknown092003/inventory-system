@@ -295,10 +295,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="form-group">
                 <label>Equipment Type:</label>
                 <select name="equipment_type" required>
-                    <option value="ICT" <?= $item['equipment_type'] === 'ICT' ? 'selected' : '' ?>>ICT Equipment</option>
-                    <option value="Machine" <?= $item['equipment_type'] === 'Machine' ? 'selected' : '' ?>>Machine Equipment</option>
+                    <option value="Machinery" <?= $item['equipment_type'] === 'Machinery' ? 'selected' : '' ?>>Machinery</option>
+                    <option value="Construction" <?= $item['equipment_type'] === 'Construction' ? 'selected' : '' ?>>Construction</option>
+                    <option value="ICT Equipment" <?= $item['equipment_type'] === 'ICT Equipment' || $item['equipment_type'] === 'ICT' ? 'selected' : '' ?>>ICT Equipment</option>
+                    <option value="Communications" <?= $item['equipment_type'] === 'Communications' ? 'selected' : '' ?>>Communications</option>
+                    <option value="Military/Security" <?= $item['equipment_type'] === 'Military/Security' ? 'selected' : '' ?>>Military/Security</option>
+                    <option value="Office" <?= $item['equipment_type'] === 'Office' ? 'selected' : '' ?>>Office</option>
+                    <option value="DRRM Equipment" <?= $item['equipment_type'] === 'DRRM Equipment' ? 'selected' : '' ?>>DRRM Equipment</option>
                     <option value="Furniture" <?= $item['equipment_type'] === 'Furniture' ? 'selected' : '' ?>>Furniture</option>
-                    <option value="Other" <?= $item['equipment_type'] === 'Other' ? 'selected' : '' ?>>Other</option>
                 </select>
             </div>
 

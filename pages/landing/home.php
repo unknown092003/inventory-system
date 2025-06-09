@@ -274,11 +274,11 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
     </div>
     
     <!-- Equipment Modal -->
-    <div id="equipment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; padding:20px;">
-      <div style="background:#fff; max-width:600px; margin:50px auto; padding:25px; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
+    <div id="equipment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; padding:20px; overflow-y:auto;">
+      <div style="background:#fff; max-width:700px; margin:50px auto; padding:25px; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
         <h2 id="equipment-title" style="margin-top:0; color:#333; font-size:24px; text-align:center;"></h2>
         <div id="equipment-content" style="margin:15px 0;">
-          <!-- Content will be added here later -->
+          <!-- Content will be added dynamically -->
         </div>
         <div style="text-align:center; margin-top:20px;">
           <button onclick="closeEquipmentModal()" style="background:#ff8000; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Close</button>
@@ -388,8 +388,80 @@ function showEquipmentModal(equipmentType) {
   // Set the title in the modal
   document.getElementById('equipment-title').textContent = equipmentType;
   
+  // Show loading state
+  document.getElementById('equipment-content').innerHTML = '<div style="text-align:center;padding:20px;">Loading statistics...</div>';
+  
   // Show the modal
   document.getElementById('equipment-modal').style.display = 'block';
+  
+  // Fetch equipment statistics
+  fetch(`/inventory-system/api/get_equipment_stats.php?type=${encodeURIComponent(equipmentType)}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        document.getElementById('equipment-content').innerHTML = `<div style="color:red;text-align:center;">${data.error}</div>`;
+        return;
+      }
+      
+      // Format currency function
+      const formatCurrency = (amount) => {
+        return '₱' + parseFloat(amount).toLocaleString('en-US', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      };
+      
+      // Create statistics display
+      const statsHtml = `
+        <div style="padding:10px;">
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; text-align:center;">
+            <div style="background:#f0f0f0; padding:15px; border-radius:8px;">
+              <div style="font-size:24px; font-weight:bold;">${data.total}</div>
+              <div>Total Items</div>
+              <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+                <div style="font-size:14px; color:#666;">Total Cost</div>
+                <div style="font-size:18px; font-weight:bold;">${formatCurrency(data.total_cost)}</div>
+              </div>
+            </div>
+            <div style="background:#e8f5e9; padding:15px; border-radius:8px;">
+              <div style="font-size:24px; font-weight:bold; color:#2e7d32;">${data.serviceable}</div>
+              <div>Serviceable</div>
+              <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+                <div style="font-size:14px; color:#666;">Total Cost</div>
+                <div style="font-size:18px; font-weight:bold; color:#2e7d32;">${formatCurrency(data.serviceable_cost)}</div>
+              </div>
+            </div>
+            <div style="background:#fff3e0; padding:15px; border-radius:8px;">
+              <div style="font-size:24px; font-weight:bold; color:#ef6c00;">${data.unserviceable}</div>
+              <div>Unserviceable</div>
+              <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+                <div style="font-size:14px; color:#666;">Total Cost</div>
+                <div style="font-size:18px; font-weight:bold; color:#ef6c00;">${formatCurrency(data.unserviceable_cost)}</div>
+              </div>
+            </div>
+            <div style="background:#ffebee; padding:15px; border-radius:8px;">
+              <div style="font-size:24px; font-weight:bold; color:#c62828;">${data.disposed}</div>
+              <div>Disposed</div>
+              <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+                <div style="font-size:14px; color:#666;">Total Cost</div>
+                <div style="font-size:18px; font-weight:bold; color:#c62828;">${formatCurrency(data.disposed_cost)}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:20px; text-align:center;">
+            <a href="/inventory-system/pages/landing/data.php?search=${encodeURIComponent(equipmentType)}" 
+               style="display:inline-block; padding:8px 16px; background:#2196F3; color:white; text-decoration:none; border-radius:4px;">
+              View All ${equipmentType} Items
+            </a>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('equipment-content').innerHTML = statsHtml;
+    })
+    .catch(error => {
+      document.getElementById('equipment-content').innerHTML = `<div style="color:red;text-align:center;">Error loading statistics: ${error.message}</div>`;
+    });
 }
 
 function closeEquipmentModal() {
