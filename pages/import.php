@@ -79,6 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             $person_accountable = trim($data[4] ?? null);
             $cost = !empty($data[5]) ? filter_var(str_replace(',', '', $data[5]), FILTER_VALIDATE_FLOAT) : 0;
             $remarks = 'service';
+            
+            // Ensure equipment_type is set for this record
+            // Using the equipment_type from the URL parameter
+            error_log("Using equipment_type: " . $equipment_type . " for property number: " . $property_number);
 
             // Validate required fields
             $row_errors = [];
@@ -139,6 +143,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ");
                 $acquisition_date_str = $acquisition_date ? $acquisition_date->format('Y-m-d') : null;
+                
+                // Debug log to verify equipment_type value
+                error_log("Inserting new record with equipment_type: " . $equipment_type);
+                
                 $stmt->bind_param(
                     "sssssdss",
                     $property_number,

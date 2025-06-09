@@ -19,13 +19,31 @@ function generateSticker($propertyNumber) {
         }
     }
     
+    // Debug log to check property number
+    error_log("Generating sticker for property number: " . $propertyNumber);
+    
     // Prepare and execute query using mysqli
     $stmt = $db->prepare("SELECT * FROM inventory WHERE property_number = ?");
+    if (!$stmt) {
+        error_log("Prepare failed: " . $db->error);
+        return false;
+    }
+    
     $stmt->bind_param("s", $propertyNumber);
-    $stmt->execute();
+    if (!$stmt->execute()) {
+        error_log("Execute failed: " . $stmt->error);
+        $stmt->close();
+        return false;
+    }
+    
     $result = $stmt->get_result();
     $row = $result->fetch_assoc();
     $stmt->close();
+    
+    // Debug log to check if equipment_type is present in the record
+    if ($row) {
+        error_log("Found record with equipment_type: " . ($row['equipment_type'] ?? 'NOT SET'));
+    }
     
     if (!$row) {
         error_log("Record not found for property number: " . $propertyNumber);

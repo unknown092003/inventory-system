@@ -34,6 +34,7 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Inventory Dashboard</title>
 
     <style>
@@ -142,9 +143,82 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
+    <style>
+
+        
+/* Card Grid Component CSS */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card i {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.card p {
+  margin: 10px 0 0;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Animation */
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Define primary color if not already defined */
+:root {
+  --primary-color: #3498db;
+}
+
+
+    </style>
 
 </head>
 <body>
+
+
+
+
     <!-- introduction of current log in user  -->
     <div class="header_home">
         <h1>Inventory System</h1>
@@ -153,6 +227,66 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
         </div>  
         <!-- <a href="logout.php">Logout</a></p> -->
     </div>
+
+    <div>
+      <div class="card-grid">
+        <div class="card fade-in" onclick="showEquipmentModal('Machinery')">
+          <i class="fas fa-cogs"></i>
+          <h3>Machinery</h3>
+          <p>Heavy equipment and industrial machines</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('Construction')">
+          <i class="fas fa-truck-pickup"></i>
+          <h3>Construction</h3>
+          <p>Tools and vehicles for construction</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('ICT Equipment')">
+          <i class="fas fa-server"></i>
+          <h3>ICT Equipment</h3>
+          <p>Computers, servers, and networking</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('Communications')">
+          <i class="fas fa-satellite-dish"></i>
+          <h3>Communications</h3>
+          <p>Radio and satellite equipment</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('Military/Security')">
+          <i class="fas fa-shield-alt"></i>
+          <h3>Military/Security</h3>
+          <p>Defense and security apparatus</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('Office')">
+          <i class="fas fa-print"></i>
+          <h3>Office</h3>
+          <p>Office supplies and equipment</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('DRRM Equipment')">
+          <i class="fas fa-first-aid"></i>
+          <h3>DRRM</h3>
+          <p>Disaster risk reduction equipment</p>
+        </div>
+        <div class="card fade-in" onclick="showEquipmentModal('Furniture')">
+          <i class="fas fa-couch"></i>
+          <h3>Furniture</h3>
+          <p>Office furniture and fixtures</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Equipment Modal -->
+    <div id="equipment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; padding:20px;">
+      <div style="background:#fff; max-width:600px; margin:50px auto; padding:25px; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
+        <h2 id="equipment-title" style="margin-top:0; color:#333; font-size:24px; text-align:center;"></h2>
+        <div id="equipment-content" style="margin:15px 0;">
+          <!-- Content will be added here later -->
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+          <button onclick="closeEquipmentModal()" style="background:#ff8000; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Close</button>
+        </div>
+      </div>
+    </div>
+
+
        <h2 class="h2_act">Recent Activity</h2>
 <table cellpadding="5" id="activity-table">
     <tr>
@@ -248,6 +382,19 @@ function showChanges(button, changes) {
     }
     
     modal.style.display = 'block';
+}
+
+function showEquipmentModal(equipmentType) {
+  // Set the title in the modal
+  document.getElementById('equipment-title').textContent = equipmentType;
+  
+  // Show the modal
+  document.getElementById('equipment-modal').style.display = 'block';
+}
+
+function closeEquipmentModal() {
+  // Hide the modal
+  document.getElementById('equipment-modal').style.display = 'none';
 }
 </script>
 </body>

@@ -186,7 +186,7 @@
                         <td><?= htmlspecialchars($item['property_number']) ?></td>
                         <td><?= htmlspecialchars($item['description']) ?></td>
                         <td><?= htmlspecialchars($item['model_number'] ?? 'N/A') ?></td>
-                        <td><?= htmlspecialchars($item['equipment_type']) ?></td>
+                        <td><?= htmlspecialchars($item['equipment_type'] ?? 'Not Specified') ?></td>
                         <td><?= $acquired ?></td>
                         <td style="text-align: right;">₱<?= $cost ?></td>
                         <td><?= htmlspecialchars($item['person_accountable'] ?? 'N/A') ?></td>
