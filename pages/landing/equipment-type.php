@@ -21,125 +21,126 @@ $equipment_types = [
     <style>
     .create-page {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #f0f4ff, #ffffff);
+    background: linear-gradient(to right, #1e2a38, #2c3e50);
     margin: 0;
-    /* padding: 30px; */
-    color: #333;
+    color: #f0f4f8;
 }
 
-    .h1_equip {
-        text-align: center;
-        color: #2c3e50;
-        margin-bottom: 40px;
-        font-size: 32px;
-        font-weight: 600;
-    }
+.h1_equip {
+    text-align: center;
+    color: #f0f4f8;
+    text-shadow: 1px 1px 3px rgb(255, 255, 255);
+    margin-bottom: 40px;
+    font-size: 32px;
+    font-weight: 600;
+}
 
-    .type-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 24px;
-        max-width: 1000px;
-        margin: 0 auto;
-        padding: 0 15px;
-    }
+.type-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
 
+.type-card {
+    background: linear-gradient(to bottom right, #2c3e50, #3e5b75);
+    border: 2px solid #4a6b88;
+    border-radius: 14px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+.type-card:hover {
+    background: linear-gradient(to bottom right, #425d77, #5f7b95);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+    border-color: #5fa8e6;
+}
+
+.type-card.selected {
+    border-color: #4CAF50;
+    background: linear-gradient(to bottom right, #35523a, #497d53);
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
+}
+
+.type-card div {
+    font-size: 50px;
+    color: #ffa200;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.type-card h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #f0f4f8;
+    font-weight: 500;
+}
+
+.action-buttons {
+    display: none;
+    margin-top: 50px;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.action-buttons .button {
+    display: inline-block;
+    margin: 10px 15px;
+    padding: 14px 30px;
+    background: #4CAF50;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.action-buttons .button:hover {
+    background: #43a047;
+    transform: scale(1.05);
+}
+
+.action-buttons .button:nth-child(2) {
+    background: #2196F3;
+}
+
+.action-buttons .button:nth-child(2):hover {
+    background: #1976D2;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 600px) {
     .type-card {
-        background: linear-gradient(to bottom right, #ffffff, #f4f6fa);
-        border: 2px solid #ddd;
-        border-radius: 14px;
-        padding: 32px 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-        position: relative;
-    }
-
-    .type-card:hover {
-        background: linear-gradient(to bottom right, #e0f7fa, #ffffff);
-        transform: translateY(-6px);
-        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-        border-color: #2196F3;
-    }
-
-    .type-card.selected {
-        border-color: #4CAF50;
-        background: #e8fbe9;
-        box-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
+        padding: 24px 16px;
     }
 
     .type-card div {
-        font-size: 50px;
-        color: #4CAF50;
-        margin-bottom: 12px;
-        font-weight: bold;
+        font-size: 40px;
     }
 
     .type-card h3 {
-        margin: 0;
-        font-size: 18px;
-        color: #333;
-        font-weight: 500;
-    }
-
-    .action-buttons {
-        display: none;
-        margin-top: 50px;
-        text-align: center;
-        animation: fadeIn 0.3s ease-in-out;
+        font-size: 16px;
     }
 
     .action-buttons .button {
-        display: inline-block;
-        margin: 10px 15px;
-        padding: 14px 30px;
-        background: #4CAF50;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 8px;
-        font-size: 17px;
-        font-weight: 600;
-        transition: background-color 0.3s ease, transform 0.2s;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        padding: 12px 20px;
+        font-size: 15px;
     }
+}
 
-    .action-buttons .button:hover {
-        background: #43a047;
-        transform: scale(1.05);
-    }
-
-    .action-buttons .button:nth-child(2) {
-        background: #2196F3;
-    }
-
-    .action-buttons .button:nth-child(2):hover {
-        background: #1976D2;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @media (max-width: 600px) {
-        .type-card {
-            padding: 24px 16px;
-        }
-
-        .type-card div {
-            font-size: 40px;
-        }
-
-        .type-card h3 {
-            font-size: 16px;
-        }
-
-        .action-buttons .button {
-            padding: 12px 20px;
-            font-size: 15px;
-        }
-    }
 </style>
 </head>
 <body class="create-page">

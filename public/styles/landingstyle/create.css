@@ -61,7 +61,7 @@ h2 {
 .theme-toggle:hover {
   transform: rotate(30deg);
 }
-
+ 
 /* Equipment cards */
 .card-grid {
   display: grid;

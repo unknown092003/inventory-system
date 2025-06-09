@@ -11,7 +11,10 @@
   <!-- HEADER -->
   <header class="header">
     <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-    <h1>OFFICE OF CIVIL DEFENSE</h1>
+    <div>
+      <h1>OFFICE OF CIVIL DEFENSE </h1>
+      <p>Cordillera Administrative Region</p>
+    </div>
     <img src="/inventory-system/public/img/ocd.png" alt="OCD Logo" />
   </header>
 
@@ -19,19 +22,24 @@
   <div class="main-container">
     
     <!-- SIDEBAR -->
-    <nav class="left-nav" id="mobileMenu">
-      <h2>INVENTORY SYSTEM</h2>
-      <hr />
-      <ul>
-        <li><a class="a" href="?page=home">Home</a></li>
-        <li><a class="a" href="?page=list">List</a></li>
-        <li><a class="a" href="?page=create">Create</a></li>
-        <li><a class="a" href="?page=data">Data</a></li>
-        <!-- <li><a href="?page=edit">Edit</a></li> -->
-        <li><a class="a" href="landing/scan.php">Scan</a></li>
-        <li><a class="logout" href="logout.php">Logout</a></li>
-      </ul>
-    </nav>
+<nav class="left-nav" id="mobileMenu">
+  <div class="nav-div">
+    <h2>INVENTORY SYSTEM</h2>
+    <hr />
+    <ul>
+      <li><a class="a" href="?page=home">Home</a></li>
+      <li><a class="a" href="?page=list">List</a></li>
+      <li><a class="a" href="?page=create">Create</a></li>
+      <li><a class="a" href="?page=data">Data</a></li>
+      <li><a class="a" href="landing/scan.php">Scan</a></li>
+    </ul>
+  </div>
+
+  <!-- Move logout outside ul -->
+  <a class="logout" href="logout.php">Logout</a>
+</nav>
+
+
 
     <!-- MAIN CONTENT -->
     <main class="content-area">

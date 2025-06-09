@@ -151,7 +151,7 @@
     <?php endif; ?>
     <!-- <a class="full" href="/inventory-system/pages/landing/data.php">Full Screen</a> -->
     <!-- Show results count -->
-    <div style="margin-bottom: 15px;">
+    <div style="margin-bottom: 15px; color: white;">
         Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
     </div>
 
@@ -161,7 +161,7 @@
     <div style="overflow-x: auto;">
         <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr style="background-color: #f2f2f2;">
+                <tr>
                     <th>Property #</th>
                     <th>Description</th>
                     <th>Model #</th>

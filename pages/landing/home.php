@@ -40,7 +40,7 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
         .welcome-message {
             margin: 10px auto;
             padding: 10px;
-            background: linear-gradient(to right, #1622a7, #dc4d00);
+            /* background: linear-gradient(to right, #1622a7, #dc4d00); */
             color: #fff;
             text-align: center;
             border-radius: 16px;
@@ -48,80 +48,89 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
             animation: fadeIn 0.6s ease;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            border: 2px solid #ffa200;
         }
 
         .welcome-message p {
             margin: 0;
             font-size: 28px;
             letter-spacing: 1px;
-            color: #ffeb8e;
+            color: #ffa200;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
         }
 
         .header_home {
             text-align: center;
             font-weight: bold;
-            color: black;
+            color: white;
             /* padding: 15px; ✅ Add this back */
-            border-bottom: 1px solid #ccc;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            /* border-bottom: 1px solid #ccc; */
+            text-shadow: 1px 1px 3px rgb(255, 255, 255);
             font-size: 20px;
         }
         .h2_act {
             margin: 10px auto;
             font-size: 22px;
             font-weight: 600;
-            text-align: center;
-            color: #333;
+            /* text-align: center; */
+            color: white;
         }
 
         #activity-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 30px;
-            background-color: #fff;
-            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05); */
-            /* border-bottom: 1px solid black; */
+            background-color: #0b2545; /* Slightly lighter than #001938 */
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 2px solid #ffffff10; /* Subtle border */
         }
-        
-        #activity-table th, #activity-table td {
-            padding: 12px 16px;
-            text-align: left;
-            font-size: 15px;
-            border-right: 1px solid rgb(192, 192, 192);
-        }
-        
+
         #activity-table th {
-            background-color: #f9f9f9;
+            background-color: #123456;
+            color: white;
             font-weight: 600;
-            color: #333;
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid #2c3e50;
         }
-                
-        #activity-table {
-            border: 1px solid rgb(0, 0, 0);
+
+        #activity-table td {
+            color: #e0e0e0;
+            padding: 12px 16px;
+            text-align: center;
+            border-bottom: 1px solid #2c3e50;
         }
-        
+
         #activity-table tr:nth-child(even) {
-            background-color: #f4f6f8;
+            background-color: #0e2238;
         }
-        #activity-table tr {
-            border: none !important;
+
+        #activity-table tr:hover {
+            background-color: #1a3a5f;
+        }
+
+        tr td {
+            color: white;
         }
 
         button {
-            background-color: #ff5722;
+            background-color: #ff8000;
             color: white;
             border: none;
             padding: 6px 14px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
             transition: background-color 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
         }
 
         button:hover {
-            background-color: #e64a19;
+            background-color: #e26d00;
         }
+
 
         .changed-field {
             font-weight: bold;

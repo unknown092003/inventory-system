@@ -1,20 +1,18 @@
-Base Styles
-/* 
-  */
-
+/* === Header === */
 .inv-h1 {
-    color: #2c3e50;
+    color: #fff;
     text-align: center;
     margin-bottom: 30px;
     font-size: 2.2rem;
+    text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.7);
 }
 
-/* Search and Sort Container */
+/* === Search & Sort Section === */
 .search-sort-container {
     margin: 20px 0;
     display: flex;
-    gap: 15px;
     flex-wrap: wrap;
+    gap: 15px;
     align-items: center;
     justify-content: center;
 }
@@ -25,124 +23,172 @@ Base Styles
     gap: 10px;
     align-items: center;
     width: 100%;
+    max-width: 800px;
 }
 
-.search-box {
+.search-box,
+.sort-select {
     padding: 10px 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 6px;
-    min-width: 200px;
-    flex-grow: 1;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    flex: 1;
+    transition: 0.3s ease;
 }
 
-.search-box:focus {
-    outline: none;
+.search-box:focus,
+.sort-select:focus {
     border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    outline: none;
 }
 
 .sort-select {
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background-color: white;
-    font-size: 1rem;
+    background-color: #fff;
     cursor: pointer;
-    transition: border-color 0.3s;
 }
 
-.sort-select:focus {
-    outline: none;
-    border-color: #3498db;
-}
-
-/* Buttons */
-.button, #apply, button {
+/* === Buttons === */
+/* === Buttons === */
+.button,
+#apply,
+button {
     padding: 10px 20px;
     border-radius: 6px;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
     border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
+/* Primary Button */
 #apply {
-    background-color: #2c3e50;
-    color: white;
+    background-color: #00aaff;
+    color: #fff;
 }
 
 #apply:hover {
-    background-color: #1a252f;
+    background-color: #008fcc;
 }
 
+/* Danger/Remove Button */
 .button {
-    background-color: #e74c3c;
+    background-color: #ff4f4f;
     color: white;
 }
 
 .button:hover {
-    background-color: #c0392b;
+    background-color: #cc3c3c;
 }
 
+/* View Layout Button */
 .view_layout {
-    background-color: #3498db;
+    background-color: #00c896;
     color: white;
 }
 
 .view_layout:hover {
-    background-color: #2980b9;
+    background-color: #009f79;
 }
 
-/* Table Styles */
+/* === Search Input === */
+.search-box {
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    flex-grow: 1;
+    background-color: #f8f9fa;
+    color: #001938;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: #00aaff;
+    box-shadow: 0 0 0 3px rgba(0, 170, 255, 0.2);
+}
+
+/* === Table Styles === */
+/* === Table Container === */
 .table-container {
     width: 100%;
     overflow-x: auto;
     margin-top: 30px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    background-color: #0b2545; /* slightly lighter than #001938 */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+/* === Table Headings === */
+thead tr {
+    background-color: #123456; /* distinct row background */
+}
+
+thead tr th {
+    color: #ffffff;
+    padding: 12px 16px;
+    text-align: center;
+    border-bottom: 1px solid #2c3e50;
+    font-weight: 600;
+}
+
+/* === Table Body === */
+tbody tr {
+    background-color: #102840;
+    transition: background-color 0.2s;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #0e2238; /* alternate row color */
+}
+
+tbody tr:hover {
+    background-color: #1a3a5f; /* hover highlight */
 }
 
 tbody td {
+    color: #e0e0e0;
+    padding: 12px 16px;
     text-align: center;
-    /* margin: 10px; */
+    border-bottom: 1px solid #2c3e50;
 }
-.pages {
-    /* text-align: center; */
-    padding: 5px;
-    text-decoration: none;
-}
-/* .pagination {
-    text-align: center;
-} */
-/* .full {
-    text-decoration: none;
-    color: black;
-    background-color: #ddd;
-    padding: 5px;
-    border: 1px solid black;
-    margin-bottom: 5px;
-} */
 
-/* Responsive Adjustments */
+/* Optional: Add subtle row divider lines or borders */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+/* === Responsive Font Scaling (optional) === */
+@media (max-width: 768px) {
+    thead tr th,
+    tbody td {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
+
+
+/* === Responsive Design === */
 @media (max-width: 768px) {
     .search-sort-container form {
         flex-direction: column;
         align-items: stretch;
     }
-    
-    .search-box, .sort-select {
+
+    .search-box,
+    .sort-select {
         width: 100%;
-        min-width: auto;
     }
-    
-    body {
-        padding: 15px;
-    }
-    
+
     h1 {
         font-size: 1.8rem;
+    }
+
+    body {
+        padding: 15px;
     }
 }
 
@@ -150,10 +196,11 @@ tbody td {
     .search-sort-container {
         gap: 10px;
     }
-    
-    .button, #apply, button {
+
+    .button,
+    #apply,
+    button {
         padding: 8px 15px;
         font-size: 0.9rem;
     }
-    
 }

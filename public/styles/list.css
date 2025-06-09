@@ -122,3 +122,18 @@ body {
   text-decoration: none;
   color: #000;
 }
+.list-nav {
+  margin-bottom: 10px;
+}
+.list-nav a {
+  text-decoration: none;
+  color:white;
+  /* background-color: white; */
+  padding: 2px 15px;
+  border: 2px solid white;
+}
+.list-nav a:hover {
+  background-color: #1622a7;
+  color: #ffffff;
+  transform: translateX(5px);
+}
