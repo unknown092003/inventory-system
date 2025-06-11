@@ -106,139 +106,219 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Inventory Item</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        a:hover {
-            background-color: #0056b3;
-        }
-        .back-dashboard {
-            position: relative;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 30%;
-            background-color: #007BFF;
-            padding: 7px;
-            border-radius: 4px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        input:focus, select:focus {
-            border-color: #007BFF;
-            outline: none;
-        }
-        .error {
-            color: red;
-            margin-top: 5px;
-            text-align: center;
-        }
-        .button-group {
-            display: flex;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        .back-btn {
-            width: 30%;
-            background-color: #007BFF;
-            padding: 7px;
-            margin-left: 10px;
-            border-radius: 4px;
-        }
-        /* .back-btn:hover {
-            background-color: #0056b3;
-        } */
-        .save-btn{
-            width: 100%;
-            font-weight: bold;
-            font-size: large;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            flex: 1;
-            margin: 0 5px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .qr-image{
-            width: 90%;
-        }
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; /* 15% from the top and centered */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; /* Could be more or less, depending on screen size */
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-        .modal-btn {
-            margin: 5px;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .modal-btn-primary {
-            background-color: #4CAF50; /* Green */
-            color: white;
-        }
-        .modal-btn-secondary {
-            background-color: #f44336; /* Red */
-            color: white;
-        }
+/* Modern Reset */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f3f4f6;
+    color: #1f2937;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    min-height: 100vh;
+    padding: 40px 16px;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    max-width: 700px;
+    width: 100%;
+}
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-align: center;
+    color: #111827;
+}
+
+a.back-dashboard {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a.back-dashboard:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
+}
+
+input[type="text"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.button-group {
+    margin: 24px 0;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.button {
+    padding: 12px 18px;
+    font-size: 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.back-btn {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+.back-btn:hover {
+    background-color: #d1d5db;
+}
+
+.save-btn {
+    background: linear-gradient(to right, #06b6d4, #3b82f6);
+    color: white;
+    border: none;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.save-btn:hover {
+    background: linear-gradient(to right, #0284c7, #2563eb);
+}
+
+.qr-section {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.qr-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 16px;
+}
+
+.qr-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #06b6d4, #3b82f6);
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease;
+}
+
+.qr-btn:hover {
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+}
+
+.qr-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 8px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(31, 41, 55, 0.5);
+}
+
+.modal-content {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 24px;
+    border-radius: 12px;
+    max-width: 400px;
+    text-align: center;
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-btn {
+    padding: 10px 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.modal-btn-primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.modal-btn-secondary {
+    background-color: #e5e7eb;
+    color: #1f2937;
+}
+
+.modal-btn-primary:hover {
+    background-color: #2563eb;
+}
+
+.modal-btn-secondary:hover {
+    background-color: #d1d5db;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+
     </style>
 </head>
 <body>
@@ -249,7 +329,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-        <form method="POST" id="editForm">
+        <form method="POST" id="editForm" class="qr-form">
             <div class="form-group">
                 <label>Property Number:</label>
                 <input type="text" name="property_number" value="<?= htmlspecialchars($item['property_number']) ?>" required>
