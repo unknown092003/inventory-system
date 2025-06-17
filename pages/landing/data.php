@@ -1,110 +1,205 @@
 <?php
-require_once __DIR__ . '/../../api/config.php';
-requireAuth();
+// Include configuration file and authentication check
+require_once __DIR__ . '/../../api/config.php';  // Database configuration
+requireAuth();  // Ensure user is authenticated
 
 // Initialize pagination variables
-$per_page = 20;
-$page = max(1, intval($_GET['page'] ?? 1));
-$offset = ($page - 1) * $per_page;
+$per_page = 20;  // Number of items per page
+$page = max(1, intval($_GET['page'] ?? 1));  // Current page, default to 1
+$offset = ($page - 1) * $per_page;  // Calculate offset for SQL query
 
-// Build the base query
+// Build the base SQL query - selects all inventory fields we need
 $base_query = "SELECT 
     property_number, description, model_number, equipment_type, 
     acquisition_date, cost, person_accountable, remarks,
     signature_of_inventory_team_date
     FROM inventory 
-    WHERE 1=1";
+    WHERE 1=1";  // 1=1 allows easy addition of AND conditions
 
-// Add search conditions
+// Initialize search condition - empty by default
 $search_condition = "";
+
+// Add search conditions if search parameter exists
 if (!empty($_GET['search'])) {
-    $search = $db->real_escape_string($_GET['search']);
-    $search_condition = " AND (property_number LIKE '%$search%' 
-               OR description LIKE '%$search%'
-               OR model_number LIKE '%$search%'
-               OR person_accountable LIKE '%$search%')";
+    $search = $db->real_escape_string($_GET['search']);  // Prevent SQL injection
+    
+    // First try to parse the search term as a date
+    $dateFormats = [
+        'M j, Y' => 'Sep 27, 2024',  // Month abbreviation day, year
+        'F j, Y' => 'September 27, 2024',  // Full month name
+        'Y-m-d' => '2024-09-27',  // ISO format
+        'm/d/Y' => '09/27/2024',  // US format
+        'd/m/Y' => '27/09/2024',  // European format
+        'M j' => 'Sep 27',  // Month abbreviation and day
+        'F j' => 'September 27'  // Full month and day
+    ];
+    
+    $dateConditions = [];
+    foreach ($dateFormats as $format => $example) {
+        $date = DateTime::createFromFormat($format, $search);
+        if ($date !== false) {
+            // If we successfully parsed as a date, add conditions for both formatted and raw dates
+            $mysqlDate = $date->format('Y-m-d');
+            $dateConditions[] = "acquisition_date = '$mysqlDate'";
+            $dateConditions[] = "DATE_FORMAT(acquisition_date, '$format') LIKE '%$search%'";
+        }
+    }
+    
+    // Base search conditions
+    $search_condition = " AND (
+        property_number LIKE '%$search%' 
+        OR description LIKE '%$search%'
+        OR model_number LIKE '%$search%'
+        OR person_accountable LIKE '%$search%'
+        OR equipment_type LIKE '%$search%'
+        OR remarks LIKE '%$search%'";
+    
+    // Add date conditions if we found any valid date formats
+    if (!empty($dateConditions)) {
+        $search_condition .= " OR " . implode(" OR ", $dateConditions);
+    } else {
+        // Fallback to more general date matching if no specific format was matched
+        $search_condition .= "
+            OR DATE_FORMAT(acquisition_date, '%M %d, %Y') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%b %d, %Y') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%Y-%m-%d') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%m/%d/%Y') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%d/%m/%Y') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%M %d') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%b %d') LIKE '%$search%'
+        ";
+    }
+    
+    $search_condition .= ")";
 }
 
-// Add sorting and equipment type filtering
+// Apply equipment type filter if selected
+if (!empty($_GET['equipment_type'])) {
+    $equipment_type = $db->real_escape_string($_GET['equipment_type']);
+    $search_condition .= " AND equipment_type = '$equipment_type'";
+}
+
+// Apply remarks filter if selected
+if (!empty($_GET['remarks'])) {
+    $remarks = $db->real_escape_string($_GET['remarks']);
+    $search_condition .= " AND remarks = '$remarks'";
+}
+
+// Apply month filter if selected
+if (!empty($_GET['month'])) {
+    $month = $db->real_escape_string($_GET['month']);
+    $search_condition .= " AND MONTH(acquisition_date) = '$month'";
+}
+
+// Apply year filter if selected
+if (!empty($_GET['year'])) {
+    $year = $db->real_escape_string($_GET['year']);
+    $search_condition .= " AND YEAR(acquisition_date) = '$year'";
+}
+
+// Apply value filter (high/low) if selected
+if (!empty($_GET['value_sort'])) {
+    if ($_GET['value_sort'] === 'high') {
+        $search_condition .= " AND cost >= 5000";
+    } elseif ($_GET['value_sort'] === 'low') {
+        $search_condition .= " AND cost < 5000";
+    }
+}
+
+// Default sorting by acquisition date (newest first)
 $sort_condition = " ORDER BY acquisition_date DESC";
+
+// Handle different sorting options from dropdown
 if (!empty($_GET['sort'])) {
     switch ($_GET['sort']) {
+        // Date sorting options
         case 'date_asc':
-            $sort_condition = " ORDER BY signature_of_inventory_team_date ASC";
+            $sort_condition = " ORDER BY acquisition_date ASC";
             break;
+            
+        // Property number sorting
         case 'property_asc':
             $sort_condition = " ORDER BY property_number ASC";
             break;
         case 'property_desc':
             $sort_condition = " ORDER BY property_number DESC";
             break;
+            
+        // Person accountable sorting
         case 'person_asc':
             $sort_condition = " ORDER BY person_accountable ASC";
             break;
         case 'person_desc':
             $sort_condition = " ORDER BY person_accountable DESC";
             break;
+            
+        // Equipment type filtering with date sorting
         case 'type_machinery':
             $search_condition .= " AND equipment_type = 'Machinery'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_construction':
             $search_condition .= " AND equipment_type = 'Construction'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_ict':
             $search_condition .= " AND equipment_type = 'ICT Equipment'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_communications':
             $search_condition .= " AND equipment_type = 'Communications'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_military':
             $search_condition .= " AND equipment_type = 'Military/Security'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_office':
             $search_condition .= " AND equipment_type = 'Office'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_drrm':
             $search_condition .= " AND equipment_type = 'DRRM'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_furniture':
             $search_condition .= " AND equipment_type = 'Furniture'";
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
             break;
+            
+        // Default sorting (newest first)
         case 'date_desc':
         default:
-            $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
+            $sort_condition = " ORDER BY acquisition_date DESC";
     }
 }
 
-// Get total count for pagination
+// Get total count of items for pagination
 $count_query = "SELECT COUNT(*) as total FROM inventory WHERE 1=1" . $search_condition;
 $count_result = $db->query($count_query);
 
 if ($count_result) {
     $count_data = $count_result->fetch_assoc();
-    $total_items = $count_data['total'] ?? 0;
-    $total_pages = max(1, ceil($total_items / $per_page));
+    $total_items = $count_data['total'] ?? 0;  // Total matching items
+    $total_pages = max(1, ceil($total_items / $per_page));  // Calculate total pages needed
 } else {
+    // Handle query error
     $total_items = 0;
     $total_pages = 1;
     $_SESSION['error'] = "Error counting inventory items: " . $db->error;
 }
 
-// Build and execute main query
+// Build and execute the main query with pagination
 $query = $base_query . $search_condition . $sort_condition . " LIMIT $offset, $per_page";
 $items = $db->query($query);
 
 if (!$items) {
+    // Handle query error
     $_SESSION['error'] = "Error loading inventory: " . $db->error;
     $items = [];
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,228 +211,131 @@ if (!$items) {
 <body>
     <h1 class="inv-h1">Inventory Database</h1>
     
-<div class="search-sort-container">
-    <!-- Combined Search and Sort Form -->
-    <form method="GET" action="">
-        <input type="hidden" name="page" value="data">
-        
-        <!-- Search Input -->
-        <input type="text" name="search" class="search-box" 
-               placeholder="Search inventory..." 
-               value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-        
-        <!-- Primary Sort Dropdown -->
-        <select name="sort" class="sort-select"> 
-            <option value="date_desc" <?= ($_GET['sort'] ?? 'date_desc') === 'date_desc' ? 'selected' : '' ?>>
-                Newest First
-            </option>
-            <option value="date_asc" <?= ($_GET['sort'] ?? '') === 'date_asc' ? 'selected' : '' ?>>
-                Oldest First
-            </option>
-            
-            <!-- Equipment Type Sorting Options -->
-            <option value="type_machinery" <?= ($_GET['sort'] ?? '') === 'type_machinery' ? 'selected' : '' ?>>
-                Machinery
-            </option>
-            <option value="type_construction" <?= ($_GET['sort'] ?? '') === 'type_construction' ? 'selected' : '' ?>>
-                Construction
-            </option>
-            <option value="type_ict" <?= ($_GET['sort'] ?? '') === 'type_ict' ? 'selected' : '' ?>>
-                ICT Equipment
-            </option>
-            <option value="type_communications" <?= ($_GET['sort'] ?? '') === 'type_communications' ? 'selected' : '' ?>>
-                Communications
-            </option>
-            <option value="type_military" <?= ($_GET['sort'] ?? '') === 'type_military' ? 'selected' : '' ?>>
-                Military/Security
-            </option>
-            <option value="type_office" <?= ($_GET['sort'] ?? '') === 'type_office' ? 'selected' : '' ?>>
-                Office
-            </option>
-            <option value="type_drrm" <?= ($_GET['sort'] ?? '') === 'type_drrm' ? 'selected' : '' ?>>
-                DRRM
-            </option>
-            <option value="type_furniture" <?= ($_GET['sort'] ?? '') === 'type_furniture' ? 'selected' : '' ?>>
-                Furniture
-            </option>
-        </select>
-        
-        <!-- Month Filter -->
-        <select name="month" class="sort-select">
-            <option value="">All Months</option>
-            <?php 
-            $months = [
-                '01' => 'January', '02' => 'February', '03' => 'March', '04' => 'April',
-                '05' => 'May', '06' => 'June', '07' => 'July', '08' => 'August',
-                '09' => 'September', '10' => 'October', '11' => 'November', '12' => 'December'
-            ];
-            foreach ($months as $num => $name): ?>
-                <option value="<?= $num ?>" <?= ($_GET['month'] ?? '') === $num ? 'selected' : '' ?>>
-                    <?= $name ?>
+    <!-- Multi-Filter and Sort Controls -->
+    <div class="search-sort-container">
+        <form method="GET" action="">
+            <input type="hidden" name="page" value="data">
+
+            <!-- Search Input -->
+            <input type="text" name="search" class="search-box"
+                   placeholder="Search property #, description, dates, etc..."
+                   value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+
+            <!-- Equipment Type Filter -->
+            <select name="equipment_type" class="sort-select">
+                <option value="">All Types</option>
+                <option value="Machinery" <?= ($_GET['equipment_type'] ?? '') === 'Machinery' ? 'selected' : '' ?>>Machinery</option>
+                <option value="Construction" <?= ($_GET['equipment_type'] ?? '') === 'Construction' ? 'selected' : '' ?>>Construction</option>
+                <option value="ICT Equipment" <?= ($_GET['equipment_type'] ?? '') === 'ICT Equipment' ? 'selected' : '' ?>>ICT Equipment</option>
+                <option value="Communications" <?= ($_GET['equipment_type'] ?? '') === 'Communications' ? 'selected' : '' ?>>Communications</option>
+                <option value="Military/Security" <?= ($_GET['equipment_type'] ?? '') === 'Military/Security' ? 'selected' : '' ?>>Military/Security</option>
+                <option value="Office" <?= ($_GET['equipment_type'] ?? '') === 'Office' ? 'selected' : '' ?>>Office</option>
+                <option value="DRRM" <?= (($_GET['equipment_type'] ?? '') === 'DRRM') ? 'selected' : '' ?>>DRRM</option>
+                <option value="Furniture" <?= (($_GET['equipment_type'] ?? '') === 'Furniture') ? 'selected' : '' ?>>Furniture</option>
+            </select>
+
+            <!-- Remarks Filter -->
+            <select name="remarks" class="sort-select">
+                <option value="">All Status</option>
+                <option value="service" <?= ($_GET['remarks'] ?? '') === 'service' ? 'selected' : '' ?>>Serviceable</option>
+                <option value="unservice" <?= ($_GET['remarks'] ?? '') === 'unservice' ? 'selected' : '' ?>>Unserviceable</option>
+                <option value="disposed" <?= ($_GET['remarks'] ?? '') === 'disposed' ? 'selected' : '' ?>>Disposed</option>
+            </select>
+
+            <!-- Month Filter -->
+            <select name="month" class="sort-select">
+                <option value="">All Months</option>
+                <?php
+                for ($m = 1; $m <= 12; $m++) {
+                    $month_val = str_pad($m, 2, '0', STR_PAD_LEFT);
+                    $month_name = date('F', mktime(0, 0, 0, $m, 10));
+                    $selected = (($_GET['month'] ?? '') === $month_val) ? 'selected' : '';
+                    echo "<option value=\"$month_val\" $selected>$month_name</option>";
+                }
+                ?>
+            </select>
+
+            <!-- Year Filter -->
+            <select name="year" class="sort-select">
+                <option value="">All Years</option>
+                <?php
+                $currentYear = date('Y');
+                for ($y = $currentYear; $y >= $currentYear - 10; $y--) {
+                    $selected = (($_GET['year'] ?? '') == $y) ? 'selected' : '';
+                    echo "<option value=\"$y\" $selected>$y</option>";
+                }
+                ?>
+            </select>
+
+            <!-- Value Sort -->
+            <select name="value_sort" class="sort-select">
+                <option value="">Sort by Value</option>
+                <option value="high" <?= ($_GET['value_sort'] ?? '') === 'high' ? 'selected' : '' ?>>High Value (≥₱5,000)</option>
+                <option value="low" <?= ($_GET['value_sort'] ?? '') === 'low' ? 'selected' : '' ?>>Low Value (<₱5,000)</option>
+            </select>
+
+            <!-- Primary Sort Dropdown -->
+            <select name="sort" class="sort-select">
+                <option value="date_desc" <?= ($_GET['sort'] ?? 'date_desc') === 'date_desc' ? 'selected' : '' ?>>
+                    Newest First
                 </option>
-            <?php endforeach; ?>
-        </select>
-        
-        <!-- Year Filter -->
-        <select name="year" class="sort-select">
-            <option value="">All Years</option>
-            <?php 
-            $currentYear = date('Y');
-            for ($year = $currentYear; $year >= $currentYear - 5; $year--): ?>
-                <option value="<?= $year ?>" <?= ($_GET['year'] ?? '') == $year ? 'selected' : '' ?>>
-                    <?= $year ?>
+                <option value="date_asc" <?= ($_GET['sort'] ?? '') === 'date_asc' ? 'selected' : '' ?>>
+                    Oldest First
                 </option>
-            <?php endfor; ?>
-        </select>
-        
-        <button id="apply" type="submit">Apply</button>
-        
-        <?php if (isset($_GET['search']) || isset($_GET['month']) || isset($_GET['year']) || (isset($_GET['sort']) && $_GET['sort'] != 'date_desc')): ?>
-            <a href="?page=data" class="button">Clear Filters</a>
-        <?php endif; ?>
-    </form>
+                <option value="property_asc" <?= ($_GET['sort'] ?? '') === 'property_asc' ? 'selected' : '' ?>>
+                    Property # Asc
+                </option>
+                <option value="property_desc" <?= ($_GET['sort'] ?? '') === 'property_desc' ? 'selected' : '' ?>>
+                    Property # Desc
+                </option>
+                <option value="person_asc" <?= ($_GET['sort'] ?? '') === 'person_asc' ? 'selected' : '' ?>>
+                    Accountable A-Z
+                </option>
+                <option value="person_desc" <?= ($_GET['sort'] ?? '') === 'person_desc' ? 'selected' : '' ?>>
+                    Accountable Z-A
+                </option>
+            </select>
 
-    <button class="view_layout" onclick="redirectToExport()">View Layout</button>
-    <script>
-        function redirectToExport() {
-            // Get all current parameters EXCEPT 'page'
-            const params = new URLSearchParams(window.location.search);
-            params.delete('page'); // Remove pagination parameter
-            
-            // Convert to URL-encoded string
-            const queryString = params.toString();
-            
-            // Redirect with all current filters
-            window.location.href = `export.php?${queryString}`;
-        }
-    </script>
-</div>
-    <?php
-    require_once __DIR__ . '/../../api/config.php';
-    requireAuth();
+            <button id="apply" type="submit">Apply</button>
 
-    // Initialize pagination variables
-    $per_page = 20;
-    $page = max(1, intval($_GET['page'] ?? 1));
-    $offset = ($page - 1) * $per_page;
+            <!-- Clear Filters button (only shows when filters are active) -->
+            <?php
+            $filtersActive = !empty($_GET['search']) || !empty($_GET['equipment_type']) || !empty($_GET['remarks']) ||
+                !empty($_GET['month']) || !empty($_GET['year']) || !empty($_GET['value_sort']) ||
+                (isset($_GET['sort']) && $_GET['sort'] != 'date_desc');
+            if ($filtersActive): ?>
+                <a href="?page=data" class="button">Clear Filters</a>
+            <?php endif; ?>
+        </form>
 
-    // Build the base query
-    $base_query = "SELECT 
-        property_number, description, model_number, equipment_type, 
-        acquisition_date, cost, person_accountable, remarks,
-        signature_of_inventory_team_date
-        FROM inventory 
-        WHERE 1=1";
+        <!-- Export/View Layout Button -->
+        <button class="view_layout" onclick="redirectToExport()">View Layout</button>
+        <script>
+            function redirectToExport() {
+                // Get all current search/filter parameters
+                const params = new URLSearchParams(window.location.search);
+                params.delete('page'); // Remove pagination parameter
 
-    // Add search conditions
-    $search_condition = "";
-    if (!empty($_GET['search'])) {
-        $search = $db->real_escape_string($_GET['search']);
-        $search_condition = " AND (property_number LIKE '%$search%' 
-                   OR description LIKE '%$search%'
-                   OR model_number LIKE '%$search%'
-                   OR person_accountable LIKE '%$search%')";
-    }
+                // Redirect to export page with current filters
+                window.location.href = `export.php?${params.toString()}`;
+            }
+        </script>
+    </div>
 
-    // Add sorting and equipment type filtering
-    $sort_condition = " ORDER BY acquisition_date DESC";
-    if (!empty($_GET['sort'])) {
-        switch ($_GET['sort']) {
-            case 'date_asc':
-                $sort_condition = " ORDER BY signature_of_inventory_team_date ASC";
-                break;
-            case 'property_asc':
-                $sort_condition = " ORDER BY property_number ASC";
-                break;
-            case 'property_desc':
-                $sort_condition = " ORDER BY property_number DESC";
-                break;
-            case 'person_asc':
-                $sort_condition = " ORDER BY person_accountable ASC";
-                break;
-            case 'person_desc':
-                $sort_condition = " ORDER BY person_accountable DESC";
-                break;
-            case 'type_machinery':
-                $search_condition .= " AND equipment_type = 'Machinery'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_construction':
-                $search_condition .= " AND equipment_type = 'Construction'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_ict':
-                $search_condition .= " AND equipment_type = 'ICT Equipment'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_communications':
-                $search_condition .= " AND equipment_type = 'Communications'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_military':
-                $search_condition .= " AND equipment_type = 'Military/Security'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_office':
-                $search_condition .= " AND equipment_type = 'Office'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_drrm':
-                $search_condition .= " AND equipment_type = 'DRRM'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'type_furniture':
-                $search_condition .= " AND equipment_type = 'Furniture'";
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-                break;
-            case 'date_desc':
-            default:
-                $sort_condition = " ORDER BY STR_TO_DATE(signature_of_inventory_team_date, '%Y-%m-%d') DESC";
-        }
-    }
-
-    // Get total count for pagination
-    $count_query = "SELECT COUNT(*) as total FROM inventory WHERE 1=1" . $search_condition;
-    $count_result = $db->query($count_query);
-
-    if ($count_result) {
-        $count_data = $count_result->fetch_assoc();
-        $total_items = $count_data['total'] ?? 0;
-        $total_pages = max(1, ceil($total_items / $per_page));
-    } else {
-        $total_items = 0;
-        $total_pages = 1;
-        $_SESSION['error'] = "Error counting inventory items: " . $db->error;
-    }
-
-    // Build and execute main query
-    $query = $base_query . $search_condition . $sort_condition . " LIMIT $offset, $per_page";
-    $items = $db->query($query);
-
-    if (!$items) {
-        $_SESSION['error'] = "Error loading inventory: " . $db->error;
-        $items = [];
-    }
-    ?>
-
-  
-
-    <!-- Display any errors -->
+    <!-- Error Display -->
     <?php if (isset($_SESSION['error'])): ?>
         <div style="color: red; margin-bottom: 15px; padding: 10px; border: 1px solid red;">
             <?= $_SESSION['error'] ?>
             <?php unset($_SESSION['error']); ?>
         </div>
     <?php endif; ?>
-    <!-- <a class="full" href="/inventory-system/pages/landing/data.php">Full Screen</a> -->
-    <!-- Show results count -->
+
+    <!-- Results Count -->
     <div style="margin-bottom: 15px; color: white;">
         Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
     </div>
 
-    <!-- Pagination Top -->
-    
-
+    <!-- Inventory Table -->
     <div style="overflow-x: auto;">
         <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -349,18 +347,26 @@ if (!$items) {
                     <th>Acquired</th>
                     <th>Cost</th>
                     <th>Accountable</th>
-                    <th>Status</th>
-                    <th>Last Updated</th>
+                    <th>Remarks</th>
+                    <!-- <th>Last Updated</th> -->
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if ($items && $items->num_rows > 0): ?>
                     <?php while ($item = $items->fetch_assoc()): 
+                        // Format data for display
                         $cost = number_format($item['cost'], 2);
                         $acquired = date('M j, Y', strtotime($item['acquisition_date']));
                         $updated = $item['signature_of_inventory_team_date'] ? 
                             date('M j, Y', strtotime($item['signature_of_inventory_team_date'])) : 'N/A';
+                        
+                        // Determine status badge class
+                        $status_class = [
+                            'service' => 'status-service',
+                            'unservice' => 'status-unservice',
+                            'disposed' => 'status-disposed'
+                        ][$item['remarks']] ?? '';
                     ?>
                     <tr>
                         <td><?= htmlspecialchars($item['property_number']) ?></td>
@@ -371,19 +377,13 @@ if (!$items) {
                         <td style="text-align: right;">₱<?= $cost ?></td>
                         <td><?= htmlspecialchars($item['person_accountable'] ?? 'N/A') ?></td>
                         <td>
-                            <?php 
-                            $status_class = [
-                                'service' => 'status-service',
-                                'unservice' => 'status-unservice',
-                                'disposed' => 'status-disposed'
-                            ][$item['remarks']] ?? '';
-                            ?>
                             <span class="status-badge <?= $status_class ?>">
                                 <?= ucfirst($item['remarks']) ?>
                             </span>
                         </td>
-                        <td><?= $updated ?></td>
+                        <!-- <td><?= $updated ?></td> -->
                         <td>
+                            <!-- Edit Button -->
                             <a href="edit.php?property_number=<?= urlencode($item['property_number']) ?>" 
                                style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px; " >
                                 Edit
