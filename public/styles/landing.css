@@ -157,10 +157,10 @@ body {
     display: block;
   }
 
-  .main-container {
-    /* flex-direction: column; */
-    /* display: block; */
-  }
+  /* .main-container {
+     flex-direction: column;
+    display: block;
+  } */
 
   .left-nav {
     position: fixed !important;

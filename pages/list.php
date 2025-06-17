@@ -4,17 +4,105 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/inventory-system/public/styles/list.css">
-    <title>Document</title>
+    <title>Inventory Stickers</title>
+    <style>
+        /* SCREEN-SPECIFIC STYLES */
+        .sticker-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .sticker {
+            width: 400px;
+        }
+        
+        .sticker img {
+            width: 70%;
+            margin-top: 3px;
+        }
+        
+        @media print {
+            nav, .list-nav, .navbar, header, footer {
+                display: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="list-nav">
-        <a href="list.php">Print</a>
-        <a href="landing.php">Home</a>
+        <button onclick="printStickers()">Print</button>
     </div>
-
-
+    
+    <script>
+    function printStickers() {
+        // Get all sticker HTML
+        const stickers = document.querySelectorAll('.sticker');
+        let stickersHTML = '';
+        
+        // Build HTML for each sticker with proper print dimensions
+        stickers.forEach(sticker => {
+            stickersHTML += `
+                <div class="print-sticker">
+                    ${sticker.innerHTML.replace('width="70%"', 'width="100%" height="100%"')}
+                </div>
+            `;
+        });
+        
+        // Create print window
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Print Stickers</title>
+                <style>
+                    @page {
+                        size: letter; /* Standard 8.5" x 11" paper */
+                        margin: 0.25in; /* Reduced margins for more space */
+                    }
+                    body {
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .sticker-sheet {
+                        display: grid;
+                        grid-template-columns: repeat(2, 4in); /* 2 columns of 4" stickers */
+                        grid-auto-rows: 2in; /* Each row 2" tall */
+                        gap: 0.1in; /* Small gap between stickers */
+                        width: 8.5in; /* Full page width */
+                        height: 11in; /* Full page height */
+                        padding: 0.1in;
+                        box-sizing: border-box;
+                    }
+                    .print-sticker {
+                        width: 4in;
+                        height: 2in;
+                        overflow: hidden;
+                        page-break-inside: avoid;
+                        border: 1px dashed #ccc; /* Optional: visual guide for cutting */
+                    }
+                    .print-sticker img {
+                        width: 100% !important;
+                        height: 100% !important;
+                        object-fit: contain;
+                        margin: 0 !important;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="sticker-sheet">${stickersHTML}</div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        
+        printWindow.onload = function() {
+            printWindow.print();
+        };
+    }
+    </script>
     <?php
-    // echo '<link rel="stylesheet" href="/inventory-system/public/styles/list.css">';
     require dirname(__FILE__, 2) . "/vendor/autoload.php";
     
     use BaconQrCode\Common\ErrorCorrectionLevel;
@@ -77,9 +165,7 @@
     }
     
     // Display the generated stickers on the webpage
-    echo '<div class="sticker-preview">
-    <style>img{margin-top: 3px;}</style>
-    ';
+    echo '<div class="sticker-preview">';
     foreach ($res as $row) {
         $outputPath = '/inventory-system/qr/' . $row["property_number"] . '.png';
         echo '<div class="sticker">';
@@ -87,8 +173,6 @@
         echo '</div>';
     }
     echo '</div>';
-    
     ?>     
-
 </body>
 </html>

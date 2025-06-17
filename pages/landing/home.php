@@ -113,7 +113,7 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
         }
 
         tr td {
-            color: white;
+            color: black;
         }
 
         button {
@@ -318,24 +318,51 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
 </table>
 
 <!-- Change comparison modal -->
-<div id="changes-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; padding:20px;">
-    <div style="background:white; padding:20px; max-width:800px; margin:50px auto; border-radius:5px;">
-        <h2>Change Comparison</h2>
-        <div style="display:flex; gap:20px;">
-            <div style="flex:1;">
-                <h3 style="color:red;">Old Values</h3>
-                <table border="1" cellpadding="5" id="old-values-table" style="width:100%;"></table>
-            </div>
-            <div style="flex:1;">
-                <h3 style="color:green;">New Values</h3>
-                <table border="1" cellpadding="5" id="new-values-table" style="width:100%;"></table>
-            </div>
-        </div>
-        <button onclick="document.getElementById('changes-modal').style.display='none'" 
-                style="margin-top:20px; padding:5px 10px;">
-            Close
-        </button>
+<div id="changes-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(20,30,40,0.85); z-index:1000; padding:20px;">
+  <div style="background:linear-gradient(135deg,#fffbe7 0%,#e3f0ff 100%); padding:32px 28px 24px 28px; max-width:900px; margin:60px auto; border-radius:18px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
+    <h2 style="text-align:center; color:#1a237e; letter-spacing:1px; margin-bottom:18px; font-size:2rem;">
+      <i class="fas fa-exchange-alt" style="color:#ffa200; margin-right:8px;"></i>
+      Change Comparison
+    </h2>
+    <div style="display:flex; gap:32px; justify-content:center;">
+      <div style="flex:1; background:#fff; border-radius:10px; box-shadow:0 2px 8px #ffa20022; padding:18px;">
+        <h3 style="color:#e53935; text-align:center; font-size:1.1rem; margin-bottom:10px;">
+          <i class="fas fa-history"></i> Old Values
+        </h3>
+        <table border="0" cellpadding="6" id="old-values-table" style="width:100%; border-radius:8px; overflow:hidden; background:#fff8f6;">
+          <style>
+            #old-values-table tr, #old-values-table td, #old-values-table th {
+              color: #222 !important;
+              font-size: 1rem;
+            }
+          </style>
+        </table>
+      </div>
+      <div style="flex:1; background:#fff; border-radius:10px; box-shadow:0 2px 8px #2196f322; padding:18px;">
+        <h3 style="color:#43a047; text-align:center; font-size:1.1rem; margin-bottom:10px;">
+          <i class="fas fa-sync-alt"></i> New Values
+        </h3>
+        <table border="0" cellpadding="6" id="new-values-table" style="width:100%; border-radius:8px; overflow:hidden; background:#f6fff8;">
+          <style>
+            #new-values-table tr, #new-values-table td, #new-values-table th {
+              color: #222 !important;
+              font-size: 1rem;
+            }
+          </style>
+        </table>
+      </div>
     </div>
+    <button onclick="document.getElementById('changes-modal').style.display='none'"
+        style="margin:28px auto 0 auto; display:block; padding:10px 32px; background:linear-gradient(90deg,#ffa200,#ff8000); color:#fff; border:none; border-radius:6px; font-size:1rem; font-weight:600; box-shadow:0 2px 8px #ffa20033; cursor:pointer; transition:background 0.2s;">
+      <i class="fas fa-times"></i> Close
+    </button>
+    <div style="position:absolute; top:18px; right:24px;">
+      <button onclick="document.getElementById('changes-modal').style.display='none'"
+        style="background:none; border:none; font-size:1.5rem; color:#ffa200; cursor:pointer;">
+        <i class="fas fa-times-circle"></i>
+      </button>
+    </div>
+  </div>
 </div>
 
 <script>

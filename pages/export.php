@@ -414,7 +414,7 @@ button:hover {
                         <tr>
                             <td><?= htmlspecialchars($row['person_accountable']) ?></td>
                             <td><?= htmlspecialchars($row['property_number']) ?></td>
-                            <td><?= htmlspecialchars($row['acquisition_date']) ?></td>
+                            <td><?= htmlspecialchars((string)($row['acquisition_date'] ?? '')) ?></td>
                             <td><?= htmlspecialchars($row['description']) ?></td>
                             <td><?= htmlspecialchars($row['model_number']) ?></td>
                             <td><?= htmlspecialchars($row['id']) ?></td>
