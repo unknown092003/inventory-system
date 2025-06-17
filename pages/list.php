@@ -13,13 +13,24 @@
             gap: 10px;
         }
         
-        .sticker {
-            width: 400px;
-        }
-        
         .sticker img {
             width: 70%;
             margin-top: 3px;
+        }
+        
+        .list-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .search-sort-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
         }
         
         @media print {
@@ -31,13 +42,108 @@
 </head>
 <body>
     <div class="list-nav">
+        <div class="search-sort-container">
+            <input type="text" id="searchInput" placeholder="Search all fields..." oninput="filterStickers()">
+            <select id="sortSelect" onchange="filterByEquipmentType()">
+                <option value="all">All Equipment Types</option>
+                <option value="Machinery">Machinery</option>
+                <option value="Construction">Construction</option>
+                <option value="ICT Equipment">ICT Equipment</option>
+                <option value="Communications">Communications</option>
+                <option value="Military/Security">Military/Security</option>
+                <option value="Office">Office</option>
+                <option value="DRRM">DRRM</option>
+                <option value="Furniture">Furniture</option>
+            </select>
+        </div>
         <button onclick="printStickers()">Print</button>
+    </div>
+    
+    <div class="sticker-preview" id="stickerContainer">
+        <?php
+        require dirname(__FILE__, 2) . "/vendor/autoload.php";
+        
+        use BaconQrCode\Common\ErrorCorrectionLevel;
+        use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+        use BaconQrCode\Renderer\ImageRenderer;
+        use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+        use BaconQrCode\Writer;
+        
+        $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
+        $stmt = $pdo->query("SELECT * FROM inventory  ;");
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        $renderer = new ImageRenderer(
+            new RendererStyle(150, 1),
+            new ImagickImageBackEnd()
+        );
+        
+        $writer = new Writer($renderer);
+        
+        // Create QR directory if it doesn't exist
+        $qrDir = dirname(__FILE__, 2) . '/qr';
+        if (!file_exists($qrDir)) {
+            mkdir($qrDir, 0755, true);
+        }
+        
+        foreach ($res as $row) {
+            $outputPath = dirname(__FILE__, 2) . '/qr/' . $row["property_number"] . '.png';
+            
+            // Check if sticker already exists
+            if (!file_exists($outputPath)) {
+                // Only generate if it doesn't exist
+                $templatePath = dirname(__FILE__, 2) . '/templates/sticker-template.png';
+                
+                $im = new Imagick($templatePath);
+                $draw = new ImagickDraw();
+            
+                // Add QR Code
+                $qrCode = new Imagick();
+                $qrCode->readImageBlob($writer->writeString($row["property_number"]));
+                $qrCode->resizeImage(280, 280, Imagick::FILTER_LANCZOS, 1);
+                $im->compositeImage($qrCode, Imagick::COMPOSITE_OVER, 15, 298);
+            
+                // Add Text
+                $draw->setFontSize(30);
+                $draw->setFillColor('black');
+                $im->annotateImage($draw, 600, 95, 0, $row["property_number"]);
+                $im->annotateImage($draw, 600, 160, 0, $row["description"]);
+                $im->annotateImage($draw, 600, 225, 0, $row["model_number"]);
+                $im->annotateImage($draw, 600, 290, 0, $row["acquisition_date"]);
+                $im->annotateImage($draw, 600, 350, 0, $row["cost"]);
+                $im->annotateImage($draw, 600, 410, 0, $row["person_accountable"]);
+                $im->annotateImage($draw, 600, 475, 0, $row["remarks"]);
+                $im->annotateImage($draw, 600, 540, 0, $row["signature_of_inventory_team_date"]);
+            
+                // Save the output
+                $im->writeImage($outputPath);
+                $im->clear();
+                $im->destroy();
+            }
+        }
+        
+        // Display the generated stickers on the webpage
+        foreach ($res as $row) {
+            $outputPath = '/inventory-system/qr/' . $row["property_number"] . '.png';
+            echo '<div class="sticker" 
+                  data-property="' . htmlspecialchars($row["property_number"]) . '" 
+                  data-description="' . htmlspecialchars($row["description"]) . '" 
+                  data-model="' . htmlspecialchars($row["model_number"]) . '"
+                  data-date="' . htmlspecialchars($row["acquisition_date"]) . '"
+                  data-cost="' . htmlspecialchars($row["cost"]) . '"
+                  data-accountable="' . htmlspecialchars($row["person_accountable"]) . '"
+                  data-remarks="' . htmlspecialchars($row["remarks"]) . '"
+                  data-equipment="' . htmlspecialchars($row["equipment_type"] ?? '') . '">';
+            echo '<img src="' . $outputPath . '" alt="Sticker for ' . htmlspecialchars($row["property_number"]) . '" width="70%">';
+            echo '</div>';
+        }
+        ?>     
     </div>
     
     <script>
     function printStickers() {
-        // Get all sticker HTML
-        const stickers = document.querySelectorAll('.sticker');
+        // Get all visible sticker HTML
+        const stickers = document.querySelectorAll('.sticker:not([style*="display: none"])');
         let stickersHTML = '';
         
         // Build HTML for each sticker with proper print dimensions
@@ -101,78 +207,49 @@
             printWindow.print();
         };
     }
-    </script>
-    <?php
-    require dirname(__FILE__, 2) . "/vendor/autoload.php";
     
-    use BaconQrCode\Common\ErrorCorrectionLevel;
-    use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
-    use BaconQrCode\Renderer\ImageRenderer;
-    use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-    use BaconQrCode\Writer;
-    
-    $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
-    $stmt = $pdo->query("SELECT * FROM inventory limit 10;");
-    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-    $renderer = new ImageRenderer(
-        new RendererStyle(150, 1),
-        new ImagickImageBackEnd()
-    );
-    
-    $writer = new Writer($renderer);
-    
-    // Create QR directory if it doesn't exist
-    $qrDir = dirname(__FILE__, 2) . '/qr';
-    if (!file_exists($qrDir)) {
-        mkdir($qrDir, 0755, true);
-    }
-    
-    foreach ($res as $row) {
-        $outputPath = dirname(__FILE__, 2) . '/qr/' . $row["property_number"] . '.png';
+    function filterStickers() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const equipmentType = document.getElementById('sortSelect').value;
+        const stickers = document.querySelectorAll('.sticker');
         
-        // Check if sticker already exists
-        if (!file_exists($outputPath)) {
-            // Only generate if it doesn't exist
-            $templatePath = dirname(__FILE__, 2) . '/templates/sticker-template.png';
+        stickers.forEach(sticker => {
+            // Check equipment type filter first
+            const matchesEquipment = equipmentType === 'all' || 
+                                   sticker.getAttribute('data-equipment') === equipmentType;
             
-            $im = new Imagick($templatePath);
-            $draw = new ImagickDraw();
-        
-            // Add QR Code
-            $qrCode = new Imagick();
-            $qrCode->readImageBlob($writer->writeString($row["property_number"]));
-            $qrCode->resizeImage(280, 280, Imagick::FILTER_LANCZOS, 1);
-            $im->compositeImage($qrCode, Imagick::COMPOSITE_OVER, 15, 298);
-        
-            // Add Text
-            $draw->setFontSize(30);
-            $draw->setFillColor('black');
-            $im->annotateImage($draw, 600, 95, 0, $row["property_number"]);
-            $im->annotateImage($draw, 600, 160, 0, $row["description"]);
-            $im->annotateImage($draw, 600, 225, 0, $row["model_number"]);
-            $im->annotateImage($draw, 600, 290, 0, $row["acquisition_date"]);
-            $im->annotateImage($draw, 600, 350, 0, $row["cost"]);
-            $im->annotateImage($draw, 600, 410, 0, $row["person_accountable"]);
-            $im->annotateImage($draw, 600, 475, 0, $row["remarks"]);
-            $im->annotateImage($draw, 600, 540, 0, $row["signature_of_inventory_team_date"]);
-        
-            // Save the output
-            $im->writeImage($outputPath);
-            $im->clear();
-            $im->destroy();
-        }
+            // If equipment type doesn't match, hide immediately
+            if (!matchesEquipment) {
+                sticker.style.display = 'none';
+                return;
+            }
+            
+            // If we get here, equipment type matches - now check search term
+            let found = false;
+            if (searchTerm === '') {
+                found = true;
+            } else {
+                // Check all data attributes for a match
+                const attributes = sticker.attributes;
+                for (let i = 0; i < attributes.length; i++) {
+                    if (attributes[i].name.startsWith('data-')) {
+                        const value = attributes[i].value.toLowerCase();
+                        if (value.includes(searchTerm)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            sticker.style.display = found ? '' : 'none';
+        });
     }
     
-    // Display the generated stickers on the webpage
-    echo '<div class="sticker-preview">';
-    foreach ($res as $row) {
-        $outputPath = '/inventory-system/qr/' . $row["property_number"] . '.png';
-        echo '<div class="sticker">';
-        echo '<img src="' . $outputPath . '" alt="Sticker for ' . $row["property_number"] . '" width="70%">';
-        echo '</div>';
+    function filterByEquipmentType() {
+        // This will trigger the combined filter
+        filterStickers();
     }
-    echo '</div>';
-    ?>     
+    </script>
 </body>
 </html>
