@@ -153,25 +153,27 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
   gap: 20px;
   margin-top: 20px;
 }
-
 .card {
-  background-color: white;
-  border-radius: 8px;
-  padding: 20px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #3498db;
+    color: black;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+background-color: #2c81ba;
+    transform: scale(1.02);
 }
 
 .card i {
   font-size: 2rem;
-  color: var(--primary-color);
+  color: white;
   margin-bottom: 10px;
 }
 
@@ -183,7 +185,7 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
 .card p {
   margin: 10px 0 0;
   font-size: 0.9rem;
-  color: #666;
+  color: black;
 }
 
 /* Animation */
