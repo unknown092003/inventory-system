@@ -3,11 +3,19 @@ const html5QrCode = new Html5Qrcode("reader");
 const dialog = document.querySelector('dialog');
 const scanAgainBtn = document.getElementById('scan-again');
 const viewDataBtn = document.getElementById('view-data');
+const switchCamBtn = document.querySelector('button.home-btn:first-child'); // More specific selector
+let currentCameraIndex = 0;
+let cameras = [];
 
 // Function to start scanning
 function startScanner() {
+    // Stop scanner if already running
+    if (html5QrCode.isScanning) {
+        html5QrCode.stop().catch(() => {});
+    }
+    
     html5QrCode.start(
-        { facingMode: "environment" },
+        cameras[currentCameraIndex].id,
         {
             fps: 20,
             qrbox: { width: 250, height: 250 }
@@ -80,6 +88,27 @@ scanAgainBtn.addEventListener('click', () => {
 viewDataBtn.addEventListener('click', () => {
     const propertyNumber = viewDataBtn.getAttribute('data-property-number');
     window.location.href = `/inventory-system/pages/landing/data.php?page=data&search=${encodeURIComponent(propertyNumber)}`;
+});
+
+// Camera switch functionality
+function toggleCamera() {
+    currentCameraIndex = (currentCameraIndex + 1) % cameras.length;
+    const currentCam = cameras[currentCameraIndex];
+89|     console.log('Switching to camera:', currentCam.label || currentCam.id);
+    switchCamBtn.textContent = `Switch Camera (${currentCam.label || `Camera ${currentCameraIndex + 1}`})`;
+    startScanner();
+}
+
+// Get available cameras and initialize
+Html5Qrcode.getCameras().then(devices => {
+    if (devices && devices.length > 1) {
+        cameras = devices;
+        switchCamBtn.style.display = 'block';
+        switchCamBtn.addEventListener('click', toggleCamera);
+    }
+}).catch(err => {
+    console.log("Camera access error:", err);
+    switchCamBtn.style.display = 'none';
 });
 
 // Start scanner when page loads

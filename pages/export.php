@@ -9,12 +9,13 @@ ini_set('display_errors', 1);
 // Get and sanitize parameters
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $sort = isset($_GET['sort']) ? $_GET['sort'] : 'date_desc';
+$monthPicker = isset($_GET['monthPicker']) ? $_GET['monthPicker'] : '';
+$valueSort = isset($_GET['value_sort']) ? $_GET['value_sort'] : '';
 
 // Base query
 $sql = "SELECT * FROM inventory WHERE 1=1";
 $params = [];
 $types = '';
-
 // Add search filter if provided
 if (!empty($search)) {
     $sql .= " AND (
@@ -27,6 +28,22 @@ if (!empty($search)) {
     $searchTerm = '%' . $search . '%';
     $params = array_fill(0, 5, $searchTerm);
     $types = str_repeat('s', count($params));
+}
+// Add month/year filter for acquisition_date if provided
+if (!empty($monthPicker)) {
+    // $monthPicker is in format YYYY-MM
+    $sql .= " AND DATE_FORMAT(acquisition_date, '%Y-%m') = ?";
+    $params[] = $monthPicker;
+    $types .= 's';
+}
+
+// Add value_sort filter for cost level if provided
+if (!empty($valueSort)) {
+    if ($valueSort === 'high') {
+        $sql .= " AND cost >= 5000";
+} elseif ($valueSort === 'low') {
+    $sql .= " AND cost < 5000";
+}
 }
 
 // Validate and set sort order
@@ -276,7 +293,21 @@ button:hover {
 }
 
 /* Print Styles - Optimized for PDF/Word Export */
-@media print {
+    /* Add padding to account for fixed nav */
+    body {
+        padding-top: 80px;
+    }
+
+    @media print {
+        body {
+            padding-top: 0;
+        }
+        .main-nav {
+            display: none !important;
+        }
+    }
+
+\@media print {
     body {
         font-size: 10pt;
         padding: 0;
@@ -352,7 +383,50 @@ button:hover {
     }
 }
 
-/* For PDF export specifically */
+    /* Navigation styles */
+    .main-nav {
+        background: #2c3e50;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .nav-brand {
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 2rem;
+    }
+
+    .nav-link {
+        color: white;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: background 0.3s ease;
+    }
+
+    .nav-link:hover {
+        background: #34495e;
+    }
+
+    .logout {
+        background: #e74c3c;
+    }
+
+    .logout:hover {
+        background: #c0392b;
+    }
+
+    /* For PDF export specifically */
 .pdf-export {
     transform: scale(0.8);
     transform-origin: top left;
@@ -361,14 +435,93 @@ button:hover {
     </style>
 </head>
 <body>
-    <div class="header-group">
-        <div class="controls">
-            <button id="exportPdfBtn">Export to PDF</button>
-            <button id="exportBtn">Export to Excel</button>
-            <button id="exportWordBtn">Export to Word</button>
-            <button id="printBtn">Print</button>
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-brand">Inventory System</div>
+        <div class="nav-links">
+            <div class="header-group">
+                <div class="controls">
+                    <!-- Sort/filter by acquisition date (month/year) -->
+                    <form id="filterForm" method="get" style="display:inline; margin-right:10px;">
+                        <label for="monthPicker">Select Month and Year:</label>
+                        <input type="month" id="monthPicker" name="monthPicker" value="<?= htmlspecialchars($_GET['monthPicker'] ?? '') ?>">
+
+                        <button type="submit" style="display:none;">Apply</button>
+                    </form>
+                    <script>
+                        // Auto-submit on month change
+                        document.getElementById('monthPicker').addEventListener('change', function() {
+                            document.getElementById('filterForm').submit();
+                        });
+                    </script>
+
+                    <!-- Value Sort -->
+                    <select name="value_sort" class="sort-select" id="valueSort">
+                        <option value="">Sort by Value</option>
+                        <option value="high">High Value (≥₱5,000)</option>
+                        <option value="low">Low Value (<₱5,000)</option>
+                    </select>
+                    <script>
+                        // Set selected option based on URL param
+                        (function() {
+                            const params = new URLSearchParams(window.location.search);
+                            const valueSort = params.get('value_sort') || '';
+                            document.getElementById('valueSort').value = valueSort;
+                        })();
+
+                        // On change, submit form with value_sort param
+                        document.getElementById('valueSort').addEventListener('change', function() {
+                            const form = document.getElementById('filterForm');
+                            let url = new URL(window.location.href);
+                            let params = new URLSearchParams(url.search);
+
+                            if (this.value) {
+                                params.set('value_sort', this.value);
+                            } else {
+                                params.delete('value_sort');
+                            }
+                            // Keep monthPicker value
+                            const monthPicker = document.getElementById('monthPicker').value;
+                            if (monthPicker) params.set('monthPicker', monthPicker);
+
+                            // Keep search and sort params if present
+                            if (params.has('search')) params.set('search', params.get('search'));
+                            if (params.has('sort')) params.set('sort', params.get('sort'));
+
+                            window.location.search = params.toString();
+                        });
+                    </script>
+                    <div class="export-dropdown">
+                        <button id="exportDropdownBtn">Export ▼</button>
+                        <div id="exportDropdownMenu" style="display:none; position:absolute; background:white; border:1px solid #ccc; border-radius:4px; min-width:140px; z-index:999;">
+                            <button id="exportPdfBtn" style="width:100%; text-align:left; background:none; color:#1622a7;">Export to PDF</button>
+                            <button id="exportBtn" style="width:100%; text-align:left; background:none; color:#1622a7;">Export to Excel</button>
+                            <button id="exportWordBtn" style="width:100%; text-align:left; background:none; color:#1622a7;">Export to Word</button>
+                        </div>
+                    </div>
+                    <button id="printBtn">Print</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </nav>
+    <script>
+        // Dropdown logic
+        const exportBtn = document.getElementById('exportDropdownBtn');
+        const exportMenu = document.getElementById('exportDropdownMenu');
+        exportBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            exportMenu.style.display = exportMenu.style.display === 'block' ? 'none' : 'block';
+        });
+        // Hide dropdown when clicking outside
+        document.addEventListener('click', function() {
+            exportMenu.style.display = 'none';
+        });
+        // Prevent closing when clicking inside
+        exportMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
+
 
     <div id="exportContent">
         <div class="main-header">

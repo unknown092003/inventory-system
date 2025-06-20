@@ -274,28 +274,6 @@ if (!$items) {
                 <option value="low" <?= ($_GET['value_sort'] ?? '') === 'low' ? 'selected' : '' ?>>Low Value (<₱5,000)</option>
             </select>
 
-            <!-- Primary Sort Dropdown -->
-            <select name="sort" class="sort-select">
-                <option value="date_desc" <?= ($_GET['sort'] ?? 'date_desc') === 'date_desc' ? 'selected' : '' ?>>
-                    Newest First
-                </option>
-                <option value="date_asc" <?= ($_GET['sort'] ?? '') === 'date_asc' ? 'selected' : '' ?>>
-                    Oldest First
-                </option>
-                <option value="property_asc" <?= ($_GET['sort'] ?? '') === 'property_asc' ? 'selected' : '' ?>>
-                    Property # Asc
-                </option>
-                <option value="property_desc" <?= ($_GET['sort'] ?? '') === 'property_desc' ? 'selected' : '' ?>>
-                    Property # Desc
-                </option>
-                <option value="person_asc" <?= ($_GET['sort'] ?? '') === 'person_asc' ? 'selected' : '' ?>>
-                    Accountable A-Z
-                </option>
-                <option value="person_desc" <?= ($_GET['sort'] ?? '') === 'person_desc' ? 'selected' : '' ?>>
-                    Accountable Z-A
-                </option>
-            </select>
-
             <button id="apply" type="submit">Apply</button>
 
             <!-- Clear Filters button (only shows when filters are active) -->
@@ -307,19 +285,6 @@ if (!$items) {
                 <a href="?page=data" class="button">Clear Filters</a>
             <?php endif; ?>
         </form>
-
-        <!-- Export/View Layout Button -->
-        <button class="view_layout" onclick="redirectToExport()">View Layout</button>
-        <script>
-            function redirectToExport() {
-                // Get all current search/filter parameters
-                const params = new URLSearchParams(window.location.search);
-                params.delete('page'); // Remove pagination parameter
-
-                // Redirect to export page with current filters
-                window.location.href = `export.php?${params.toString()}`;
-            }
-        </script>
     </div>
 
     <!-- Error Display -->
