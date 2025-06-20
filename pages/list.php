@@ -6,6 +6,48 @@
     <link rel="stylesheet" href="/inventory-system/public/styles/list.css">
     <title>Inventory Stickers</title>
     <style>
+        input[type="text"],
+            select {
+                padding: 10px 15px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                font-size: 16px;
+                outline: none;
+                background-color: #f9f9f9;
+                transition: border-color 0.3s ease, box-shadow 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            }
+
+            input[type="text"]:focus,
+            select:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+                background-color: #fff;
+            }
+
+            button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                font-size: 16px;
+                font-weight: 500;
+                border: none;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: background-color 0.3s ease, transform 0.2s ease;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            button:hover {
+                background-color: #0056b3;
+                transform: translateY(-1px);
+            }
+
+            button:active {
+                background-color: #004494;
+                transform: scale(0.98);
+            }
+
         /* SCREEN-SPECIFIC STYLES */
         .sticker-preview {
             display: flex;
