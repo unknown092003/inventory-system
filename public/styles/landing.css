@@ -51,7 +51,8 @@ body {
 
 /* Sidebar */
 .left-nav {
-  width: 170px;
+  max-width: 200px;
+  min-width: 170px;
   background-color: #001938;
   padding: 20px;
   border-right: 1px solid #ddd;

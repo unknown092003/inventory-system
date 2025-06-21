@@ -1,27 +1,31 @@
 <?php
+// Include configuration file and authentication check
 require_once __DIR__ . '/../api/config.php';
-requireAuth();
+requireAuth(); // Ensure user is authenticated
 
-// Get and validate equipment type
+// Get and validate equipment type from URL parameter
 $equipment_type = $_GET['type'] ?? '';
+// Define valid equipment types
 $valid_types = ['Machinery', 'Construction', 'ICT Equipment', 'Communications', 
                'Military/Security', 'Office', 'DRRM Equipment', 'Furniture'];
 
+// Validate the equipment type
 if (!in_array($equipment_type, $valid_types)) {
     $_SESSION['error'] = "Invalid equipment type selected. Please choose a valid equipment type.";
     header("Location: equipment-type.php");
     exit();
 }
 
+// Process file upload if POST request with file
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
-    // Validate file upload
+    // Validate file upload errors
     if ($_FILES['excel_file']['error'] !== UPLOAD_ERR_OK) {
         $_SESSION['import_error'] = "File upload error: " . $_FILES['excel_file']['error'];
         header("Location: /inventory-system/pages/landing.php");
         exit();
     }
 
-    // Verify file type
+    // Verify file type is Excel
     $allowed_types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
     $mime_type = finfo_file($finfo, $_FILES['excel_file']['tmp_name']);
@@ -33,55 +37,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         exit();
     }
 
+    // Include required libraries
     require_once __DIR__ .  '/../vendor/autoload.php';
-    // Include the QR generator functionality
+    // Include QR generator functionality
     require_once __DIR__ . '/../api/qr_generator.php';
     
     try {
+        // Process the Excel file
         $file = $_FILES['excel_file']['tmp_name'];
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($file);
         $reader->setReadDataOnly(true);
         $spreadsheet = $reader->load($file);
         $sheet = $spreadsheet->getActiveSheet();
         
+        // Initialize counters
         $imported_count = 0;
         $updated_count = 0;
         $skipped_count = 0;
         $errors = [];
         $success_rows = [];
-        $db->begin_transaction();
+        $db->begin_transaction(); // Start database transaction
 
+        // Iterate through each row in the Excel sheet
         foreach ($sheet->getRowIterator() as $row) {
             if ($row->getRowIndex() == 1) continue; // Skip header row
 
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(true);
             
+            // Get cell values
             $data = [];
             foreach ($cellIterator as $cell) {
                 $data[] = $cell->getValue();
             }
 
-            // Validate minimum columns
+            // Validate minimum columns exist
             if (count($data) < 6) {
                 $errors[] = "Row {$row->getRowIndex()}: Insufficient columns (expected 6, found " . count($data) . ")";
                 $skipped_count++;
                 continue;
             }
 
-            // Process and validate data
+            // Process and validate data from each cell
             $property_number = trim($data[2] ?? '');
             $description = trim($data[3] ?? '');
             $model_number = trim($data[1] ?? null);
+            // Parse acquisition date in different formats
             $acquisition_date = !empty($data[0]) ? 
                 (DateTime::createFromFormat('F j, Y', $data[0]) ?: 
                  DateTime::createFromFormat('m/d/Y', $data[0]) ?: null) : null;
             $person_accountable = trim($data[4] ?? null);
+            // Format cost by removing commas and validating as float
             $cost = !empty($data[5]) ? filter_var(str_replace(',', '', $data[5]), FILTER_VALIDATE_FLOAT) : 0;
             $remarks = 'service';
             
-            // Ensure equipment_type is set for this record
-            // Using the equipment_type from the URL parameter
+            // Log equipment type for debugging
             error_log("Using equipment_type: " . $equipment_type . " for property number: " . $property_number);
 
             // Validate required fields
@@ -102,15 +112,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 continue;
             }
 
-            // Check if item exists
+            // Check if item already exists in database
             $check_stmt = $db->prepare("SELECT id FROM inventory WHERE property_number = ?");
             $check_stmt->bind_param("s", $property_number);
             $check_stmt->execute();
             $exists = $check_stmt->get_result()->num_rows > 0;
             $check_stmt->close();
 
-            // Prepare the appropriate query
+            // Prepare appropriate query based on whether item exists
             if ($exists) {
+                // Update existing record
                 $stmt = $db->prepare("
                     UPDATE inventory SET
                         description = ?,
@@ -136,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     $property_number
                 );
             } else {
-                // Make sure equipment_type is not empty
+                // Insert new record
                 if (empty($equipment_type)) {
                     $equipment_type = $_GET['type'] ?? 'Unknown';
                 }
@@ -149,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 ");
                 $acquisition_date_str = $acquisition_date ? $acquisition_date->format('Y-m-d') : null;
                 
-                // Debug log to verify equipment_type value
+                // Debug log for equipment type
                 error_log("Inserting new record with equipment_type: " . $equipment_type);
                 
                 $stmt->bind_param(
@@ -165,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 );
             }
 
+            // Execute the query and handle results
             if ($stmt->execute()) {
                 if ($exists) {
                     $updated_count++;
@@ -186,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     );
                 }
                 
-                // Auto-generate sticker for this item
+                // Generate QR code sticker for this item
                 generateSticker($property_number);
                 
                 $success_rows[] = $row->getRowIndex();
@@ -197,9 +209,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             $stmt->close();
         }
 
-        $db->commit();
+        $db->commit(); // Commit transaction if all went well
         
-        // Prepare success message
+        // Prepare success message with counts
         $message = "Import completed: ";
         $message .= $imported_count > 0 ? "$imported_count new items added, " : "";
         $message .= $updated_count > 0 ? "$updated_count items updated, " : "";
@@ -208,19 +220,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         
         $_SESSION['import_success'] = $message;
         
+        // Store errors if any occurred
         if (!empty($errors)) {
             $_SESSION['import_errors'] = array_slice($errors, 0, 50); // Limit to 50 errors
             $_SESSION['import_warning'] = count($errors) . " rows had issues during import.";
         }
         
     } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
-        $db->rollback();
+        $db->rollback(); // Rollback on spreadsheet error
         $_SESSION['import_error'] = "Error reading Excel file: " . $e->getMessage();
     } catch (Exception $e) {
-        $db->rollback();
+        $db->rollback(); // Rollback on general error
         $_SESSION['import_error'] = "Import failed: " . $e->getMessage();
     }
 
+    // Redirect back to landing page
     header("Location: /inventory-system/pages/landing.php");
     exit();
 }
@@ -232,6 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
 <head>
     <title>Import Inventory from Excel</title>
     <style>
+        /* CSS styles for the import page */
         .instructions {
             background: #f5f5f5;
             padding: 15px;
@@ -274,6 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     <h1>Import <?= htmlspecialchars($equipment_type) ?> Inventory</h1>
     <a href="/inventory-system/pages/landing.php" style="display: inline-block; margin-bottom: 20px;">← Back to Dashboard</a>
     
+    <!-- Equipment type confirmation section -->
     <div class="type-confirmation">
         <h3 style="margin-top: 0;">Equipment Type Confirmation</h3>
         <p>All imported items will be categorized as: 
@@ -281,6 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         <p>If this is incorrect, <a href="equipment-type.php">go back and select a different type</a>.</p>
     </div>
     
+    <!-- File requirements section -->
     <div class="file-requirements">
         <h3>File Requirements</h3>
         <p>Your Excel file must meet these requirements:</p>
@@ -299,6 +316,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         </ol>
     </div>
     
+    <!-- Duplicate handling explanation -->
     <div class="duplicate-options">
         <h3>Duplicate Handling</h3>
         <p>When items with existing property numbers are found:</p>
@@ -309,6 +327,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         </ul>
     </div>
     
+    <!-- File upload form -->
     <div class="upload-form">
         <form method="POST" enctype="multipart/form-data" id="importForm">
             <div>
@@ -318,6 +337,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 <input type="file" id="excel_file" name="excel_file" accept=".xls,.xlsx" required>
             </div>
             
+            <!-- Progress bar (hidden by default) -->
             <div id="progressContainer" style="display: none; margin: 15px 0;">
                 <div style="width: 100%; background-color: #f3f3f3; border-radius: 5px; overflow: hidden;">
                     <div id="progressBar" style="height: 24px; width: 0; background-color: #4CAF50; text-align: center; line-height: 24px; color: white;">0%</div>
@@ -330,6 +350,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         </form>
     </div>
     
+    <!-- JavaScript for progress bar animation -->
     <script>
         document.getElementById('importForm').addEventListener('submit', function(e) {
             // Show progress bar when form is submitted
@@ -356,6 +377,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     progressStatus.innerHTML = "Finalizing... Please wait, this might take a few minutes.";
                 }
                 
+                // Update progress status messages
                 if (progress >= 70 && progress < 99) {
                     progressStatus.innerHTML = "Generating stickers...";
                 } else if (progress >= 40 && progress < 70) {
@@ -370,6 +392,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         });
     </script>
     
+    <!-- Important notes section -->
     <div style="margin-top: 30px; padding: 15px; background: #fff3e0; border-radius: 5px;">
         <h3>Important Notes</h3>
         <ul>
@@ -380,79 +403,80 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             <li>Stickers will be automatically generated for all imported items</li>
         </ul>
     </div>
+    
+    <!-- Export functionality scripts -->
     <script>
         document.getElementById('exportBtn').addEventListener('click', function() {
-    const exportContent = document.getElementById('exportContent').cloneNode(true);
-    const buttons = exportContent.querySelectorAll('button');
-    buttons.forEach(button => button.remove());
+            const exportContent = document.getElementById('exportContent').cloneNode(true);
+            const buttons = exportContent.querySelectorAll('button');
+            buttons.forEach(button => button.remove());
 
-    const tempDiv = document.createElement('div');
-    tempDiv.style.textAlign = 'center';
-    tempDiv.appendChild(exportContent);
-    document.body.appendChild(tempDiv);
+            const tempDiv = document.createElement('div');
+            tempDiv.style.textAlign = 'center';
+            tempDiv.appendChild(exportContent);
+            document.body.appendChild(tempDiv);
 
-    const wb = XLSX.utils.table_to_book(exportContent.querySelector('table'), {
-        sheet: "Inventory",
-        raw: true
-    });
+            const wb = XLSX.utils.table_to_book(exportContent.querySelector('table'), {
+                sheet: "Inventory",
+                raw: true
+            });
 
-    const today = new Date();
-    const dateString = today.getFullYear() + '-' + 
-                      (today.getMonth() + 1).toString().padStart(2, '0') + '-' + 
-                      today.getDate().toString().padStart(2, '0');
-    const filename = `OCD_Inventory_Report_${dateString}.xlsx`;
+            const today = new Date();
+            const dateString = today.getFullYear() + '-' + 
+                              (today.getMonth() + 1).toString().padStart(2, '0') + '-' + 
+                              today.getDate().toString().padStart(2, '0');
+            const filename = `OCD_Inventory_Report_${dateString}.xlsx`;
 
-    XLSX.writeFile(wb, filename);
-    document.body.removeChild(tempDiv);
-});
+            XLSX.writeFile(wb, filename);
+            document.body.removeChild(tempDiv);
+        });
 
-document.getElementById('exportPdfBtn').addEventListener('click', function () {
-    const element = document.getElementById('exportContent');
-    element.style.width = element.scrollWidth + 'px';
-    element.style.transform = 'scale(0.84) translateX(-90px)';
-    element.style.transformOrigin = 'center top';
+        document.getElementById('exportPdfBtn').addEventListener('click', function () {
+            const element = document.getElementById('exportContent');
+            element.style.width = element.scrollWidth + 'px';
+            element.style.transform = 'scale(0.84) translateX(-90px)';
+            element.style.transformOrigin = 'center top';
 
-    const opt = {
-        margin: 0,
-        filename: 'OCD_Inventory_Report.pdf',
-        image: { type: 'jpeg', quality: 1 },
-        html2canvas: {
-            scale: 1,
-            scrollX: 0,
-            scrollY: -window.scrollY,
-            windowWidth: element.scrollWidth,
-            useCORS: true
-        },
-        jsPDF: {
-            unit: 'mm',
-            format: 'a4',
-            orientation: 'landscape'
-        }
-    };
+            const opt = {
+                margin: 0,
+                filename: 'OCD_Inventory_Report.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: {
+                    scale: 1,
+                    scrollX: 0,
+                    scrollY: -window.scrollY,
+                    windowWidth: element.scrollWidth,
+                    useCORS: true
+                },
+                jsPDF: {
+                    unit: 'mm',
+                    format: 'a4',
+                    orientation: 'landscape'
+                }
+            };
 
-    html2pdf().set(opt).from(element).save().then(() => {
-        element.style.width = '';
-        element.style.transform = '';
-    });
-});
+            html2pdf().set(opt).from(element).save().then(() => {
+                element.style.width = '';
+                element.style.transform = '';
+            });
+        });
 
-document.getElementById('printBtn').addEventListener('click', function() {
-    window.print();
-});
+        document.getElementById('printBtn').addEventListener('click', function() {
+            window.print();
+        });
 
-document.getElementById('exportWordBtn').addEventListener('click', function() {
-    const content = document.getElementById('exportContent').cloneNode(true);
-    const buttons = content.querySelectorAll('button');
-    buttons.forEach(button => button.remove());
+        document.getElementById('exportWordBtn').addEventListener('click', function() {
+            const content = document.getElementById('exportContent').cloneNode(true);
+            const buttons = content.querySelectorAll('button');
+            buttons.forEach(button => button.remove());
 
-    const wrapper = document.createElement('div');
-    wrapper.style.textAlign = 'center';
-    wrapper.appendChild(content);
+            const wrapper = document.createElement('div');
+            wrapper.style.textAlign = 'center';
+            wrapper.appendChild(content);
 
-    const converted = htmlDocx.asBlob(wrapper.innerHTML);
-    saveAs(converted, 'OCD_Inventory_Report.docx');
-});
-
+            const converted = htmlDocx.asBlob(wrapper.innerHTML);
+            saveAs(converted, 'OCD_Inventory_Report.docx');
+        });
     </script>
 </body>
 </html>

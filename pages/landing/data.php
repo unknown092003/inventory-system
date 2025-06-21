@@ -1,14 +1,32 @@
 <?php
+/**
+ * Inventory Management System - Data View
+ * 
+ * This script handles displaying inventory items with pagination, filtering, and sorting capabilities.
+ */
+
 // Include configuration file and authentication check
 require_once __DIR__ . '/../../api/config.php';  // Database configuration
 requireAuth();  // Ensure user is authenticated
 
-// Initialize pagination variables
-$per_page = 20;  // Number of items per page
-$page = max(1, intval($_GET['page'] ?? 1));  // Current page, default to 1
-$offset = ($page - 1) * $per_page;  // Calculate offset for SQL query
+// =============================================
+// PAGINATION CONFIGURATION
+// =============================================
 
-// Build the base SQL query - selects all inventory fields we need
+// Number of items to display per page
+$per_page = 20;
+
+// Get current page from URL, default to 1
+$current_page = max(1, intval($_GET['p'] ?? 1));
+
+// Calculate offset for SQL query
+$offset = ($current_page - 1) * $per_page;
+
+// =============================================
+// BASE QUERY CONSTRUCTION
+// =============================================
+
+// Base SQL query - selects all inventory fields we need
 $base_query = "SELECT 
     property_number, description, model_number, equipment_type, 
     acquisition_date, cost, person_accountable, remarks,
@@ -19,9 +37,13 @@ $base_query = "SELECT
 // Initialize search condition - empty by default
 $search_condition = "";
 
+// =============================================
+// SEARCH FUNCTIONALITY
+// =============================================
+
 // Add search conditions if search parameter exists
 if (!empty($_GET['search'])) {
-    $search = $db->real_escape_string($_GET['search']);  // Prevent SQL injection
+    $search_term = $db->real_escape_string($_GET['search']);  // Prevent SQL injection
     
     // First try to parse the search term as a date
     $dateFormats = [
@@ -36,23 +58,23 @@ if (!empty($_GET['search'])) {
     
     $dateConditions = [];
     foreach ($dateFormats as $format => $example) {
-        $date = DateTime::createFromFormat($format, $search);
+        $date = DateTime::createFromFormat($format, $search_term);
         if ($date !== false) {
             // If we successfully parsed as a date, add conditions for both formatted and raw dates
             $mysqlDate = $date->format('Y-m-d');
             $dateConditions[] = "acquisition_date = '$mysqlDate'";
-            $dateConditions[] = "DATE_FORMAT(acquisition_date, '$format') LIKE '%$search%'";
+            $dateConditions[] = "DATE_FORMAT(acquisition_date, '$format') LIKE '%$search_term%'";
         }
     }
     
     // Base search conditions
     $search_condition = " AND (
-        property_number LIKE '%$search%' 
-        OR description LIKE '%$search%'
-        OR model_number LIKE '%$search%'
-        OR person_accountable LIKE '%$search%'
-        OR equipment_type LIKE '%$search%'
-        OR remarks LIKE '%$search%'";
+        property_number LIKE '%$search_term%' 
+        OR description LIKE '%$search_term%'
+        OR model_number LIKE '%$search_term%'
+        OR person_accountable LIKE '%$search_term%'
+        OR equipment_type LIKE '%$search_term%'
+        OR remarks LIKE '%$search_term%'";
     
     // Add date conditions if we found any valid date formats
     if (!empty($dateConditions)) {
@@ -60,18 +82,22 @@ if (!empty($_GET['search'])) {
     } else {
         // Fallback to more general date matching if no specific format was matched
         $search_condition .= "
-            OR DATE_FORMAT(acquisition_date, '%M %d, %Y') LIKE '%$search%'
-            OR DATE_FORMAT(acquisition_date, '%b %d, %Y') LIKE '%$search%'
-            OR DATE_FORMAT(acquisition_date, '%Y-%m-%d') LIKE '%$search%'
-            OR DATE_FORMAT(acquisition_date, '%m/%d/%Y') LIKE '%$search%'
-            OR DATE_FORMAT(acquisition_date, '%d/%m/%Y') LIKE '%$search%'
-            OR DATE_FORMAT(acquisition_date, '%M %d') LIKE '%$search%'
-            OR DATE_FORMAT(acquisition_date, '%b %d') LIKE '%$search%'
+            OR DATE_FORMAT(acquisition_date, '%M %d, %Y') LIKE '%$search_term%'
+            OR DATE_FORMAT(acquisition_date, '%b %d, %Y') LIKE '%$search_term%'
+            OR DATE_FORMAT(acquisition_date, '%Y-%m-%d') LIKE '%$search_term%'
+            OR DATE_FORMAT(acquisition_date, '%m/%d/%Y') LIKE '%$search_term%'
+            OR DATE_FORMAT(acquisition_date, '%d/%m/%Y') LIKE '%$search_term%'
+            OR DATE_FORMAT(acquisition_date, '%M %d') LIKE '%$search_term%'
+            OR DATE_FORMAT(acquisition_date, '%b %d') LIKE '%$search_term%'
         ";
     }
     
     $search_condition .= ")";
 }
+
+// =============================================
+// FILTERS
+// =============================================
 
 // Apply equipment type filter if selected
 if (!empty($_GET['equipment_type'])) {
@@ -105,6 +131,10 @@ if (!empty($_GET['value_sort'])) {
         $search_condition .= " AND cost < 5000";
     }
 }
+
+// =============================================
+// SORTING
+// =============================================
 
 // Default sorting by acquisition date (newest first)
 $sort_condition = " ORDER BY acquisition_date DESC";
@@ -174,6 +204,10 @@ if (!empty($_GET['sort'])) {
     }
 }
 
+// =============================================
+// PAGINATION CALCULATIONS
+// =============================================
+
 // Get total count of items for pagination
 $count_query = "SELECT COUNT(*) as total FROM inventory WHERE 1=1" . $search_condition;
 $count_result = $db->query($count_query);
@@ -189,6 +223,10 @@ if ($count_result) {
     $_SESSION['error'] = "Error counting inventory items: " . $db->error;
 }
 
+// =============================================
+// DATA FETCHING
+// =============================================
+
 // Build and execute the main query with pagination
 $query = $base_query . $search_condition . $sort_condition . " LIMIT $offset, $per_page";
 $items = $db->query($query);
@@ -197,6 +235,18 @@ if (!$items) {
     // Handle query error
     $_SESSION['error'] = "Error loading inventory: " . $db->error;
     $items = [];
+}
+
+// =============================================
+// URL PARAMETER MANAGEMENT
+// =============================================
+
+// Function to build URL with parameters while maintaining existing ones
+function buildUrl($params = []) {
+    $current_params = $_GET;
+    unset($current_params['p']); // Remove pagination param
+    $merged_params = array_merge($current_params, $params);
+    return '?' . http_build_query($merged_params);
 }
 ?>
 
@@ -207,6 +257,33 @@ if (!$items) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Database</title>
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data_main.css">
+    <style>
+        /* Additional styles for pagination */
+        .pagination {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 2px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+        }
+        .pagination a:hover {
+            background: #f5f5f5;
+        }
+        .pagination .current {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        .pagination .disabled {
+            color: #ccc;
+            pointer-events: none;
+        }
+    </style>
 </head> 
 <body>
     <h1 class="inv-h1">Inventory Database</h1>
@@ -313,7 +390,6 @@ if (!$items) {
                     <th>Cost</th>
                     <th>Accountable</th>
                     <th>Remarks</th>
-                    <!-- <th>Last Updated</th> -->
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -346,11 +422,10 @@ if (!$items) {
                                 <?= ucfirst($item['remarks']) ?>
                             </span>
                         </td>
-                        <!-- <td><?= $updated ?></td> -->
                         <td>
                             <!-- Edit Button -->
                             <a href="edit.php?property_number=<?= urlencode($item['property_number']) ?>" 
-                               style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px; " >
+                               style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px;">
                                 Edit
                             </a>
                         </td>
@@ -358,11 +433,69 @@ if (!$items) {
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="10" style="text-align: center; padding: 20px;">No inventory items found</td>
+                        <td colspan="9" style="text-align: center; padding: 20px;">No inventory items found</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
+    </div>
+
+    <!-- ============================================= -->
+    <!-- PAGINATION CONTROLS -->
+    <!-- ============================================= -->
+    <div class="pagination">
+        <?php if ($current_page > 1): ?>
+            <a href="<?= buildUrl(['p' => 1]) ?>">&laquo; First</a>
+            <a href="<?= buildUrl(['p' => $current_page - 1]) ?>">&lsaquo; Previous</a>
+        <?php else: ?>
+            <span class="disabled">&laquo; First</span>
+            <span class="disabled">&lsaquo; Previous</span>
+        <?php endif; ?>
+
+        <?php
+        // Show page numbers (with ellipsis for many pages)
+        $max_pages_to_show = 5;
+        $start_page = max(1, $current_page - floor($max_pages_to_show / 2));
+        $end_page = min($total_pages, $start_page + $max_pages_to_show - 1);
+        
+        // Adjust if we're at the end
+        if ($end_page - $start_page < $max_pages_to_show - 1) {
+            $start_page = max(1, $end_page - $max_pages_to_show + 1);
+        }
+        
+        // Show first page + ellipsis if needed
+        if ($start_page > 1) {
+            echo '<a href="' . buildUrl(['p' => 1]) . '">1</a>';
+            if ($start_page > 2) {
+                echo '<span>...</span>';
+            }
+        }
+        
+        // Show page numbers
+        for ($i = $start_page; $i <= $end_page; $i++) {
+            if ($i == $current_page) {
+                echo '<span class="current">' . $i . '</span>';
+            } else {
+                echo '<a href="' . buildUrl(['p' => $i]) . '">' . $i . '</a>';
+            }
+        }
+        
+        // Show last page + ellipsis if needed
+        if ($end_page < $total_pages) {
+            if ($end_page < $total_pages - 1) {
+                echo '<span>...</span>';
+            }
+            echo '<a href="' . buildUrl(['p' => $total_pages]) . '">' . $total_pages . '</a>';
+        }
+        ?>
+
+        <?php if ($current_page < $total_pages): ?>
+            <a href="<?= buildUrl(['p' => $current_page + 1]) ?>">Next &rsaquo;</a>
+            <a href="<?= buildUrl(['p' => $total_pages]) ?>">Last &raquo;</a>
+        <?php else: ?>
+            <span class="disabled">Next &rsaquo;</span>
+            <span class="disabled">Last &raquo;</span>
+        <?php endif; ?>
     </div>
 </body>
 </html>
