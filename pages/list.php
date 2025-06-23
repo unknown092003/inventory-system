@@ -129,7 +129,9 @@
         }
         
         foreach ($res as $row) {
-            $outputPath = dirname(__FILE__, 2) . '/qr/' . $row["property_number"] . '.png';
+            // Sanitize property number for filename
+            $safePropertyNumber = preg_replace('/[^A-Za-z0-9_\-]/', '_', $row["property_number"]);
+            $outputPath = dirname(__FILE__, 2) . '/qr/' . $safePropertyNumber . '.png';
             
             // Check if sticker already exists
             if (!file_exists($outputPath)) {
@@ -163,10 +165,10 @@
                 $im->destroy();
             }
         }
-        
         // Display the generated stickers on the webpage
         foreach ($res as $row) {
-            $outputPath = '/inventory-system/qr/' . $row["property_number"] . '.png';
+            $safePropertyNumber = preg_replace('/[^A-Za-z0-9_\-]/', '_', $row["property_number"]);
+            $outputPath = '/inventory-system/qr/' . $safePropertyNumber . '.png';
             echo '<div class="sticker" 
                   data-property="' . htmlspecialchars($row["property_number"]) . '" 
                   data-description="' . htmlspecialchars($row["description"]) . '" 
@@ -179,7 +181,7 @@
             echo '<img src="' . $outputPath . '" alt="Sticker for ' . htmlspecialchars($row["property_number"]) . '" width="70%">';
             echo '</div>';
         }
-        ?>     
+        ?>
     </div>
     
     <script>
