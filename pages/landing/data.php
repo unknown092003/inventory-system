@@ -257,38 +257,12 @@ function buildUrl($params = []) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory Database</title>
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data_main.css">
-    <style>
-        /* Additional styles for pagination */
-        .pagination {
-            margin: 20px 0;
-            text-align: center;
-        }
-        .pagination a, .pagination span {
-            display: inline-block;
-            padding: 8px 12px;
-            margin: 0 2px;
-            border: 1px solid #ddd;
-            text-decoration: none;
-            color: #333;
-        }
-        .pagination a:hover {
-            background: #f5f5f5;
-        }
-        .pagination .current {
-            background: #4CAF50;
-            color: white;
-            border-color: #4CAF50;
-        }
-        .pagination .disabled {
-            color: #ccc;
-            pointer-events: none;
-        }
-    </style>
 </head> 
 <body>
     <h1 class="inv-h1">Inventory Database</h1>
     
     <!-- Multi-Filter and Sort Controls -->
+     <div class="page-wrapper">
     <div class="search-sort-container">
         <form method="GET" action="">
             <input type="hidden" name="page" value="data">
@@ -378,7 +352,7 @@ function buildUrl($params = []) {
     </div>
 
     <!-- Inventory Table -->
-    <div style="overflow-x: auto;">
+    <div style="overflow-x: auto;" class="table-container">
         <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
             <thead>
                 <tr>
@@ -438,6 +412,7 @@ function buildUrl($params = []) {
                 <?php endif; ?>
             </tbody>
         </table>
+    </div>
     </div>
 
     <!-- ============================================= -->

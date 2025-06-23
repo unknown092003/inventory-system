@@ -19,7 +19,7 @@ $equipment_types = [
 <head>
     <title>Select Equipment Type</title>
     <style>
-    .create-page {
+.create-page {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(to right, #1e2a38, #2c3e50);
     margin: 0;
@@ -31,29 +31,32 @@ $equipment_types = [
     color: #f0f4f8;
     text-shadow: 1px 1px 3px rgb(255, 255, 255);
     margin-bottom: 40px;
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 600;
+    padding: 0 10px;
 }
 
 .type-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 16px;
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 15px;
 }
 
 .type-card {
+    flex: 1 1 180px;
+    max-width: 220px;
     background: linear-gradient(to bottom right, #2c3e50, #3e5b75);
     border: 2px solid #4a6b88;
     border-radius: 14px;
-    padding: 32px 20px;
+    padding: 24px 16px;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s ease;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-    position: relative;
 }
 
 .type-card:hover {
@@ -70,7 +73,7 @@ $equipment_types = [
 }
 
 .type-card div {
-    font-size: 50px;
+    font-size: 2.5rem;
     color: #ffa200;
     margin-bottom: 12px;
     font-weight: bold;
@@ -78,27 +81,28 @@ $equipment_types = [
 
 .type-card h3 {
     margin: 0;
-    font-size: 18px;
+    font-size: 1rem;
     color: #f0f4f8;
     font-weight: 500;
 }
 
 .action-buttons {
     display: none;
-    margin-top: 50px;
+    margin-top: 40px;
     text-align: center;
     animation: fadeIn 0.3s ease-in-out;
+    padding: 0 10px;
 }
 
 .action-buttons .button {
     display: inline-block;
-    margin: 10px 15px;
-    padding: 14px 30px;
+    margin: 10px 10px;
+    padding: 12px 22px;
     background: #4CAF50;
     color: #fff;
     text-decoration: none;
     border-radius: 8px;
-    font-size: 17px;
+    font-size: 1rem;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.2s;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -120,25 +124,6 @@ $equipment_types = [
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-@media (max-width: 600px) {
-    .type-card {
-        padding: 24px 16px;
-    }
-
-    .type-card div {
-        font-size: 40px;
-    }
-
-    .type-card h3 {
-        font-size: 16px;
-    }
-
-    .action-buttons .button {
-        padding: 12px 20px;
-        font-size: 15px;
-    }
 }
 
 </style>

@@ -36,191 +36,8 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <title>Inventory Dashboard</title>
-
-    <style>
-        .welcome-message {
-            margin: 10px auto;
-            padding: 10px;
-            /* background: linear-gradient(to right, #1622a7, #dc4d00); */
-            color: #fff;
-            text-align: center;
-            border-radius: 16px;
-            max-width: 400px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            animation: fadeIn 0.6s ease;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            border: 2px solid #ffa200;
-        }
-
-        .welcome-message p {
-            margin: 0;
-            font-size: 28px;
-            letter-spacing: 1px;
-            color: #ffa200;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.4);
-        }
-
-        .header_home {
-            text-align: center;
-            font-weight: bold;
-            color: white;
-            /* padding: 15px; ✅ Add this back */
-            /* border-bottom: 1px solid #ccc; */
-            text-shadow: 1px 1px 3px rgb(255, 255, 255);
-            font-size: 20px;
-        }
-        .h2_act {
-            margin: 10px auto;
-            font-size: 22px;
-            font-weight: 600;
-            /* text-align: center; */
-            color: white;
-        }
-
-        #activity-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 30px;
-            background-color: #0b2545; /* Slightly lighter than #001938 */
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            border: 2px solid #ffffff10; /* Subtle border */
-        }
-
-        #activity-table th {
-            background-color: #123456;
-            color: white;
-            font-weight: 600;
-            padding: 12px 16px;
-            text-align: center;
-            border-bottom: 1px solid #2c3e50;
-        }
-
-        #activity-table td {
-            color: #e0e0e0;
-            padding: 12px 16px;
-            text-align: center;
-            border-bottom: 1px solid #2c3e50;
-        }
-
-        #activity-table tr:nth-child(even) {
-            background-color: #0e2238;
-        }
-
-        #activity-table tr:hover {
-            background-color: #1a3a5f;
-        }
-
-        tr td {
-            color: black;
-        }
-
-        button {
-            background-color: #ff8000;
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        button:hover {
-            background-color: #e26d00;
-        }
-
-
-        .changed-field {
-            font-weight: bold;
-            color: #d84315;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
-    <style>
-
-        
-/* Card Grid Component CSS */
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-.card {
-    background-color: #3498db;
-    color: black;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s;
-    margin-top: 10px;
-}
-
-.card:hover {
-background-color: #2c81ba;
-    transform: scale(1.02);
-}
-
-.card i {
-  font-size: 2rem;
-  color: white;
-  margin-bottom: 10px;
-}
-
-.card h3 {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-.card p {
-  margin: 10px 0 0;
-  font-size: 0.9rem;
-  color: black;
-}
-
-/* Animation */
-.fade-in {
-  animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-/* Utility classes */
-.hidden {
-  display: none;
-}
-
-.text-center {
-  text-align: center;
-}
-
-/* Define primary color if not already defined */
-:root {
-  --primary-color: #3498db;
-}
-
-
-    </style>
-
 </head>
 <body>
-
-
-
-
     <!-- introduction of current log in user  -->
     <div class="header_home">
         <h1>Inventory System</h1>
@@ -277,7 +94,7 @@ background-color: #2c81ba;
     
     <!-- Equipment Modal -->
     <div id="equipment-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; padding:20px; overflow-y:auto;">
-      <div style="background:#fff; max-width:700px; margin:50px auto; padding:25px; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
+      <div style="background:#fff; max-width:800px; margin:50px auto; padding:25px; border-radius:8px; box-shadow:0 5px 15px rgba(0,0,0,0.3);">
         <h2 id="equipment-title" style="margin-top:0; color:#333; font-size:24px; text-align:center;"></h2>
         <div id="equipment-content" style="margin:15px 0;">
           <!-- Content will be added dynamically -->
@@ -290,6 +107,7 @@ background-color: #2c81ba;
 
 
        <h2 class="h2_act">Recent Activity</h2>
+<div class="table-wrapper">
 <table cellpadding="5" id="activity-table">
     <tr>
         <th>Time</th>
@@ -318,7 +136,7 @@ background-color: #2c81ba;
     </tr>
     <?php endforeach; ?>
 </table>
-
+</div>
 <!-- Change comparison modal -->
 <div id="changes-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(20,30,40,0.85); z-index:1000; padding:20px;">
   <div style="background:linear-gradient(135deg,#fffbe7 0%,#e3f0ff 100%); padding:32px 28px 24px 28px; max-width:900px; margin:60px auto; border-radius:18px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
@@ -443,7 +261,7 @@ function showEquipmentModal(equipmentType) {
       // Create statistics display
       const statsHtml = `
         <div style="padding:10px;">
-          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:15px; text-align:center;">
+          <div style="display:grid; grid-template-columns:repeat(auto-fill , minmax(150px, 1fr)); gap:15px; text-align:center;">
             <div style="background:#f0f0f0; padding:15px; border-radius:8px;">
               <div style="font-size:24px; font-weight:bold;">${data.total}</div>
               <div>Total Items</div>

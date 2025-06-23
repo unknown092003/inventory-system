@@ -247,42 +247,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
     <title>Import Inventory from Excel</title>
     <style>
         /* CSS styles for the import page */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 40px;
+            background-color: #f4f6f8;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .type-confirmation,
+        .file-requirements,
+        .duplicate-options,
+        .upload-form,
         .instructions {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .instructions ol {
-            margin-left: 20px;
-        }
-        .type-confirmation {
-            background: #e8f5e9;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        .file-requirements {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 15px 0;
-        }
-        .upload-form {
-            margin-top: 20px;
+            background-color: #ffffff;
+            border-left: 6px solid #3498db;
             padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .upload-form input[type="file"] {
-            margin-bottom: 15px;
+
+        .type-confirmation {
+            border-left-color: #4caf50;
         }
+
+        .file-requirements {
+            border-left-color: #2196f3;
+        }
+
         .duplicate-options {
-            margin: 15px 0;
-            padding: 15px;
-            background: #fff3cd;
-            border-radius: 5px;
+            border-left-color: #fbc02d;
         }
+
+        h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            padding-left: 10px;
+        }
+
+        .upload-form input[type="file"] {
+            display: block;
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        button[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #43a047;
+        }
+
+        #progressContainer {
+            background: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        #progressBar {
+            height: 24px;
+            width: 0;
+            background-color: #4CAF50;
+            text-align: center;
+            line-height: 24px;
+            color: white;
+            border-radius: 3px;
+            transition: width 0.4s ease-in-out;
+        }
+
+        #importForm {
+            margin-top: 20px;
+        }
+
+        #progressStatus {
+            margin-top: 8px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+
+        div[style*="background: #fff3e0"] {
+            background-color: #fff8e1 !important;
+            border-left: 6px solid #ffb300;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        div[style*="background: #fff3e0"] h3 {
+            color: #e65100;
+        }
+
     </style>
 </head>
 <body>
