@@ -15,6 +15,7 @@ if (!in_array($equipment_type, $valid_types)) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $item = [
         'property_number' => $_POST['property_number'],
+        'article' => $_POST['article'],
         'description' => $_POST['description'],
         'model_number' => $_POST['model_number'],
         'acquisition_date' => $_POST['acquisition_date'],
@@ -35,9 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = "Property Number already exists. Please use a different one.";
     } else {
         // Insert only if not duplicate
-        $stmt = $db->prepare("INSERT INTO inventory (property_number, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssds", 
+        $stmt = $db->prepare("INSERT INTO inventory (property_number, article, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssssssds", 
             $item['property_number'],
+            $item['article'],
             $item['description'],
             $item['model_number'],
             $item['acquisition_date'],
@@ -213,6 +215,11 @@ button:hover {
             <div class="form-group">
                 <label>Property Number:</label>
                 <input type="text" name="property_number" required>
+            </div>
+
+            <div class="form-group">
+                <label>article:</label>
+                <input type="text" name="article" required>
             </div>
 
             <div class="form-group">

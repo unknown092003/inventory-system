@@ -449,7 +449,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             <li><strong>Acquisition Date</strong> (e.g. "September 27, 2024" or "09/27/2024")</li>
             <li><strong>Model Number</strong> (ICS NO.)</li>
             <li><strong>Property Number</strong> (required)</li>
-            <li><strong>Description</strong> (required)</li>
+            <li><strong>Description</strong> (Description)</li>
             <li><strong>Person Accountable</strong> (Office/Officer)</li>
             <li><strong>Cost</strong> (e.g. "36,862.81")</li>
         </ol>

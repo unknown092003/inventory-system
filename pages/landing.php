@@ -31,7 +31,7 @@
       <li><a class="a" href="?page=list">List</a></li>
       <li><a class="a" href="?page=create">Create</a></li>
       <li><a class="a" href="?page=data">Data</a></li>
-      <li><a class="a" href="\trial\view\reg.php">VIEW Data</a></li>
+      <li><a class="a" href="viewdata/viewdata2.php">VIEW Data</a></li>
       <li><a class="a" href="landing/scan.php">Scan</a></li>
     </ul>
   </div>

@@ -27,9 +27,9 @@
         
         <dialog id="item-dialog">
             <h2 id="prod-num"></h2>
+            <p id="art"></p>
             <p id="prod-desc"></p>
             <p id="model"></p>
-            <p id="serial"></p>
             <p id="accquisition-date"></p>
             <p id="person-acc"></p>
             <p id="status"></p>
@@ -160,9 +160,9 @@
                     
                     // Populate dialog with data
                     document.getElementById('prod-num').textContent = `Property Number: ${data.property_number}`;
+                    document.getElementById('art').textContent = `Article: ${data.article}`;
                     document.getElementById('prod-desc').textContent = `Description: ${data.description}`;
                     document.getElementById('model').textContent = `Model: ${data.model_number}`;
-                    document.getElementById('serial').textContent = `Serial: ${data.serial_number}`;
                     document.getElementById('accquisition-date').textContent = `Acquired: ${data.acquisition_date_cost}`;
                     document.getElementById('person-acc').textContent = `Accountable: ${data.person_accountable}`;
                     document.getElementById('status').textContent = `Status: ${data.remarks}`;
