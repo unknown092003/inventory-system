@@ -258,7 +258,7 @@ function buildUrl($params = []) {
     <title>Inventory Database</title>
     <link rel="stylesheet" href="/inventory-system/public/styles/landingstyle/data_main.css">
 </head> 
-<body>
+<body class="data_body">
     <h1 class="inv-h1">Inventory Database</h1>
     
     <!-- Multi-Filter and Sort Controls -->
