@@ -332,7 +332,7 @@
                     <div class="header-container">
                         <div class="headerlogo">
                             <div class="ocd-logo">
-                                <img src="\trial\img\ocd.png" alt="OCD Logo">
+                                <img src="/public/img/ocd.png" alt="OCD Logo">
                             </div>
                             <div class="ocd-text">
                                 <h4>Republic of the Philippines</h4>
@@ -342,7 +342,7 @@
                                 <h5>NO. 55 First Road, Quazon HILL PROPER, BAGUIO CITY, 2600</h5>
                             </div>
                             <div class="bp-logo">
-                                <img src="\trial\img\bp.png" alt="BP Logo">
+                                <img src="/public/img/bp.png" alt="BP Logo">
                             </div>
                         </div>
                         <div class="headertype">
