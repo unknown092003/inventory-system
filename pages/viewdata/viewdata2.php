@@ -338,7 +338,7 @@
                 <th colspan="11" style="border:none">
                     <div class="headerlogo">
                         <div class="ocd-logo">
-                            <img src="\trial\img\ocd.png" alt="OCD Logo">
+                            <img src="/public/img/ocd.png" alt="OCD Logo">
                         </div>
                         <div class="ocd-text">
                             <h4>Republic of the Philippines</h4>
@@ -348,7 +348,7 @@
                             <h5>NO. 55 First Road, Quazon HILL PROPER, BAGUIO CITY, 2600</h5>
                         </div>
                         <div class="bp-logo">
-                            <img src="\trial\img\bp.png" alt="BP Logo">
+                            <img src="/public/img/bp.png" alt="BP Logo">
                         </div>
                     </div>
                     <div class="headertype">
@@ -402,7 +402,7 @@
                                   data-status='".htmlspecialchars($row['remarks'])."'
                                   data-date='".htmlspecialchars($row['acquisition_date'])."'
                                   data-value='".htmlspecialchars($row['cost'])."'>";
-                        echo "<td></td>"; // Article
+                        echo "<td>" . htmlspecialchars($row['article']) . "</td>"; // Article
                         echo "<td>" . htmlspecialchars($row['description']) . "</td>"; // Description
                         echo "<td>" . htmlspecialchars($row['acquisition_date']) . "</td>"; // Acquisition Date
                         echo "<td>" . htmlspecialchars($row['property_number']) . "</td>"; // Property Number
