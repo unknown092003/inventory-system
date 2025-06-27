@@ -186,6 +186,7 @@
                     
                     <!-- REGISTRY BUTTON -->
                     <button class="settings-btn" type="button" onclick="window.location.href='viewdata1.php'">Registry</button>
+                    <button class="settings-btn" type="button" onclick="window.location.href='/inventory-system/pages/landing.php'">Return</button>
                 </div>
             </div>
         </div>

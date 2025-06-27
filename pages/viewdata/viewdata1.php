@@ -181,6 +181,7 @@
                     
                     <!-- NAVIGATION BUTTONS -->
                     <button class="settings-btn" type="button" onclick="window.location.href='viewdata2.php'">RPCPPE</button>
+                    <button class="settings-btn" type="button" onclick="window.location.href='/inventory-system/pages/landing.php'">Return</button>
                 </div>
             </div>
         </div>
