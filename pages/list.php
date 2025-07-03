@@ -84,20 +84,43 @@
 </head>
 <body>
     <div class="list-nav">
-        <div class="search-sort-container">
-            <input type="text" id="searchInput" placeholder="Search all fields..." oninput="filterStickers()">
-            <select id="sortSelect" onchange="filterByEquipmentType()">
-                <option value="all">All Equipment Types</option>
-                <option value="Machinery">Machinery</option>
-                <option value="Construction">Construction</option>
-                <option value="ICT Equipment">ICT Equipment</option>
-                <option value="Communications">Communications</option>
-                <option value="Military/Security">Military/Security</option>
-                <option value="Office">Office</option>
-                <option value="DRRM">DRRM</option>
-                <option value="Furniture">Furniture</option>
+        <form method="GET" class="search-sort-container">
+            <input type="hidden" name="page" value="list">
+            <input type="text" name="search" placeholder="Search all fields..." value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+            <select name="equipment_type">
+                <option value="">All Equipment Types</option>
+                <option value="Machinery" <?= ($_GET['equipment_type'] ?? '') === 'Machinery' ? 'selected' : '' ?>>Machinery</option>
+                <option value="Construction" <?= ($_GET['equipment_type'] ?? '') === 'Construction' ? 'selected' : '' ?>>Construction</option>
+                <option value="ICT Equipment" <?= ($_GET['equipment_type'] ?? '') === 'ICT Equipment' ? 'selected' : '' ?>>ICT Equipment</option>
+                <option value="Communications" <?= ($_GET['equipment_type'] ?? '') === 'Communications' ? 'selected' : '' ?>>Communications</option>
+                <option value="Military/Security" <?= ($_GET['equipment_type'] ?? '') === 'Military/Security' ? 'selected' : '' ?>>Military/Security</option>
+                <option value="Office" <?= ($_GET['equipment_type'] ?? '') === 'Office' ? 'selected' : '' ?>>Office</option>
+                <option value="DRRM Equipment" <?= ($_GET['equipment_type'] ?? '') === 'DRRM Equipment' ? 'selected' : '' ?>>DRRM Equipment</option>
+                <option value="Furniture" <?= ($_GET['equipment_type'] ?? '') === 'Furniture' ? 'selected' : '' ?>>Furniture</option>
             </select>
-        </div>
+            <select name="month">
+                <option value="">All Months</option>
+                <?php
+                for ($m = 1; $m <= 12; $m++) {
+                    $month_val = str_pad($m, 2, '0', STR_PAD_LEFT);
+                    $month_name = date('F', mktime(0, 0, 0, $m, 10));
+                    $selected = (($_GET['month'] ?? '') === $month_val) ? 'selected' : '';
+                    echo "<option value=\"$month_val\" $selected>$month_name</option>";
+                }
+                ?>
+            </select>
+            <select name="year">
+                <option value="">All Years</option>
+                <?php
+                $currentYear = date('Y');
+                for ($y = $currentYear; $y >= $currentYear - 10; $y--) {
+                    $selected = (($_GET['year'] ?? '') == $y) ? 'selected' : '';
+                    echo "<option value=\"$y\" $selected>$y</option>";
+                }
+                ?>
+            </select>
+            <button type="submit">Filter</button>
+        </form>
         <button onclick="printStickers()">Print</button>
     </div>
     
@@ -112,7 +135,36 @@
         use BaconQrCode\Writer;
         
         $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
-        $stmt = $pdo->query("SELECT * FROM inventory  ;");
+        
+        // Build query with filters
+        $query = "SELECT * FROM inventory WHERE 1=1";
+        $params = [];
+        
+        if (!empty($_GET['search'])) {
+            $query .= " AND (property_number LIKE ? OR description LIKE ? OR model_number LIKE ? OR person_accountable LIKE ?)";
+            $search = '%' . $_GET['search'] . '%';
+            $params = array_merge($params, [$search, $search, $search, $search]);
+        }
+        
+        if (!empty($_GET['equipment_type'])) {
+            $query .= " AND equipment_type = ?";
+            $params[] = $_GET['equipment_type'];
+        }
+        
+        if (!empty($_GET['month']) && !empty($_GET['year'])) {
+            $query .= " AND MONTH(acquisition_date) = ? AND YEAR(acquisition_date) = ?";
+            $params[] = $_GET['month'];
+            $params[] = $_GET['year'];
+        } elseif (!empty($_GET['month'])) {
+            $query .= " AND MONTH(acquisition_date) = ?";
+            $params[] = $_GET['month'];
+        } elseif (!empty($_GET['year'])) {
+            $query .= " AND YEAR(acquisition_date) = ?";
+            $params[] = $_GET['year'];
+        }
+        
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
         $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
         $renderer = new ImageRenderer(

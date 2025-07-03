@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Insert only if not duplicate
         $stmt = $db->prepare("INSERT INTO inventory (property_number, article, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssssssds", 
+        $stmt->bind_param("sssssssdss", 
             $item['property_number'],
             $item['article'],
             $item['description'],
@@ -263,6 +263,7 @@ button:hover {
             <div class="form-group">
                 <label>Status:</label>
                 <select name="remarks" required>
+                    <option value="standby" selected>Standby</option>
                     <option value="service">In Service</option>
                     <option value="unservice">Unserviceable</option>
                     <option value="disposed">Disposed</option>

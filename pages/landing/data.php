@@ -288,6 +288,7 @@ function buildUrl($params = []) {
             <!-- Remarks Filter -->
             <select name="remarks" class="sort-select">
                 <option value="">All Status</option>
+                <option value="standby" <?= ($_GET['remarks'] ?? '') === 'standby' ? 'selected' : '' ?>>Standby</option>
                 <option value="service" <?= ($_GET['remarks'] ?? '') === 'service' ? 'selected' : '' ?>>Serviceable</option>
                 <option value="unservice" <?= ($_GET['remarks'] ?? '') === 'unservice' ? 'selected' : '' ?>>Unserviceable</option>
                 <option value="disposed" <?= ($_GET['remarks'] ?? '') === 'disposed' ? 'selected' : '' ?>>Disposed</option>
@@ -376,6 +377,7 @@ function buildUrl($params = []) {
                         date('M j, Y', strtotime($item['signature_of_inventory_team_date'])) : 'N/A';
                     
                     $status_class = [
+                        'standby' => 'status-standby',
                         'service' => 'status-service',
                         'unservice' => 'status-unservice',
                         'disposed' => 'status-disposed'

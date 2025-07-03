@@ -318,13 +318,32 @@ select:focus {
     margin-bottom: 12px;
 }
 
+/* for closing 
+ */
+ .modal {
+    transition: opacity 0.3s ease;
+}
+
+.modal.fade-out {
+    opacity: 0;
+}
+
+.modal-btn-tertiary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.modal-btn-tertiary:hover {
+    background-color: #e0e0e0;
+}
+
 
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Edit Inventory Item</h1>
-        <a href="landing.php" class="back-dashboard">Back to Dashboard</a>
         <?php if (isset($error)) echo "<p class='error'>$error</p>"; ?>
 
 
@@ -391,6 +410,7 @@ select:focus {
             <div class="form-group">
                 <label>Status:</label>
                 <select name="remarks" required>
+                    <option value="standby" <?= $item['remarks'] === 'standby' ? 'selected' : '' ?>>Standby</option>
                     <option value="service" <?= $item['remarks'] === 'service' ? 'selected' : '' ?>>In Service</option>
                     <option value="unservice" <?= $item['remarks'] === 'unservice' ? 'selected' : '' ?>>Unserviceable</option>
                     <option value="disposed" <?= $item['remarks'] === 'disposed' ? 'selected' : '' ?>>Disposed</option>
@@ -408,7 +428,8 @@ select:focus {
 
             <div class="button-group">
                 <a href="/inventory-system/pages/landing/scan.php" class="button back-btn">Back to Scanner</a>
-                <a href="/inventory-system/pages/landing.php?page=edit" class="button back-btn">Back to List</a>
+                <a href="/inventory-system/pages/landing/data.php?page=data" class="button back-btn">Back to List</a>
+                 <a href="/inventory-system/pages/landing.php?page=home" class="button back-btn">Back Dashboard</a>
             </div>
                 <button type="submit" class="button save-btn">Save Changes</button>
             
@@ -428,18 +449,18 @@ select:focus {
 
 
 
-        <div id="confirmationModal" class="modal">
-            <div class="modal-content">
-                <h3>Save Changes</h3>
-                <p>What would you like to do after saving?</p>
-                <div class="modal-actions">
-                    <button id="generateQR" class="modal-btn modal-btn-primary">Generate New QR Code</button>
-                    <button id="openScanner" class="modal-btn modal-btn-secondary">Open Scanner</button>
-                    <button id="backToList" class="modal-btn modal-btn-secondary">Back to List</button>
-                    <button id="editAgain" class="modal-btn modal-btn-secondary">Edit Again</button>
-                </div>
-            </div>
+       <div id="confirmationModal" class="modal">
+    <div class="modal-content">
+        <h3>Save Changes</h3>
+        <p>What would you like to do after saving?</p>
+        <div class="modal-actions">
+            <button id="generateQR" class="modal-btn modal-btn-primary">Generate New QR Code</button>
+            <button id="openScanner" class="modal-btn modal-btn-secondary">Open Scanner</button>
+            <button id="backToList" class="modal-btn modal-btn-secondary">Back to List</button>
+            <button id="cancelChanges" class="modal-btn modal-btn-tertiary">Cancel</button>
         </div>
+    </div>
+</div>
 
 
 
@@ -459,14 +480,23 @@ select:focus {
 
 
         document.getElementById('backToList').addEventListener('click', function() {
-            window.location.href = "/inventory-system/pages/landing.php?page=edit";
+            window.location.href = "/inventory-system/pages/landing/data.php?page=data";
         });
 
 
 
-        document.getElementById('editAgain').addEventListener('click', function() {
-            window.location.reload();
-        });
+       document.getElementById('cancelChanges').addEventListener('click', function() {
+    // Close the modal
+    document.getElementById('confirmationModal').style.display = 'none';
+    
+    // Optional: Add fade-out animation
+    const modal = document.getElementById('confirmationModal');
+    modal.classList.add('fade-out');
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('fade-out');
+    }, 300);
+});
 
 
 
