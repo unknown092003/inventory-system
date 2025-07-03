@@ -357,6 +357,11 @@ select:focus {
 
 
             <div class="form-group">
+                <label>Article:</label>
+                <input type="text" name="article" value="<?= htmlspecialchars($item['article'] ?? '') ?>">
+            </div>
+
+            <div class="form-group">
                 <label>Description:</label>
                 <input type="text" name="description" value="<?= htmlspecialchars($item['description']) ?>" required>
             </div>

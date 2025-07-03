@@ -79,7 +79,7 @@ function generateSticker($propertyNumber) {
         $draw->setFontSize(30);
         $draw->setFillColor('black');
         $im->annotateImage($draw, 600, 95, 0, $row["property_number"]);
-        $im->annotateImage($draw, 600, 160, 0, $row["description"]);
+        $im->annotateImage($draw, 600, 160, 0, $row["article"]);
         $im->annotateImage($draw, 600, 225, 0, $row["model_number"]);
         $im->annotateImage($draw, 600, 290, 0, $row["acquisition_date"]);
         $im->annotateImage($draw, 600, 350, 0, $row["cost"]);

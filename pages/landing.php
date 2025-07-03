@@ -6,14 +6,13 @@
   <link rel="stylesheet" href="/inventory-system/public/styles/landing.css" />
   <title>Inventory System</title>
   <style>
-   /* Modal Overlay */
 .modal {
   display: none;
   position: fixed;
   z-index: 1000;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: flex; /* for centering */
+
   justify-content: center;
   align-items: center;
   animation: fadeIn 0.3s ease-in-out;

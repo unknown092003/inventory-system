@@ -47,7 +47,7 @@ if (!$item) {
         <div class="qr-code" id="qrcode"></div>
         
         <div class="item-details">
-            <p><strong>Description:</strong> <?= htmlspecialchars($item['description']) ?></p>
+            <p><strong>Article:</strong> <?= htmlspecialchars($item['article']) ?></p>
             <p><strong>Model:</strong> <?= htmlspecialchars($item['model_number']) ?></p>
             <p><strong>Serial:</strong> <?= htmlspecialchars($item['serial_number']) ?></p>
             <p><strong>Status:</strong> <?= htmlspecialchars($item['status']) ?></p>
@@ -58,7 +58,7 @@ if (!$item) {
         // Generate QR code with item data
         const qrData = `Inventory Item:
 Property: <?= $item['property_number'] ?>
-Description: <?= $item['description'] ?>
+Article: <?= $item['article'] ?>
 Model: <?= $item['model_number'] ?>
 Serial: <?= $item['serial_number'] ?>
 Last Updated: <?= (new Date()).toISOString().split('T')[0] ?>`;

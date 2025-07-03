@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Prepare all fields from the form
     $update_data = [
         'property_number' => $_POST['property_number'],
+        'article' => $_POST['article'] ?? '',
         'description' => $_POST['description'],
         'model_number' => $_POST['model_number'],
         'acquisition_date' => $_POST['acquisition_date'],
@@ -52,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         UPDATE inventory 
         SET 
             property_number = ?,
+            article = ?,
             description = ?,
             model_number = ?,
             acquisition_date = ?,
@@ -66,8 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     $stmt->bind_param(
-        "sssssdssss",
+        "ssssssdssss",
         $update_data['property_number'],
+        $update_data['article'],
         $update_data['description'],
         $update_data['model_number'],
         $update_data['acquisition_date'],
@@ -355,6 +358,11 @@ select:focus {
             </div>
 
 
+
+            <div class="form-group">
+                <label>Article:</label>
+                <input type="text" name="article" value="<?= htmlspecialchars($item['article'] ?? '') ?>">
+            </div>
 
             <div class="form-group">
                 <label>Description:</label>
