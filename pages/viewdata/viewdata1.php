@@ -170,8 +170,8 @@
                     <div class="export-dropdown" id="exportDropdown">
                         <button id="exportDropdownBtn">Copy ▼</button>
                         <div id="exportDropdownMenu">
-                            <button id="copyTableBtn">Copy Basic Table</button>
-                            <button id="copyTableWithLayoutBtn">Copy Table with Layout</button>
+                            <button id="copyTableBtn">Copy With Header</button>
+                            <button id="copyTableWithLayoutBtn">Copy Table Only</button>
                             <button id="copyAsImageBtn">Copy as Image</button>
                         </div>
                     </div>
