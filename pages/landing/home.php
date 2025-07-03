@@ -107,8 +107,8 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
 
 
        <h2 class="h2_act">Recent Activity</h2>
-<div class="table-wrapper">
-<table cellpadding="5" id="activity-table">
+<div class="table-wrapper" style="overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -10px; padding: 0 10px;">
+<table cellpadding="5" id="activity-table" style="min-width: 800px; width: 100%;">
     <tr>
         <th>Time</th>
         <th>Action</th>
@@ -138,52 +138,94 @@ if (isset($_SESSION['import_errors']) && is_array($_SESSION['import_errors'])) {
 </table>
 </div>
 <!-- Change comparison modal -->
-<div id="changes-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(20,30,40,0.85); z-index:1000; padding:20px;">
-  <div style="background:linear-gradient(135deg,#fffbe7 0%,#e3f0ff 100%); padding:32px 28px 24px 28px; max-width:900px; margin:60px auto; border-radius:18px; box-shadow:0 8px 32px rgba(0,0,0,0.18); position:relative;">
-    <h2 style="text-align:center; color:#1a237e; letter-spacing:1px; margin-bottom:18px; font-size:2rem;">
-      <i class="fas fa-exchange-alt" style="color:#ffa200; margin-right:8px;"></i>
+<div id="changes-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(20,30,40,0.85); z-index:1000; padding:10px; overflow-y:auto;">
+  <div style="background:linear-gradient(135deg,#fffbe7 0%,#e3f0ff 100%); padding:24px 16px 20px 16px; max-width:900px; margin:40px auto; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.15); position:relative;">
+    <h2 style="text-align:center; color:#1a237e; letter-spacing:0.5px; margin-bottom:14px; font-size:1.5rem;">
+      <i class="fas fa-exchange-alt" style="color:#ffa200; margin-right:6px;"></i>
       Change Comparison
     </h2>
-    <div style="display:flex; gap:32px; justify-content:center;">
-      <div style="flex:1; background:#fff; border-radius:10px; box-shadow:0 2px 8px #ffa20022; padding:18px;">
-        <h3 style="color:#e53935; text-align:center; font-size:1.1rem; margin-bottom:10px;">
+    <div style="display:flex; flex-direction:column; gap:16px;">
+      <div style="background:#fff; border-radius:8px; box-shadow:0 2px 6px #ffa20022; padding:14px;">
+        <h3 style="color:#e53935; text-align:center; font-size:1rem; margin-bottom:8px;">
           <i class="fas fa-history"></i> Old Values
         </h3>
-        <table border="0" cellpadding="6" id="old-values-table" style="width:100%; border-radius:8px; overflow:hidden; background:#fff8f6;">
-          <style>
-            #old-values-table tr, #old-values-table td, #old-values-table th {
-              color: #222 !important;
-              font-size: 1rem;
-            }
-          </style>
-        </table>
+        <div style="overflow-x:auto;">
+          <table border="0" cellpadding="4" id="old-values-table" style="width:100%; border-radius:6px; overflow:hidden; background:#fff8f6; font-size:0.9rem;">
+          </table>
+        </div>
       </div>
-      <div style="flex:1; background:#fff; border-radius:10px; box-shadow:0 2px 8px #2196f322; padding:18px;">
-        <h3 style="color:#43a047; text-align:center; font-size:1.1rem; margin-bottom:10px;">
+      <div style="background:#fff; border-radius:8px; box-shadow:0 2px 6px #2196f322; padding:14px;">
+        <h3 style="color:#43a047; text-align:center; font-size:1rem; margin-bottom:8px;">
           <i class="fas fa-sync-alt"></i> New Values
         </h3>
-        <table border="0" cellpadding="6" id="new-values-table" style="width:100%; border-radius:8px; overflow:hidden; background:#f6fff8;">
-          <style>
-            #new-values-table tr, #new-values-table td, #new-values-table th {
-              color: #222 !important;
-              font-size: 1rem;
-            }
-          </style>
-        </table>
+        <div style="overflow-x:auto;">
+          <table border="0" cellpadding="4" id="new-values-table" style="width:100%; border-radius:6px; overflow:hidden; background:#f6fff8; font-size:0.9rem;">
+          </table>
+        </div>
       </div>
     </div>
     <button onclick="document.getElementById('changes-modal').style.display='none'"
-        style="margin:28px auto 0 auto; display:block; padding:10px 32px; background:linear-gradient(90deg,#ffa200,#ff8000); color:#fff; border:none; border-radius:6px; font-size:1rem; font-weight:600; box-shadow:0 2px 8px #ffa20033; cursor:pointer; transition:background 0.2s;">
+        style="margin:20px auto 0 auto; display:block; padding:8px 24px; background:linear-gradient(90deg,#ffa200,#ff8000); color:#fff; border:none; border-radius:5px; font-size:0.9rem; font-weight:600; box-shadow:0 2px 6px #ffa20033; cursor:pointer;">
       <i class="fas fa-times"></i> Close
     </button>
-    <div style="position:absolute; top:18px; right:24px;">
+    <div style="position:absolute; top:12px; right:16px;">
       <button onclick="document.getElementById('changes-modal').style.display='none'"
-        style="background:none; border:none; font-size:1.5rem; color:#ffa200; cursor:pointer;">
+        style="background:none; border:none; font-size:1.2rem; color:#ffa200; cursor:pointer;">
         <i class="fas fa-times-circle"></i>
       </button>
     </div>
   </div>
 </div>
+
+<style>
+  /* Desktop styles */
+  @media (min-width: 768px) {
+    #changes-modal > div {
+      padding: 32px 28px 24px 28px;
+      margin: 60px auto;
+      border-radius: 18px;
+    }
+    
+    #changes-modal h2 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+    
+    #changes-modal > div > div {
+      flex-direction: row;
+      gap: 32px;
+    }
+    
+    #changes-modal h3 {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    
+    #changes-modal table {
+      padding: 6px;
+      font-size: 1rem;
+    }
+    
+    #changes-modal button[onclick] {
+      padding: 10px 32px;
+      font-size: 1rem;
+    }
+    
+    #changes-modal > div > div:last-child button {
+      font-size: 1.5rem;
+    }
+  }
+  
+  /* Mobile touch target improvements */
+  button {
+    min-height: 44px; /* Recommended minimum touch target size */
+  }
+  
+  /* Table scrolling for mobile */
+  table {
+    min-width: 300px; /* Ensures tables don't get too narrow */
+  }
+</style>
 
 <script>
 function showChanges(button, changes) {

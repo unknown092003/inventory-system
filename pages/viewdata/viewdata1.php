@@ -328,6 +328,7 @@
     <!-- ========== MAIN INVENTORY TABLE ========== -->
     <div class="rtp_table">
         <table>
+            <!-- OCD header  -->
             <tr>
                 <th colspan="17" style="border:none">
                     <div class="header-container">
@@ -354,7 +355,7 @@
                     </div>
                 </th>
             </tr>
-            
+            <!-- table content area  -->
             <tr>
                 <th rowspan="2">Date</th>
                 <th colspan="2">Reference No.</th>

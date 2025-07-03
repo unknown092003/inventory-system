@@ -351,70 +351,65 @@ function buildUrl($params = []) {
         Showing <?= $offset + 1 ?>-<?= min($offset + $per_page, $total_items) ?> of <?= $total_items ?> items
     </div>
 
-    <!-- Inventory Table -->
-    <div style="overflow-x: auto;" class="table-container">
-        <table border="1" cellpadding="8" style="width: 100%; border-collapse: collapse;">
-            <thead>
+<!-- Inventory Table -->
+<div style="width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0; padding: 10px 0;" class="table-container">
+    <table border="1" cellpadding="6" style="border-collapse: collapse; white-space: nowrap; margin: 0 10px;">
+        <thead>
+            <tr>
+                <th style="min-width: 100px;">Property #</th>
+                <th style="min-width: 150px;">Description</th>
+                <th style="min-width: 100px;">Model #</th>
+                <th style="min-width: 120px;">Type</th>
+                <th style="min-width: 90px;">Acquired</th>
+                <th style="min-width: 90px;">Cost</th>
+                <th style="min-width: 130px;">Accountable</th>
+                <th style="min-width: 100px;">Remarks</th>
+                <th style="min-width: 90px; padding-right: 20px;">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if ($items && $items->num_rows > 0): ?>
+                <?php while ($item = $items->fetch_assoc()): 
+                    $cost = number_format($item['cost'], 2);
+                    $acquired = date('M j, Y', strtotime($item['acquisition_date']));
+                    $updated = $item['signature_of_inventory_team_date'] ? 
+                        date('M j, Y', strtotime($item['signature_of_inventory_team_date'])) : 'N/A';
+                    
+                    $status_class = [
+                        'service' => 'status-service',
+                        'unservice' => 'status-unservice',
+                        'disposed' => 'status-disposed'
+                    ][$item['remarks']] ?? '';
+                ?>
                 <tr>
-                    <th>Property #</th>
-                    <th>Description</th>
-                    <th>Model #</th>
-                    <th>Type</th>
-                    <th>Acquired</th>
-                    <th>Cost</th>
-                    <th>Accountable</th>
-                    <th>Remarks</th>
-                    <th>Actions</th>
+                    <td style="min-width: 100px;"><?= htmlspecialchars($item['property_number']) ?></td>
+                    <td style="min-width: 150px;"><?= htmlspecialchars($item['description']) ?></td>
+                    <td style="min-width: 100px;"><?= htmlspecialchars($item['model_number'] ?? 'N/A') ?></td>
+                    <td style="min-width: 120px;"><?= htmlspecialchars($item['equipment_type'] ?? 'Not Specified') ?></td>
+                    <td style="min-width: 90px;"><?= $acquired ?></td>
+                    <td style="text-align: right; min-width: 90px;">₱<?= $cost ?></td>
+                    <td style="min-width: 130px;"><?= htmlspecialchars($item['person_accountable'] ?? 'N/A') ?></td>
+                    <td style="min-width: 100px;">
+                        <span class="status-badge <?= $status_class ?>">
+                            <?= ucfirst($item['remarks']) ?>
+                        </span>
+                    </td>
+                    <td style="min-width: 90px; padding-right: 20px;">
+                        <a href="edit.php?property_number=<?= urlencode($item['property_number']) ?>" 
+                           style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px; display: inline-block;">
+                            Edit
+                        </a>
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                <?php if ($items && $items->num_rows > 0): ?>
-                    <?php while ($item = $items->fetch_assoc()): 
-                        // Format data for display
-                        $cost = number_format($item['cost'], 2);
-                        $acquired = date('M j, Y', strtotime($item['acquisition_date']));
-                        $updated = $item['signature_of_inventory_team_date'] ? 
-                            date('M j, Y', strtotime($item['signature_of_inventory_team_date'])) : 'N/A';
-                        
-                        // Determine status badge class
-                        $status_class = [
-                            'service' => 'status-service',
-                            'unservice' => 'status-unservice',
-                            'disposed' => 'status-disposed'
-                        ][$item['remarks']] ?? '';
-                    ?>
-                    <tr>
-                        <td><?= htmlspecialchars($item['property_number']) ?></td>
-                        <td><?= htmlspecialchars($item['description']) ?></td>
-                        <td><?= htmlspecialchars($item['model_number'] ?? 'N/A') ?></td>
-                        <td><?= htmlspecialchars($item['equipment_type'] ?? 'Not Specified') ?></td>
-                        <td><?= $acquired ?></td>
-                        <td style="text-align: right;">₱<?= $cost ?></td>
-                        <td><?= htmlspecialchars($item['person_accountable'] ?? 'N/A') ?></td>
-                        <td>
-                            <span class="status-badge <?= $status_class ?>">
-                                <?= ucfirst($item['remarks']) ?>
-                            </span>
-                        </td>
-                        <td>
-                            <!-- Edit Button -->
-                            <a href="edit.php?property_number=<?= urlencode($item['property_number']) ?>" 
-                               style="padding: 4px 8px; background: #4CAF50; color: white; text-decoration: none; border-radius: 3px;">
-                                Edit
-                            </a>
-                        </td>
-                    </tr>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <tr>
-                        <td colspan="9" style="text-align: center; padding: 20px;">No inventory items found</td>
-                    </tr>
-                <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
-    </div>
-
+                <?php endwhile; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="9" style="text-align: center; padding: 15px;">No inventory items found</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
     <!-- ============================================= -->
     <!-- PAGINATION CONTROLS -->
     <!-- ============================================= -->

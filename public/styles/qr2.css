@@ -95,7 +95,8 @@ dialog p#prod-desc {
   margin: 10px;
 } */
 
-dialog p, h2 {
+dialog p,
+h2 {
   border: 1px solid white;
   margin: 2px;
   padding: 5px;
@@ -104,18 +105,18 @@ dialog p, h2 {
 
 /* Home button styles */
 .home-btn {
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    transition: background 0.3s ease;
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  /* border-radius: 5px; */
+  cursor: pointer;
+  margin-bottom: 15px;
+  transition: background 0.3s ease;
 }
 
 .home-btn:hover {
-    background: #0056b3;
+  background: #0056b3;
 }
 
 /* Scan again button as circular image icon */
@@ -131,7 +132,7 @@ dialog p, h2 {
 } */
 
 .scan-again-btn:hover {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
 
 dialog {
@@ -194,9 +195,9 @@ dialog p {
 #view-data:hover {
   background-color: #4951ad;
 } */
- #view-data {
+#view-data {
   display: none;
- }
+}
 #scan-again {
   position: absolute;
   left: 50%;

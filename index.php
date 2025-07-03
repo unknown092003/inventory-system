@@ -18,7 +18,9 @@
                         <h1>Scan</h1>
                     </div>
                     <button id="switch-cam-btn" class="home-btn" style="display:none">Switch Camera</button>
-                    <button class="home-btn"><a href="pages/login.php">Login</a></button>
+                    <button class="home-btn">
+  <a href="/inventory-system/pages/login.php" style="display:block; width:100%; height:100%">Login</a>
+</button>
                 </div>
                 <div id="reader"></div>
                 <p id="message"></p>
