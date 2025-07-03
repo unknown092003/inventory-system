@@ -40,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <button type="submit">Sign In</button>
     </form>
     
-    <div class="register-prompt" style="text-align: center; margin: 1.5rem 0">
+    <!-- <div class="register-prompt" style="text-align: center; margin: 1.5rem 0">
       <p style="color: #4a5568; font-size: 0.9rem; margin-bottom: 0.5rem;">Don't have an account?</p>
       <a href="register.php" style="color: #1622a7; text-decoration: none; font-weight: 600; font-size: 0.9rem">Create Account</a>
-    </div>
+    </div> -->
   </div>
 </div>
 </body>

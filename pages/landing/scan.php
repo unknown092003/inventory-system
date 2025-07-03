@@ -550,8 +550,8 @@
             </div>
             
             <div class="item-detail">
-                <span class="item-label">Serial Number</span>
-                <span id="serial-number" class="item-value empty">N/A</span>
+                <span class="item-label">Article</span>
+                <span id="article" class="item-value empty">N/A</span>
             </div>
             
             <div class="item-detail">
@@ -819,7 +819,7 @@
             
             updateField('description', data.description);
             updateField('model-number', data.model_number);
-            updateField('serial-number', data.serial_number);
+            updateField('article', data.article);
             updateField('acquisition-date', formatDate(data.acquisition_date));
             updateField('person-accountable', data.person_accountable);
             updateStatusField(data.remarks);
