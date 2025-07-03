@@ -92,7 +92,6 @@
         .filter-group input {
             width: 100%;
             padding: 8px 12px;
-            border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 14px;
         }
@@ -354,8 +353,19 @@
                     </div>
                     <div class="headertype">
                         <h3>REPORT ON THE PHYSICAL COUNT OF PROPERTY, PLANT AND EQUIPMENT</h3>
-                        <p><strong>Information, Communication and Technology Equipment</strong></p>
-                        <p>As of (date)</p>
+                        <p><strong><?= !empty($_GET['equipmentFilter']) && $_GET['equipmentFilter'] !== 'all' ? htmlspecialchars($_GET['equipmentFilter']) : 'All Equipment Types' ?></strong></p>
+                        <p><input style="text-align:center;"type="text" placeholder="as of "></p>
+
+                    </div>
+                    <div class="title">
+                        <style>
+                            input{
+                                border:none;
+                                outline: none;
+                            }
+                        </style>
+                        <input type="text" name="" id="" placeholder="Enter Fund Cluster" >
+                        <input type="text" name="" id="" placeholder="Enter Fund Cluster" >
                     </div>
                 </th>
             </tr>
@@ -667,11 +677,32 @@
          */
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const equipmentType = document.getElementById('equipmentTypeFilter').value.toLowerCase();
+            const equipmentType = document.getElementById('equipmentTypeFilter').value;
             const remarksFilter = document.getElementById('remarksFilter').value.toLowerCase();
             const month = document.getElementById('monthFilter').value;
             const year = document.getElementById('yearFilter').value;
             const valueFilter = document.getElementById('valueFilter').value;
+            
+            // Update URL with equipment filter to change header
+            if (equipmentType !== 'all') {
+                const url = new URL(window.location);
+                url.searchParams.set('equipmentFilter', equipmentType);
+                window.history.replaceState({}, '', url);
+                // Update header immediately
+                const headerText = document.querySelector('.headertype p strong');
+                if (headerText) {
+                    headerText.textContent = equipmentType;
+                }
+            } else {
+                const url = new URL(window.location);
+                url.searchParams.delete('equipmentFilter');
+                window.history.replaceState({}, '', url);
+                // Update header immediately
+                const headerText = document.querySelector('.headertype p strong');
+                if (headerText) {
+                    headerText.textContent = 'All Equipment Types';
+                }
+            }
 
             const rows = document.querySelectorAll('.rtp_table table tr');
             
@@ -708,8 +739,8 @@
                                     rowData.remarks.includes(searchTerm);
                 
                 const matchesEquipment = equipmentType === 'all' || 
-                                       rowData.equipment.includes(equipmentType) || 
-                                       rowData.description.includes(equipmentType);
+                                       rowData.equipment === equipmentType.toLowerCase() || 
+                                       rowData.equipment.includes(equipmentType.toLowerCase());
                 
                 const matchesStatus = remarksFilter === 'all' || 
                                     (remarksFilter === 'service' && rowData.status.includes('service')) ||

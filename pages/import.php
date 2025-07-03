@@ -71,12 +71,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             if ($row->getRowIndex() == 1) continue; // Skip header row
 
             $cellIterator = $row->getCellIterator();
-            $cellIterator->setIterateOnlyExistingCells(true);
+            $cellIterator->setIterateOnlyExistingCells(false);
             
-            // Get all cell values for this row
+            // Get all cell values for this row, ensuring we get exactly 7 columns
             $data = [];
+            $columnCount = 0;
             foreach ($cellIterator as $cell) {
+                if ($columnCount >= 7) break; // Only process first 7 columns
                 $data[] = $cell->getValue();
+                $columnCount++;
+            }
+            
+            // Ensure we have exactly 7 columns (pad with empty strings if needed)
+            while (count($data) < 7) {
+                $data[] = '';
             }
 
             /**
