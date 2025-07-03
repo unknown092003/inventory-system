@@ -116,9 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             ];
 
             // Assign values based on the fixed column mapping
-            $article = (isset($data[$columns['article']]) && !empty(trim($data[$columns['article']])))
-                ? trim($data[$columns['article']])
-                : null;
+            $article = isset($data[$columns['article']]) ? trim($data[$columns['article']]) : null;
 
             // Process acquisition date if available
             if (isset($data[$columns['acquisition_date']]) && !empty(trim($data[$columns['acquisition_date']]))) {
@@ -306,249 +304,313 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
 <html>
 <head>
     <title>Import Inventory from Excel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS styles for the import page */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 40px;
-            background-color: #f4f6f8;
-            color: #333;
+        /* Senior Web Designer Styles */
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #50e3c2;
+            --text-color: #4a4a4a;
+            --bg-color: #f7f9fc;
+            --card-bg: #ffffff;
+            --border-color: #e6e6e6;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
         }
-
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 40px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .main-container {
+            display: flex;
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .import-panel, .guide-panel {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            flex-grow: 1;
+        }
+        .import-panel {
+            flex-basis: 60%;
+        }
+        .guide-panel {
+            flex-basis: 40%;
+            position: sticky;
+            top: 40px;
+        }
+        h1, h2, h3 {
+            color: #333;
+            font-weight: 600;
+        }
         h1 {
             font-size: 28px;
-            margin-bottom: 10px;
-            color: #2c3e50;
+            margin: 0 0 10px 0;
         }
-
-        a {
-            color: #3498db;
+        .breadcrumb {
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .breadcrumb a {
+            color: var(--primary-color);
             text-decoration: none;
+        }
+        .file-upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #fdfdfd;
+        }
+        .file-upload-area.drag-over {
+            border-color: var(--primary-color);
+            background-color: #f1f7ff;
+        }
+        .file-upload-area input[type="file"] {
+            display: none;
+        }
+        .file-upload-icon {
+            font-size: 48px;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        .file-upload-text {
+            font-size: 18px;
             font-weight: 500;
         }
-
-        a:hover {
-            text-decoration: underline;
-        }
-
-        .type-confirmation,
-        .file-requirements,
-        .duplicate-options,
-        .upload-form,
-        .instructions {
-            background-color: #ffffff;
-            border-left: 6px solid #3498db;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .type-confirmation {
-            border-left-color: #4caf50;
-        }
-
-        .file-requirements {
-            border-left-color: #2196f3;
-        }
-
-        .duplicate-options {
-            border-left-color: #fbc02d;
-        }
-
-        h3 {
-            margin-top: 0;
-            font-size: 20px;
-            color: #2c3e50;
-        }
-
-        ul, ol {
-            margin-left: 20px;
-            padding-left: 10px;
-        }
-
-        .upload-form input[type="file"] {
-            display: block;
-            margin-top: 10px;
-            font-size: 15px;
-        }
-
-        button[type="submit"] {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 15px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-
-        button[type="submit"]:hover {
-            background-color: #43a047;
-        }
-
-        #progressContainer {
-            background: #e0e0e0;
-            padding: 10px;
-            border-radius: 5px;
+        .file-info {
             margin-top: 20px;
-        }
-
-        #progressBar {
-            height: 24px;
-            width: 0;
-            background-color: #4CAF50;
-            text-align: center;
-            line-height: 24px;
-            color: white;
-            border-radius: 3px;
-            transition: width 0.4s ease-in-out;
-        }
-
-        #importForm {
-            margin-top: 20px;
-        }
-
-        #progressStatus {
-            margin-top: 8px;
             font-size: 14px;
             color: #555;
+        }
+        #fileName {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        .submit-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 30px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);
+        }
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(74, 144, 226, 0.5);
+        }
+        #progressContainer {
+            margin-top: 20px;
+            display: none;
+        }
+        #progressBar {
+            height: 12px;
+            width: 0;
+            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+            border-radius: 6px;
+            transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        #progressStatus {
+            margin-top: 10px;
+            font-size: 14px;
             text-align: center;
         }
-
-        div[style*="background: #fff3e0"] {
-            background-color: #fff8e1 !important;
-            border-left: 6px solid #ffb300;
-            padding: 20px;
+        .guide-panel h2 {
+            font-size: 22px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .guide-section {
+            margin-bottom: 30px;
+        }
+        .guide-section h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .guide-section ul, .guide-section ol {
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+        .guide-section code {
+            background-color: #eef2f7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+        .download-btn {
+            display: block;
+            background-color: #eef2f7;
+            color: var(--primary-color);
+            padding: 12px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            text-decoration: none;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 10px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
         }
-
-        div[style*="background: #fff3e0"] h3 {
-            color: #e65100;
+        .download-btn:hover {
+            background-color: #e6f0ff;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
         }
-
     </style>
 </head>
 <body>
-    <h1>Import <?= htmlspecialchars($equipment_type) ?> Inventory</h1>
-    <a href="/inventory-system/pages/landing.php" style="display: inline-block; margin-bottom: 20px;">← Back to Dashboard</a>
-    
-    <!-- Equipment type confirmation section -->
-    <div class="type-confirmation">
-        <h3 style="margin-top: 0;">Equipment Type Confirmation</h3>
-        <p>All imported items will be categorized as: 
-           <strong><?= htmlspecialchars($equipment_type) ?></strong></p>
-        <p>If this is incorrect, <a href="equipment-type.php">go back and select a different type</a>.</p>
-    </div>
-    
-    <!-- File requirements section -->
-    <div class="file-requirements">
-        <h3>File Requirements</h3>
-        <p>Your Excel file must meet these requirements:</p>
-        <ul>
-            <li>File format: .xls or .xlsx</li>
-            <li>First row must be column headers</li>
-            <li>Columns must be in this exact order:</li>
-        </ul>
-        <ol>
-            <li><strong>Article</strong> (required)</li>
-            <li><strong>Acquisition Date</strong> (e.g. "September 27, 2024" or "09/27/2024")</li>
-            <li><strong>Model Number</strong> (ICS NO.)</li>
-            <li><strong>Property Number</strong> (required)</li>
-            <li><strong>Description</strong> (Description)</li>
-            <li><strong>Person Accountable</strong> (Office/Officer)</li>
-            <li><strong>Cost</strong> (e.g. "36,862.81")</li>
-        </ol>
-    </div>
-    
-    <!-- Duplicate handling explanation -->
-    <div class="duplicate-options">
-        <h3>Duplicate Handling</h3>
-        <p>When items with existing property numbers are found:</p>
-        <ul>
-            <li>Existing items will be <strong>updated</strong> with the new information</li>
-            <li>The inventory team signature date will be automatically updated</li>
-            <li>All fields except the property number will be overwritten</li>
-        </ul>
-    </div>
-    
-    <!-- File upload form -->
-    <div class="upload-form">
-        <form method="POST" enctype="multipart/form-data" id="importForm">
-            <div>
-                <label for="excel_file" style="display: block; margin-bottom: 5px; font-weight: bold;">
-                    Select Excel File:
+    <div class="main-container">
+        <div class="import-panel">
+            <div class="breadcrumb">
+                <a href="/inventory-system/pages/landing.php">Dashboard</a> / Import
+            </div>
+            <h1>Import Inventory</h1>
+            <p>Importing for: <strong><?= htmlspecialchars($equipment_type) ?></strong>. (<a href="equipment-type.php">Change</a>)</p>
+
+            <form method="POST" enctype="multipart/form-data" id="importForm">
+                <label for="excel_file" class="file-upload-area" id="fileUploadArea">
+                    <div class="file-upload-icon">📤</div>
+                    <div class="file-upload-text">Click to browse or drag & drop your file</div>
+                    <div class="file-info">
+                        <span id="fileName"></span>
+                        <p style="font-size: 12px; color: #888;">Supports .xls and .xlsx files</p>
+                    </div>
                 </label>
                 <input type="file" id="excel_file" name="excel_file" accept=".xls,.xlsx" required>
-            </div>
-            
-            <!-- Progress bar (hidden by default) -->
-            <div id="progressContainer" style="display: none; margin: 15px 0;">
-                <div style="width: 100%; background-color: #f3f3f3; border-radius: 5px; overflow: hidden;">
-                    <div id="progressBar" style="height: 24px; width: 0; background-color: #4CAF50; text-align: center; line-height: 24px; color: white;">0%</div>
+
+                <button type="submit" id="submitBtn" class="submit-btn" disabled>
+                    Import Items
+                </button>
+
+                <div id="progressContainer">
+                    <div style="width: 100%; background-color: #e0e0e0; border-radius: 6px;">
+                        <div id="progressBar"></div>
+                    </div>
+                    <p id="progressStatus">Starting import...</p>
                 </div>
-                <p id="progressStatus" style="margin-top: 5px; text-align: center;">Preparing import...</p>
+            </form>
+        </div>
+
+        <div class="guide-panel">
+            <h2>Import Guide</h2>
+            <div class="guide-section">
+                <h3>Download Template</h3>
+                <p>Use our template to ensure your data is formatted correctly.</p>
+                <a href="../templates/import-template.xlsx" class="download-btn" download>
+                    Download Excel Template
+                </a>
             </div>
-            <button type="submit" id="submitBtn" style="padding: 8px 15px; background: #4CAF50; color: white; border: none; border-radius: 4px;">
-                Import <?= htmlspecialchars($equipment_type) ?> Items
-            </button>
-        </form>
+            <div class="guide-section">
+                <h3>Column Order</h3>
+                <p>Your file must contain these columns in the exact order:</p>
+                <ol>
+                    <li><code>Article</code> (Optional)</li>
+                    <li><code>Acquisition Date</code></li>
+                    <li><code>Model Number</code></li>
+                    <li><code>Property Number</code> (Required)</li>
+                    <li><code>Description</code> (Required)</li>
+                    <li><code>Person Accountable</code></li>
+                    <li><code>Cost</code></li>
+                </ol>
+            </div>
+            <div class="guide-section">
+                <h3>Duplicate Handling</h3>
+                <p>The <code>Property Number</code> is the unique identifier. If a number already exists, the system will <strong>update</strong> the existing record instead of creating a new one.</p>
+            </div>
+            <div class="guide-section">
+                <h3>Important Notes</h3>
+                <ul>
+                    <li>Large files may take a few minutes to process.</li>
+                    <li>Please don't close this window during the import.</li>
+                    <li>QR codes are generated automatically for all items.</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    
-    <!-- JavaScript for progress bar animation -->
+
     <script>
-        document.getElementById('importForm').addEventListener('submit', function(e) {
-            // Show progress bar when form is submitted
+        const fileInput = document.getElementById('excel_file');
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        const fileNameDisplay = document.getElementById('fileName');
+        const submitBtn = document.getElementById('submitBtn');
+        const importForm = document.getElementById('importForm');
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, () => fileUploadArea.classList.add('drag-over'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileUploadArea.addEventListener(eventName, () => fileUploadArea.classList.remove('drag-over'), false);
+        });
+        fileUploadArea.addEventListener('drop', (e) => {
+            fileInput.files = e.dataTransfer.files;
+            handleFileSelect();
+        });
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        function handleFileSelect() {
+            if (fileInput.files.length > 0) {
+                fileNameDisplay.textContent = `File: ${fileInput.files[0].name}`;
+                submitBtn.disabled = false;
+            } else {
+                fileNameDisplay.textContent = '';
+                submitBtn.disabled = true;
+            }
+        }
+
+        importForm.addEventListener('submit', function(e) {
             document.getElementById('progressContainer').style.display = 'block';
-            document.getElementById('submitBtn').disabled = true;
-            document.getElementById('submitBtn').innerHTML = 'Processing...';
-            
-            // Simulate progress for import and sticker generation
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Importing...';
+
             let progress = 0;
             const progressBar = document.getElementById('progressBar');
             const progressStatus = document.getElementById('progressStatus');
-            
-            const interval = setInterval(function() {
-                // Increment progress with better distribution
-                if (progress < 60) {
-                    progress += 5;
-                } else if (progress < 85) {
-                    progress += 2;
-                } else if (progress < 99) {
-                    progress += 1;
-                } else {
-                    progress = 100;
-                    clearInterval(interval);
-                    progressStatus.innerHTML = "Finalizing... Please wait, this might take a few minutes.";
-                }
-                
-                // Update progress status messages
-                if (progress >= 70 && progress < 99) {
-                    progressStatus.innerHTML = "Generating stickers...";
-                } else if (progress >= 40 && progress < 70) {
-                    progressStatus.innerHTML = "Processing data...";
-                } else if (progress < 40) {
-                    progressStatus.innerHTML = "Uploading file...";
-                }
+
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress > 100) progress = 100;
                 
                 progressBar.style.width = progress + '%';
-                progressBar.innerHTML = progress + '%';
-            }, 400);
+
+                if (progress < 30) progressStatus.textContent = 'Uploading file...';
+                else if (progress < 70) progressStatus.textContent = 'Processing data rows...';
+                else if (progress < 95) progressStatus.textContent = 'Generating QR codes...';
+                else progressStatus.textContent = 'Finalizing import...';
+
+                if (progress === 100) {
+                    clearInterval(interval);
+                }
+            }, 300);
         });
     </script>
-    
-    <!-- Important notes section -->
-    <div style="margin-top: 30px; padding: 15px; background: #fff3e0; border-radius: 5px;">
-        <h3>Important Notes</h3>
-        <ul>
-            <li>The import process may take several minutes for large files</li>
-            <li>Do not close the browser during import</li>
-            <li>You will receive a detailed summary after completion</li>
-            <li>Existing items will be updated with the new data</li>
-            <li>Stickers will be automatically generated for all imported items</li>
-        </ul>
-    </div>
 </body>
 </html>

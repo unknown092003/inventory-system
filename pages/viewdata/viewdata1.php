@@ -347,11 +347,21 @@
                                 <img src="/inventory-system/public/img/bp.png" alt="BP Logo">
                             </div>
                         </div>
-                        <div class="headertype">
-                            <h3>REGISTRY OF SEMI-EXPANDABLE PROPERTY ISSUED</h3>
-                            <p><strong>Information, Communication and Technology Equipment</strong></p>
-                            <p>As of (date)</p>
-                        </div>
+                       <div class="headertype">
+                        <h3>REPORT ON THE PHYSICAL COUNT OF PROPERTY, PLANT AND EQUIPMENT</h3>
+                        <p><strong><?= !empty($_GET['equipmentFilter']) && $_GET['equipmentFilter'] !== 'all' ? htmlspecialchars($_GET['equipmentFilter']) : 'All Equipment Types' ?></strong></p>
+                        <p><input style="text-align:center;"type="text" placeholder="as of "></p>
+
+                    </div>
+                    <div class="title">
+                        <style>
+                            input{
+                                border:none;
+                                outline: none;
+                            }
+                        </style>
+                        <input type="text" name="" id="" placeholder="Enter Fund Cluster" >
+                        <input type="text" name="" id="" placeholder="Enter Fund Cluster" >
                     </div>
                 </th>
             </tr>
@@ -428,9 +438,9 @@
             }
             
             // TOTAL ROW
-            echo "<tr style='font-weight:bold; background:#f2f2f2'>";
+            echo "<tr id='totalRow' style='font-weight:bold; background:#f2f2f2'>";
             echo "<td colspan='13'>TOTAL:</td>";
-            echo "<td>" . number_format($totalAmount, 2) . "</td>";
+            echo "<td id='totalAmount'>" . number_format($totalAmount, 2) . "</td>";
             echo "<td></td>";
             echo "</tr>";
             
@@ -673,11 +683,32 @@
          */
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const equipmentType = document.getElementById('equipmentTypeFilter').value.toLowerCase();
+            const equipmentType = document.getElementById('equipmentTypeFilter').value;
             const remarksFilter = document.getElementById('remarksFilter').value.toLowerCase();
             const month = document.getElementById('monthFilter').value;
             const year = document.getElementById('yearFilter').value;
             const valueFilter = document.getElementById('valueFilter').value;
+            
+            // Update URL with equipment filter to change header
+            if (equipmentType !== 'all') {
+                const url = new URL(window.location);
+                url.searchParams.set('equipmentFilter', equipmentType);
+                window.history.replaceState({}, '', url);
+                // Update header immediately
+                const headerText = document.querySelector('.headertype p strong');
+                if (headerText) {
+                    headerText.textContent = equipmentType;
+                }
+            } else {
+                const url = new URL(window.location);
+                url.searchParams.delete('equipmentFilter');
+                window.history.replaceState({}, '', url);
+                // Update header immediately
+                const headerText = document.querySelector('.headertype p strong');
+                if (headerText) {
+                    headerText.textContent = 'All Equipment Types';
+                }
+            }
 
             const rows = document.querySelectorAll('.rtp_table tbody tr:not(:last-child)');
             
@@ -714,8 +745,9 @@
                                     rowData.remarks.includes(searchTerm);
                 
                 const matchesEquipment = equipmentType === 'all' || 
-                                       rowData.equipment.includes(equipmentType) || 
-                                       rowData.description.includes(equipmentType);
+                                       rowData.equipment === equipmentType.toLowerCase() || 
+                                       rowData.equipment.includes(equipmentType.toLowerCase()) ||
+                                       rowData.description.includes(equipmentType.toLowerCase());
                 
                 const matchesStatus = remarksFilter === 'all' || 
                                     (remarksFilter === 'service' && rowData.status.includes('service')) ||
@@ -738,6 +770,8 @@
                 row.style.display = (matchesSearch && matchesEquipment && matchesStatus && 
                                     matchesMonth && matchesYear && matchesValue) ? '' : 'none';
             }
+            
+            updateTotal();
         }
 
         /**
@@ -756,8 +790,27 @@
             for (let i = 0; i < rows.length; i++) {
                 rows[i].style.display = '';
             }
+            
+            updateTotal();
         }
 
+        // ========== TOTAL UPDATE FUNCTION ==========
+        function updateTotal() {
+            let visibleTotal = 0;
+            const rows = document.querySelectorAll('.rtp_table table tr');
+            
+            for (let i = 3; i < rows.length - 1; i++) {
+                const row = rows[i];
+                if (row.style.display !== 'none' && row.cells.length >= 14) {
+                    const amountText = row.cells[13].textContent.replace(/[^0-9.-]/g, '');
+                    const amount = parseFloat(amountText) || 0;
+                    visibleTotal += amount;
+                }
+            }
+            
+            document.getElementById('totalAmount').textContent = visibleTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        
         // ========== COPY FUNCTIONALITY ==========
         /**
          * Copies the basic table structure to clipboard (text only)
@@ -783,87 +836,62 @@
          */
         async function copyTableWithLayout() {
             try {
-                const tableSection = document.querySelector('.rtp_table').cloneNode(true);
-                const images = tableSection.querySelectorAll('img');
+                const table = document.querySelector('.rtp_table table');
+                const rows = table.querySelectorAll('tr');
                 
-                // Convert images to base64 for Excel compatibility
-                for (const img of images) {
-                    await convertImgToBase64(img.src, function(base64) {
-                        img.src = base64;
-                    });
-                }
+                // Skip first row (header) but include total row
+                const dataRows = Array.from(rows).slice(2);
                 
-                // Create Excel-compatible header structure
-                const headerHTML = `
-                <table style="width:100%; border-collapse:collapse;">
-                    <tr>
-                        <td style="width:20%; vertical-align:middle; text-align:center;">
-                            ${tableSection.querySelector('.ocd-logo').outerHTML}
-                        </td>
-                        <td style="width:60%; vertical-align:middle; text-align:center;">
-                            ${tableSection.querySelector('.ocd-text').outerHTML}
-                        </td>
-                        <td style="width:20%; vertical-align:middle; text-align:center;">
-                            ${tableSection.querySelector('.bp-logo').outerHTML}
-                        </td>
-                    </tr>
-                </table>
-                ${tableSection.querySelector('.headertype').outerHTML}
-                `;
+                // Create new table with only data rows
+                const newTable = document.createElement('table');
+                newTable.style.borderCollapse = 'collapse';
+                newTable.style.width = '100%';
+                document.body.appendChild(newTable);
                 
-                // Replace original header with Excel-compatible version
-                const headerContainer = tableSection.querySelector('th[colspan="17"]');
-                headerContainer.innerHTML = headerHTML;
+                const headerRow = rows[1].cloneNode(true); // Column headers
+                // Style header cells
+                headerRow.querySelectorAll('th').forEach(th => {
+                    th.style.padding = '8px';
+                    th.style.border = '2px solid #000';
+                    th.style.backgroundColor = '#f5f5f5';
+                    th.style.fontWeight = 'bold';
+                    th.style.whiteSpace = 'nowrap';
+                });
+                newTable.appendChild(headerRow);
                 
-                // Create HTML with Excel-specific markup
-                const html = `
-                <html xmlns:o="urn:schemas-microsoft-com:office:office" 
-                      xmlns:x="urn:schemas-microsoft-com:office:excel"
-                      xmlns="http://www.w3.org/TR/REC-html40">
-                <head>
-                    <!--[if gte mso 9]>
-                    <xml>
-                        <x:ExcelWorkbook>
-                            <x:ExcelWorksheets>
-                                <x:ExcelWorksheet>
-                                    <x:Name>Inventory</x:Name>
-                                    <x:WorksheetOptions>
-                                        <x:DisplayGridlines/>
-                                    </x:WorksheetOptions>
-                                </x:ExcelWorksheet>
-                            </x:ExcelWorksheets>
-                        </x:ExcelWorkbook>
-                    </xml>
-                    <![endif]-->
-                    <style>
-                        td {mso-number-format:\@;}
-                        br {mso-data-placement:same-cell;}
-                        .headerlogo { display: table; width: 100%; }
-                        .headerlogo > div { display: table-cell; vertical-align: middle; }
-                        .ocd-logo, .bp-logo { width: 20%; text-align: center; }
-                        .ocd-text { width: 60%; text-align: center; }
-                        img { max-height: 80px; width: auto; }
-                        table { border-collapse: collapse; width: 100%; }
-                    </style>
-                </head>
-                <body>
-                    ${tableSection.innerHTML}
-                </body>
-                </html>
-                `;
+                dataRows.forEach(row => {
+                    if (row.style.display !== 'none') {
+                        const clonedRow = row.cloneNode(true);
+                        // Style data cells for better readability
+                        clonedRow.querySelectorAll('td').forEach(td => {
+                            td.style.padding = '8px';
+                            td.style.border = '2px solid #000';
+                            td.style.verticalAlign = 'top';
+                            td.style.wordWrap = 'break-word';
+                            td.style.maxWidth = '200px';
+                            // Style total row differently
+                            if (row.style.fontWeight === 'bold') {
+                                td.style.backgroundColor = '#e6e6e6';
+                                td.style.fontWeight = 'bold';
+                            }
+                        });
+                        newTable.appendChild(clonedRow);
+                    }
+                });
                 
-                // Copy to clipboard as both HTML and plain text
-                const blob = new Blob([html], {type: 'text/html'});
-                await navigator.clipboard.write([
-                    new ClipboardItem({
-                        'text/html': blob,
-                        'text/plain': new Blob([tableSection.innerText], {type: 'text/plain'})
-                    })
-                ]);
-                alert('Table with layout copied! Paste into Excel to preserve formatting.');
+                const range = document.createRange();
+                range.selectNode(newTable);
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                
+                const successful = document.execCommand('copy');
+                alert(successful ? 'Table data copied!' : 'Unable to copy. Please try Ctrl+C after selecting.');
+                window.getSelection().removeAllRanges();
+                
+                document.body.removeChild(newTable);
             } catch (err) {
                 console.error('Copy failed:', err);
-                alert('Could not copy with layout. Try the basic copy or image options.');
+                alert('Could not copy table.');
             }
         }
 
