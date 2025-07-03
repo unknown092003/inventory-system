@@ -354,6 +354,7 @@
                     <div class="headertype">
                         <h3>REPORT ON THE PHYSICAL COUNT OF PROPERTY, PLANT AND EQUIPMENT</h3>
                         <p><strong><?= !empty($_GET['equipmentFilter']) && $_GET['equipmentFilter'] !== 'all' ? htmlspecialchars($_GET['equipmentFilter']) : 'All Equipment Types' ?></strong></p>
+                        <p><strong id="valueTypeDisplay">All Values</strong></p>
                         <p><input style="text-align:center;"type="text" placeholder="as of "></p>
 
                     </div>
@@ -364,8 +365,8 @@
                                 outline: none;
                             }
                         </style>
-                        <input type="text" name="" id="" placeholder="Enter Fund Cluster" >
-                        <input type="text" name="" id="" placeholder="Enter Fund Cluster" >
+                        <input type="text" name="" id="" placeholder="Fund Cluster" >
+                        <input type="text" name="" id="" placeholder="addtional input" >
                     </div>
                 </th>
             </tr>
@@ -808,6 +809,26 @@
             
             document.getElementById('totalAmount').textContent = visibleTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
         }
+        
+        // ========== VALUE TYPE DISPLAY UPDATE ==========
+        function updateValueTypeDisplay() {
+            const valueFilter = document.getElementById('valueFilter').value;
+            const valueDisplay = document.getElementById('valueTypeDisplay');
+            
+            switch(valueFilter) {
+                case 'high':
+                    valueDisplay.textContent = 'High Value (≥₱5,000)';
+                    break;
+                case 'low':
+                    valueDisplay.textContent = 'Low Value (<₱5,000)';
+                    break;
+                default:
+                    valueDisplay.textContent = 'All Values';
+            }
+        }
+        
+        // Add event listener for value filter
+        document.getElementById('valueFilter').addEventListener('change', updateValueTypeDisplay);
         
         // ========== COPY FUNCTIONALITY ==========
         /**

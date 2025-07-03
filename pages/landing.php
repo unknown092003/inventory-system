@@ -6,56 +6,95 @@
   <link rel="stylesheet" href="/inventory-system/public/styles/landing.css" />
   <title>Inventory System</title>
   <style>
-    /* Modal Styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background-color: #fefefe;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      max-width: 300px;
-      border-radius: 10px;
-      text-align: center;
-      position: relative;
-    }
-    .close-btn {
-      color: #aaa;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .modal-content a {
-      display: block;
-      padding: 12px;
-      margin: 10px 0;
-      background-color: #4a90e2;
-      color: white;
-      text-decoration: none;
-      border-radius: 5px;
-      transition: background-color 0.3s;
-    }
-    .modal-content a:hover {
-      background-color: #357abd;
-    }
-    .header img {
-        cursor: pointer;
-    }
+   /* Modal Overlay */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex; /* for centering */
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Modal Container */
+.modal-content {
+  background-color: #ffffff;
+  padding: 30px 20px;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 360px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  text-align: center;
+  position: relative;
+  animation: slideUp 0.4s ease;
+}
+
+/* Close Button */
+.close-btn {
+  color: #999;
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.close-btn:hover {
+  color: #ff5e5e;
+  transform: rotate(90deg);
+}
+
+/* Modal Links (Buttons) */
+.modal-content a {
+  display: block;
+  padding: 12px 18px;
+  margin: 12px 0;
+  background-color: #4a90e2;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.modal-content a:hover {
+  background-color: #357abd;
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive Tweaks */
+@media (max-width: 420px) {
+  .modal-content {
+    padding: 24px 15px;
+  }
+
+  .modal-content a {
+    font-size: 0.95rem;
+  }
+
+  .close-btn {
+    top: 12px;
+    right: 15px;
+    font-size: 22px;
+  }
+}
+
   </style>
 </head>
 <body>
@@ -117,6 +156,7 @@
       <h2>User Options</h2>
       <a href="register.php">Create User</a>
       <a href="change_password.php">Change Password</a>
+      <a href="view_accounts.php">View All Accounts</a>
     </div>
   </div>
 
