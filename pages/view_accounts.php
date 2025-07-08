@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
 
 // Check if user is logged in
@@ -8,17 +9,14 @@ if (!isset($_SESSION['username'])) {
 }
 
 // Connect to database
-$conn = new mysqli("localhost", "root", "", "inventory_system");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+$conn = Database::getInstance()->getConnection();
 
 // Handle delete request
 if (isset($_POST['delete_user'])) {
     $user_id = $_POST['user_id'];
     $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-    $stmt->bind_param("i", $user_id);
-    if ($stmt->execute()) {
+    $stmt->execute([$user_id]);
+    if ($stmt->rowCount() > 0) {
         $message = "User deleted successfully!";
     } else {
         $error = "Error deleting user.";
@@ -320,7 +318,7 @@ $result = $conn->query($sql);
             <?php endif; ?>
             
             <div class="accounts-table-container">
-                <?php if ($result && $result->num_rows > 0): ?>
+                <?php if ($result && $result->rowCount() > 0): ?>
                     <table class="accounts-table">
                         <thead>
                             <tr>
@@ -330,7 +328,7 @@ $result = $conn->query($sql);
                             </tr>
                         </thead>
                         <tbody>
-                            <?php while($row = $result->fetch_assoc()): 
+                            <?php while($row = $result->fetch(PDO::FETCH_ASSOC)): 
                                 $initial = strtoupper(substr($row['username'], 0, 1));
                             ?>
                                 <tr>
@@ -369,7 +367,7 @@ $result = $conn->query($sql);
             <div class="stats-footer">
                 <div>
                     <i class="fas fa-database"></i>
-                    Total accounts: <?= $result ? $result->num_rows : 0 ?>
+                    Total accounts: <?= $result ? $result->rowCount() : 0 ?>
                 </div>
                 <div>
                     <i class="fas fa-clock"></i>

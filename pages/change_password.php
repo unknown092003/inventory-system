@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/db.php';
 session_start();
 
 // Check if user is logged in (check for username since that's what's stored)
@@ -9,18 +10,12 @@ if (!isset($_SESSION['username'])) {
 
 // Get user_id from username if not in session
 if (!isset($_SESSION['user_id'])) {
-    $conn = new mysqli("localhost", "root", "", "inventory_system");
-    if (!$conn->connect_error) {
-        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $_SESSION['username']);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if ($result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-            $_SESSION['user_id'] = $user['id'];
-        }
-        $stmt->close();
-        $conn->close();
+    $conn = Database::getInstance()->getConnection();
+    $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->execute([$_SESSION['username']]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($result) {
+        $_SESSION['user_id'] = $result['id'];
     }
 }
 
@@ -42,44 +37,34 @@ if ($_POST) {
     } elseif (strlen($new_password) < 6) {
         $error = "New password must be at least 6 characters long.";
     } else {
-        // Connect to database
-        $conn = new mysqli("localhost", "root", "", "inventory_system");
-        if ($conn->connect_error) {
-            $error = "Connection failed: " . $conn->connect_error;
-        } else {
-            // Get current user's data
-            $stmt = $conn->prepare("SELECT username, password FROM users WHERE id = ?");
-            $stmt->bind_param("i", $_SESSION['user_id']);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            
-            if ($result->num_rows > 0) {
-                $user = $result->fetch_assoc();
-                
-                // Store username in session if not already there
-                if (!isset($_SESSION['username'])) {
-                    $_SESSION['username'] = $user['username'];
-                }
-                
-                // Verify current password
-                if (password_verify($current_password, $user['password'])) {
-                    // Update password
-                    $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-                    $update_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-                    $update_stmt->bind_param("si", $hashed_password, $_SESSION['user_id']);
-                    
-                    if ($update_stmt->execute()) {
-                        $message = "Password changed successfully!";
-                    } else {
-                        $error = "Error updating password.";
-                    }
-                    $update_stmt->close();
-                } else {
-                    $error = "Current password is incorrect.";
-                }
+        // Use singleton for DB connection
+        $conn = Database::getInstance()->getConnection();
+        // Get current user's data
+        $stmt = $conn->prepare("SELECT username, password FROM users WHERE id = ?");
+        $stmt->execute([$_SESSION['user_id']]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result) {
+            // Store username in session if not already there
+            if (!isset($_SESSION['username'])) {
+                $_SESSION['username'] = $result['username'];
             }
-            $stmt->close();
-            $conn->close();
+            
+            // Verify current password
+            if (password_verify($current_password, $result['password'])) {
+                // Update password
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+                $update_stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
+                $update_stmt->execute([$hashed_password, $_SESSION['user_id']]);
+                
+                if ($update_stmt->rowCount() > 0) {
+                    $message = "Password changed successfully!";
+                } else {
+                    $error = "Error updating password.";
+                }
+            } else {
+                $error = "Current password is incorrect.";
+            }
         }
     }
 }

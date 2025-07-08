@@ -72,15 +72,21 @@
             
             dialog {
                 width: 95%;
-                max-height: 90vh;
+                max-height: 85vh;
+                margin:5px;
             }
             
             .dialog-content {
-                max-height: 50vh;
+                flex: 1 1 auto;
+                overflow-y: auto;
+                height: 50vh;
             }
             
             .dialog-actions {
                 flex-direction: column;
+                position: static;
+                background: white;
+                z-index: 2;
             }
             
             .button {
@@ -253,7 +259,6 @@
             padding: 0;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             background: white;
-            animation: fadeInUp 0.4s cubic-bezier(0.22, 1, 0.36, 1);
             overflow: hidden;
             margin: 0;
         }
@@ -607,9 +612,11 @@
 
         // ===== INITIALIZATION =====
         document.addEventListener('DOMContentLoaded', () => {
+            // Ensure dialog is closed on page load (all browsers)
+            if (dialog.hasAttribute('open')) dialog.removeAttribute('open');
+            dialog.close();
             // Create floating particles
             createParticles();
-            
             // Prevent zooming on mobile
             document.addEventListener('gesturestart', function(e) {
                 e.preventDefault();

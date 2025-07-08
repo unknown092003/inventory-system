@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         $skipped_count = 0;   // Count of rows skipped due to errors
         $errors = [];         // Array to store error messages
         $success_rows = [];   // Array to track successfully processed rows
-        $db->begin_transaction(); // Start database transaction
+        $db->beginTransaction(); // Start database transaction
 
         // Iterate through each row in the Excel sheet
         foreach ($sheet->getRowIterator() as $row) {
@@ -121,8 +121,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             // Process acquisition date if available
             if (isset($data[$columns['acquisition_date']]) && !empty(trim($data[$columns['acquisition_date']]))) {
                 $dateValue = trim($data[$columns['acquisition_date']]);
-                $acquisition_date = DateTime::createFromFormat('F j, Y', $dateValue) ?: 
-                                   DateTime::createFromFormat('m/d/Y', $dateValue) ?: null;
+                if (is_numeric($dateValue)) {
+                    // Handle Excel serial date
+                    $acquisition_date = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($dateValue);
+                } else {
+                    // Try multiple formats
+                    $formats = ['F j, Y', 'F d Y', 'm/d/Y', 'Y-m-d'];
+                    $acquisition_date = null;
+                    foreach ($formats as $format) {
+                        $tryValue = $dateValue;
+                        if (strpos($format, 'F') !== false) {
+                            $tryValue = ucwords(strtolower($dateValue)); // Capitalize month
+                        }
+                        $acquisition_date = DateTime::createFromFormat($format, $tryValue);
+                        if ($acquisition_date !== false) break;
+                    }
+                }
             }
 
             // Process model number if available
@@ -175,10 +189,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
             
             // Check if item already exists in database
             $check_stmt = $db->prepare("SELECT id FROM inventory WHERE property_number = ?");
-            $check_stmt->bind_param("s", $property_number);
-            $check_stmt->execute();
-            $exists = $check_stmt->get_result()->num_rows > 0;
-            $check_stmt->close();
+            $check_stmt->execute([$property_number]);
+            $exists = $check_stmt->rowCount() > 0;
 
             // Prepare appropriate query based on whether item exists
             if ($exists) {
@@ -197,8 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     WHERE property_number = ?
                 ");
                 $acquisition_date_str = $acquisition_date ? $acquisition_date->format('Y-m-d') : null;
-                $stmt->bind_param(
-                    "sssssdsss",
+                $stmt->execute([
                     $article,
                     $description,
                     $model_number,
@@ -208,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     $equipment_type,
                     $remarks,
                     $property_number
-                );
+                ]);
             } else {
                 // Insert new record
                 $stmt = $db->prepare("
@@ -218,9 +229,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ");
                 $acquisition_date_str = $acquisition_date ? $acquisition_date->format('Y-m-d') : null;
-                
-                $stmt->bind_param(
-                    "ssssssdss",
+                $stmt->execute([
                     $article,
                     $property_number,
                     $description,
@@ -230,11 +239,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                     $cost,
                     $equipment_type,
                     $remarks
-                );
+                ]);
             }
 
             // Execute the query and handle results
-            if ($stmt->execute()) {
+            if ($stmt->rowCount() > 0) {
                 if ($exists) {
                     $updated_count++;
                     $logger->logAction(
@@ -260,10 +269,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 
                 $success_rows[] = $row->getRowIndex();
             } else {
-                $errors[] = "Row {$row->getRowIndex()}: Database error - " . $stmt->error;
+                $errors[] = "Row {$row->getRowIndex()}: Database error - " . $stmt->errorInfo()[2];
                 $skipped_count++;
             }
-            $stmt->close();
         }
 
         $db->commit(); // Commit transaction if all went well
@@ -284,10 +292,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
         }
         
     } catch (\PhpOffice\PhpSpreadsheet\Reader\Exception $e) {
-        $db->rollback(); // Rollback on spreadsheet error
+        $db->rollBack(); // Rollback on spreadsheet error
         $_SESSION['import_error'] = "Error reading Excel file: " . $e->getMessage();
     } catch (Exception $e) {
-        $db->rollback(); // Rollback on general error
+        $db->rollBack(); // Rollback on general error
         $_SESSION['import_error'] = "Import failed: " . $e->getMessage();
     }
 
@@ -539,13 +547,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['excel_file'])) {
                 <p>The <code>Property Number</code> is the unique identifier. If a number already exists, the system will <strong>update</strong> the existing record instead of creating a new one.</p>
             </div>
             <div class="guide-section">
-                <h3>Important Notes</h3>
-                <ul>
-                    <li>Large files may take a few minutes to process.</li>
-                    <li>Please don't close this window during the import.</li>
-                    <li>QR codes are generated automatically for all items.</li>
-                </ul>
-            </div>
+    <h3>Important Notes</h3>
+    <ul>
+        <li>
+            The supported date formats in Excel include:
+            <ul>
+                <li>june 09 2003</li>
+                <li>June 09 2003</li>
+                <li>June 9, 2003</li>
+                <li>06/09/2003</li>
+                <li>2003-06-09</li>
+                <li>Excel serial date numbers</li>
+            </ul>
+        </li>
+        <li>Large files may take a few minutes to process.</li>
+        <li>Please don't close this window during the import.</li>
+        <li>QR codes are generated automatically for all items.</li>
+    </ul>
+</div>
+
         </div>
     </div>
 

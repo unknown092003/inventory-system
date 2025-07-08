@@ -34,8 +34,9 @@ $base_query = "SELECT
     FROM inventory 
     WHERE 1=1";  // 1=1 allows easy addition of AND conditions
 
-// Initialize search condition - empty by default
-$search_condition = "";
+// Build dynamic WHERE conditions and parameters for prepared statements
+$where_clauses = [];
+$params = [];
 
 // =============================================
 // SEARCH FUNCTIONALITY
@@ -43,56 +44,11 @@ $search_condition = "";
 
 // Add search conditions if search parameter exists
 if (!empty($_GET['search'])) {
-    $search_term = $db->real_escape_string($_GET['search']);  // Prevent SQL injection
-    
-    // First try to parse the search term as a date
-    $dateFormats = [
-        'M j, Y' => 'Sep 27, 2024',  // Month abbreviation day, year
-        'F j, Y' => 'September 27, 2024',  // Full month name
-        'Y-m-d' => '2024-09-27',  // ISO format
-        'm/d/Y' => '09/27/2024',  // US format
-        'd/m/Y' => '27/09/2024',  // European format
-        'M j' => 'Sep 27',  // Month abbreviation and day
-        'F j' => 'September 27'  // Full month and day
-    ];
-    
-    $dateConditions = [];
-    foreach ($dateFormats as $format => $example) {
-        $date = DateTime::createFromFormat($format, $search_term);
-        if ($date !== false) {
-            // If we successfully parsed as a date, add conditions for both formatted and raw dates
-            $mysqlDate = $date->format('Y-m-d');
-            $dateConditions[] = "acquisition_date = '$mysqlDate'";
-            $dateConditions[] = "DATE_FORMAT(acquisition_date, '$format') LIKE '%$search_term%'";
-        }
-    }
-    
-    // Base search conditions
-    $search_condition = " AND (
-        property_number LIKE '%$search_term%' 
-        OR description LIKE '%$search_term%'
-        OR model_number LIKE '%$search_term%'
-        OR person_accountable LIKE '%$search_term%'
-        OR equipment_type LIKE '%$search_term%'
-        OR remarks LIKE '%$search_term%'";
-    
-    // Add date conditions if we found any valid date formats
-    if (!empty($dateConditions)) {
-        $search_condition .= " OR " . implode(" OR ", $dateConditions);
-    } else {
-        // Fallback to more general date matching if no specific format was matched
-        $search_condition .= "
-            OR DATE_FORMAT(acquisition_date, '%M %d, %Y') LIKE '%$search_term%'
-            OR DATE_FORMAT(acquisition_date, '%b %d, %Y') LIKE '%$search_term%'
-            OR DATE_FORMAT(acquisition_date, '%Y-%m-%d') LIKE '%$search_term%'
-            OR DATE_FORMAT(acquisition_date, '%m/%d/%Y') LIKE '%$search_term%'
-            OR DATE_FORMAT(acquisition_date, '%d/%m/%Y') LIKE '%$search_term%'
-            OR DATE_FORMAT(acquisition_date, '%M %d') LIKE '%$search_term%'
-            OR DATE_FORMAT(acquisition_date, '%b %d') LIKE '%$search_term%'
-        ";
-    }
-    
-    $search_condition .= ")";
+    $search_term = $_GET['search'];
+    $where_clauses[] = "(property_number LIKE ? OR description LIKE ? OR model_number LIKE ? OR person_accountable LIKE ? OR equipment_type LIKE ? OR remarks LIKE ?";
+    $params = array_merge($params, array_fill(0, 6, "%$search_term%"));
+    // Date search logic can be added here as needed
+    $where_clauses[count($where_clauses)-1] .= ")";
 }
 
 // =============================================
@@ -101,34 +57,34 @@ if (!empty($_GET['search'])) {
 
 // Apply equipment type filter if selected
 if (!empty($_GET['equipment_type'])) {
-    $equipment_type = $db->real_escape_string($_GET['equipment_type']);
-    $search_condition .= " AND equipment_type = '$equipment_type'";
+    $where_clauses[] = "equipment_type = ?";
+    $params[] = $_GET['equipment_type'];
 }
 
 // Apply remarks filter if selected
 if (!empty($_GET['remarks'])) {
-    $remarks = $db->real_escape_string($_GET['remarks']);
-    $search_condition .= " AND remarks = '$remarks'";
+    $where_clauses[] = "remarks = ?";
+    $params[] = $_GET['remarks'];
 }
 
 // Apply month filter if selected
 if (!empty($_GET['month'])) {
-    $month = $db->real_escape_string($_GET['month']);
-    $search_condition .= " AND MONTH(acquisition_date) = '$month'";
+    $where_clauses[] = "MONTH(acquisition_date) = ?";
+    $params[] = $_GET['month'];
 }
 
 // Apply year filter if selected
 if (!empty($_GET['year'])) {
-    $year = $db->real_escape_string($_GET['year']);
-    $search_condition .= " AND YEAR(acquisition_date) = '$year'";
+    $where_clauses[] = "YEAR(acquisition_date) = ?";
+    $params[] = $_GET['year'];
 }
 
 // Apply value filter (high/low) if selected
 if (!empty($_GET['value_sort'])) {
     if ($_GET['value_sort'] === 'high') {
-        $search_condition .= " AND cost >= 5000";
+        $where_clauses[] = "cost >= 5000";
     } elseif ($_GET['value_sort'] === 'low') {
-        $search_condition .= " AND cost < 5000";
+        $where_clauses[] = "cost < 5000";
     }
 }
 
@@ -165,35 +121,35 @@ if (!empty($_GET['sort'])) {
             
         // Equipment type filtering with date sorting
         case 'type_machinery':
-            $search_condition .= " AND equipment_type = 'Machinery'";
+            $where_clauses[] = "equipment_type = 'Machinery'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_construction':
-            $search_condition .= " AND equipment_type = 'Construction'";
+            $where_clauses[] = "equipment_type = 'Construction'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_ict':
-            $search_condition .= " AND equipment_type = 'ICT Equipment'";
+            $where_clauses[] = "equipment_type = 'ICT Equipment'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_communications':
-            $search_condition .= " AND equipment_type = 'Communications'";
+            $where_clauses[] = "equipment_type = 'Communications'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_military':
-            $search_condition .= " AND equipment_type = 'Military/Security'";
+            $where_clauses[] = "equipment_type = 'Military/Security'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_office':
-            $search_condition .= " AND equipment_type = 'Office'";
+            $where_clauses[] = "equipment_type = 'Office'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_drrm':
-            $search_condition .= " AND equipment_type = 'DRRM'";
+            $where_clauses[] = "equipment_type = 'DRRM'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
         case 'type_furniture':
-            $search_condition .= " AND equipment_type = 'Furniture'";
+            $where_clauses[] = "equipment_type = 'Furniture'";
             $sort_condition = " ORDER BY acquisition_date DESC";
             break;
             
@@ -208,34 +164,29 @@ if (!empty($_GET['sort'])) {
 // PAGINATION CALCULATIONS
 // =============================================
 
-// Get total count of items for pagination
-$count_query = "SELECT COUNT(*) as total FROM inventory WHERE 1=1" . $search_condition;
-$count_result = $db->query($count_query);
-
-if ($count_result) {
-    $count_data = $count_result->fetch_assoc();
-    $total_items = $count_data['total'] ?? 0;  // Total matching items
-    $total_pages = max(1, ceil($total_items / $per_page));  // Calculate total pages needed
-} else {
-    // Handle query error
-    $total_items = 0;
-    $total_pages = 1;
-    $_SESSION['error'] = "Error counting inventory items: " . $db->error;
+// Combine WHERE clauses
+$where_sql = '';
+if (!empty($where_clauses)) {
+    $where_sql = ' AND ' . implode(' AND ', $where_clauses);
 }
+
+// Get total count of items for pagination
+$count_query = "SELECT COUNT(*) as total FROM inventory WHERE 1=1" . $where_sql;
+$count_stmt = $db->prepare($count_query);
+$count_stmt->execute($params);
+$count_data = $count_stmt->fetch(PDO::FETCH_ASSOC);
+$total_items = $count_data['total'] ?? 0;  // Total matching items
+$total_pages = max(1, ceil($total_items / $per_page));  // Calculate total pages needed
 
 // =============================================
 // DATA FETCHING
 // =============================================
 
 // Build and execute the main query with pagination
-$query = $base_query . $search_condition . $sort_condition . " LIMIT $offset, $per_page";
-$items = $db->query($query);
-
-if (!$items) {
-    // Handle query error
-    $_SESSION['error'] = "Error loading inventory: " . $db->error;
-    $items = [];
-}
+$query = $base_query . $where_sql . $sort_condition . " LIMIT $offset, $per_page";
+$stmt = $db->prepare($query);
+$stmt->execute($params);
+$items = $stmt;
 
 // =============================================
 // URL PARAMETER MANAGEMENT
@@ -369,8 +320,8 @@ function buildUrl($params = []) {
             </tr>
         </thead>
         <tbody>
-            <?php if ($items && $items->num_rows > 0): ?>
-                <?php while ($item = $items->fetch_assoc()): 
+            <?php if ($items && $items->rowCount() > 0): ?>
+                <?php while ($item = $items->fetch(PDO::FETCH_ASSOC)): 
                     $cost = number_format($item['cost'], 2);
                     $acquired = date('M j, Y', strtotime($item['acquisition_date']));
                     $updated = $item['signature_of_inventory_team_date'] ? 

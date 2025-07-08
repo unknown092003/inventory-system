@@ -12,39 +12,38 @@ if (empty($equipment_type)) {
 try {
     // Get total count and cost
     $stmt = $db->prepare("SELECT COUNT(*) as total, SUM(cost) as total_cost FROM inventory WHERE equipment_type = ?");
-    $stmt->bind_param("s", $equipment_type);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
+    $stmt->execute([$equipment_type]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     $total = $data['total'];
     $total_cost = $data['total_cost'] ?? 0;
     
     // Get serviceable count and cost
     $stmt = $db->prepare("SELECT COUNT(*) as count, SUM(cost) as cost FROM inventory WHERE equipment_type = ? AND remarks = 'service'");
-    $stmt->bind_param("s", $equipment_type);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
+    $stmt->execute([$equipment_type]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     $serviceable = $data['count'];
     $serviceable_cost = $data['cost'] ?? 0;
     
     // Get unserviceable count and cost
     $stmt = $db->prepare("SELECT COUNT(*) as count, SUM(cost) as cost FROM inventory WHERE equipment_type = ? AND remarks = 'unservice'");
-    $stmt->bind_param("s", $equipment_type);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
+    $stmt->execute([$equipment_type]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     $unserviceable = $data['count'];
     $unserviceable_cost = $data['cost'] ?? 0;
     
     // Get disposed count and cost
     $stmt = $db->prepare("SELECT COUNT(*) as count, SUM(cost) as cost FROM inventory WHERE equipment_type = ? AND remarks = 'disposed'");
-    $stmt->bind_param("s", $equipment_type);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $data = $result->fetch_assoc();
+    $stmt->execute([$equipment_type]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
     $disposed = $data['count'];
     $disposed_cost = $data['cost'] ?? 0;
+    
+    // Get standby count and cost
+    $stmt = $db->prepare("SELECT COUNT(*) as count, SUM(cost) as cost FROM inventory WHERE equipment_type = ? AND remarks = 'standby'");
+    $stmt->execute([$equipment_type]);
+    $data = $stmt->fetch(PDO::FETCH_ASSOC);
+    $standby = $data['count'];
+    $standby_cost = $data['cost'] ?? 0;
     
     // Return the data as JSON
     echo json_encode([
@@ -55,7 +54,9 @@ try {
         'unserviceable' => $unserviceable,
         'unserviceable_cost' => $unserviceable_cost,
         'disposed' => $disposed,
-        'disposed_cost' => $disposed_cost
+        'disposed_cost' => $disposed_cost,
+        'standby' => $standby,
+        'standby_cost' => $standby_cost
     ]);
     
 } catch (Exception $e) {

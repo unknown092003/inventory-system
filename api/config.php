@@ -1,12 +1,8 @@
 <?php
 session_start();
 
-// Database connection
-$db = new mysqli('localhost', 'root', '', 'inventory_system');
-
-if ($db->connect_error) {
-    die("Connection failed: " . $db->connect_error);
-}
+require_once __DIR__ . '/../pages/db.php';
+$db = Database::getInstance()->getConnection();
 
 // Include Logger
 require_once 'Logger.php';

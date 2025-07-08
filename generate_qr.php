@@ -1,6 +1,6 @@
 <?php
-// Database connection
-$pdo = new PDO("mysql:host=localhost;dbname=inventory-system", "root", "");
+require_once __DIR__ . '/pages/db.php';
+$pdo = Database::getInstance()->getConnection();
 
 // Get item ID from URL
 $id = $_GET['id'] ?? null;

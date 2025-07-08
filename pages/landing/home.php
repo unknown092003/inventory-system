@@ -320,6 +320,14 @@ function showEquipmentModal(equipmentType) {
                 <div style="font-size:18px; font-weight:bold; color:#2e7d32;">${formatCurrency(data.serviceable_cost)}</div>
               </div>
             </div>
+            <div style="background:#fffde7; padding:15px; border-radius:8px;">
+              <div style="font-size:24px; font-weight:bold; color:#fbc02d;">${data.standby}</div>
+              <div>Standby</div>
+              <div style="margin-top:10px; border-top:1px solid #ddd; padding-top:8px;">
+                <div style="font-size:14px; color:#666;">Total Cost</div>
+                <div style="font-size:18px; font-weight:bold; color:#fbc02d;">${formatCurrency(data.standby_cost)}</div>
+              </div>
+            </div>
             <div style="background:#fff3e0; padding:15px; border-radius:8px;">
               <div style="font-size:24px; font-weight:bold; color:#ef6c00;">${data.unserviceable}</div>
               <div>Unserviceable</div>

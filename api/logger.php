@@ -13,8 +13,7 @@ class Logger {
             VALUES (?, ?, ?, ?, ?)
         ");
         
-        $stmt->bind_param("sssss", $action, $description, $property_number, $user, $details);
-        return $stmt->execute();
+        return $stmt->execute([$action, $description, $property_number, $user, $details]);
     }
     
     public function logLogin($username) {
@@ -63,7 +62,7 @@ public function logImport($username, $count, $equipment_type) {
             LIMIT $limit
         ");
         
-        return $result->fetch_all(MYSQLI_ASSOC);
+        return $result->fetchAll(PDO::FETCH_ASSOC);
     }
 }
 ?>

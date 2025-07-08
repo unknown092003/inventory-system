@@ -72,14 +72,13 @@ if (!$stmt) {
 }
 
 if (!empty($params)) {
-    $stmt->bind_param($types, ...$params);
+    $stmt->execute($params);
 }
 
-$stmt->execute();
-$result = $stmt->get_result();
+$result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Check if we got results
-if ($result->num_rows === 0) {
+if (count($result) === 0) {
     echo "<script>alert('No items found with current filters');</script>";
 }
 ?>
@@ -558,7 +557,7 @@ button:hover {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php while ($row = $result->fetch_assoc()): ?>
+                    <?php foreach ($result as $row): ?>
                         <?php
                         $cost = $row['cost'];
                         $costLevel = $cost >= 5000 ? 'HIGH' : 'LOW';
@@ -575,7 +574,7 @@ button:hover {
                             <td><?= $costLevel ?></td>
                             <td><?= htmlspecialchars($row['remarks']) ?></td>
                         </tr>
-                    <?php endwhile; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

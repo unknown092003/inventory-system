@@ -4,30 +4,30 @@ require_once __DIR__ . '/api/config.php';
 
 // Check if the equipment_type column has the correct type
 $result = $db->query("SHOW COLUMNS FROM inventory LIKE 'equipment_type'");
-$column = $result->fetch_assoc();
+$column = $result->fetch(PDO::FETCH_ASSOC);
 
 // If the column is an enum with limited values, we need to alter it
 if (strpos($column['Type'], 'enum') !== false) {
     echo "Altering equipment_type column to VARCHAR(50)...<br>";
-    $db->query("ALTER TABLE inventory MODIFY COLUMN equipment_type VARCHAR(50)");
+    $db->exec("ALTER TABLE inventory MODIFY COLUMN equipment_type VARCHAR(50)");
     
-    if ($db->error) {
-        die("Error altering column: " . $db->error);
+    if ($db->errorInfo()) {
+        die("Error altering column: " . implode(' ', $db->errorInfo()));
     }
     echo "Column altered successfully.<br>";
 }
 
 // Update all records with empty equipment_type to a default value
 if (isset($_GET['type']) && !empty($_GET['type'])) {
-    $type = $db->real_escape_string($_GET['type']);
+    $type = $db->quote($_GET['type']);
     
-    $db->query("UPDATE inventory SET equipment_type = '$type' WHERE equipment_type IS NULL OR equipment_type = ''");
+    $db->exec("UPDATE inventory SET equipment_type = $type WHERE equipment_type IS NULL OR equipment_type = ''");
     
-    if ($db->error) {
-        die("Error updating records: " . $db->error);
+    if ($db->errorInfo()) {
+        die("Error updating records: " . implode(' ', $db->errorInfo()));
     }
     
-    $affected = $db->affected_rows;
+    $affected = $db->rowCount();
     echo "Updated $affected records with equipment_type: $type<br>";
     echo "<a href='/inventory-system/pages/landing.php'>Return to Dashboard</a>";
 } else {
@@ -89,7 +89,7 @@ if (isset($_GET['type']) && !empty($_GET['type'])) {
             <?php
             // Count records with empty equipment_type
             $result = $db->query("SELECT COUNT(*) as count FROM inventory WHERE equipment_type IS NULL OR equipment_type = ''");
-            $row = $result->fetch_assoc();
+            $row = $result->fetch(PDO::FETCH_ASSOC);
             $empty_count = $row['count'];
             
             if ($empty_count > 0) {

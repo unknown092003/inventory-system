@@ -9,10 +9,9 @@ $property_number = $_GET['property_number'];
 
 
 // Get the complete item data including cost
-$item = $db->query("
-    SELECT * FROM inventory 
-    WHERE property_number = '".$db->real_escape_string($property_number)."'
-")->fetch_assoc();
+$stmt = $db->prepare("SELECT * FROM inventory WHERE property_number = ?");
+$stmt->execute([$property_number]);
+$item = $stmt->fetch(PDO::FETCH_ASSOC);
 
 
 
@@ -67,8 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-    $stmt->bind_param(
-        "ssssssdssss",
+    $stmt->execute([
         $update_data['property_number'],
         $update_data['article'],
         $update_data['description'],
@@ -80,11 +78,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_data['remarks'],
         $update_data['signature_of_inventory_team_date'],
         $property_number // Original property number for WHERE clause
-    );
+    ]);
 
 
 
-    if ($stmt->execute()) {
+    if ($stmt->rowCount() > 0) {
         $logger->logEditItem(
             $update_data['property_number'], 
             $update_data['equipment_type'], 
@@ -95,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Instead of redirecting, we will show the modal
         echo "<script>window.onload = function() { document.getElementById('confirmationModal').style.display = 'block'; };</script>";
     } else {
-        $error = "Failed to update item: " . $db->error;
+        $error = "Failed to update item: " . $db->errorInfo()[2];
     }
 }
 ?>

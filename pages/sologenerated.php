@@ -1,4 +1,3 @@
-
 <link rel="stylesheet" href="/inventory-system/public/styles/list.css">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
@@ -7,6 +6,7 @@
 <a href="landing.php">Home</a>
 
 <?php
+require_once __DIR__ . '/db.php';
 require dirname(__FILE__, 2) . "/vendor/autoload.php";
 
 use BaconQrCode\Common\ErrorCorrectionLevel;
@@ -16,7 +16,7 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 
 // Database connection
-$pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
+$pdo = Database::getInstance()->getConnection();
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->exec("SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED");
 

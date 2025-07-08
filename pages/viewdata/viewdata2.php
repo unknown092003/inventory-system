@@ -186,6 +186,12 @@
                     <!-- REGISTRY BUTTON -->
                     <button class="settings-btn" type="button" onclick="window.location.href='viewdata1.php'">Registry</button>
                     <button class="settings-btn" type="button" onclick="window.location.href='/inventory-system/pages/landing.php'">Return</button>
+
+                    <!-- EXPORT RPCPPE BUTTON (AJAX) -->
+                    <button type="button" id="exportRpcppeAjaxBtn">Export RPCPPE (Visible Data)</button>
+                    <form id="exportRpcppeForm" action="/inventory-system/pages/export_rpcppe.php" method="post" style="display:none;">
+                        <input type="hidden" name="exportData" id="exportRpcppeDataInput">
+                    </form>
                 </div>
             </div>
         </div>
@@ -390,25 +396,32 @@
             
             <!-- TABLE DATA (DYNAMICALLY GENERATED FROM DATABASE) -->
             <?php
+                require_once __DIR__ . '/../db.php';
                 // Database connection
-                $conn = new mysqli("localhost", "root", "", "inventory_system");
-                if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+                $conn = Database::getInstance()->getConnection();
 
                 // Build WHERE clause based on filters
                 $where = [];
+                $params = [];
+                if (!empty($_GET['search'])) {
+                    $search = '%' . $_GET['search'] . '%';
+                    $where[] = "(property_number LIKE ? OR description LIKE ? OR model_number LIKE ? OR equipment_type LIKE ? OR remarks LIKE ? OR article LIKE ? OR person_accountable LIKE ?)";
+                    $params = array_fill(0, 7, $search);
+                }
                 if (!empty($_GET['monthPicker'])) {
                     $monthYear = $_GET['monthPicker'];
-                    $where[] = "acquisition_date LIKE '" . $conn->real_escape_string($monthYear) . "%'";
+                    $where[] = "acquisition_date LIKE ?";
+                    $params[] = $monthYear . '%';
                 }
                 $whereClause = $where ? "WHERE " . implode(" AND ", $where) : "";
-
-                // Query database
                 $sql = "SELECT * FROM inventory $whereClause";
-                $result = $conn->query($sql);
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($params);
+                $result = $stmt;
 
                 $totalUnitValue = 0;
-                if ($result && $result->num_rows > 0) {
-                    while($row = $result->fetch_assoc()) {
+                if ($result && $result->rowCount() > 0) {
+                    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
                         // Add data attributes for filtering
                         echo "<tr data-equipment='".htmlspecialchars($row['equipment_type'] ?? '')."' 
                                   data-status='".htmlspecialchars($row['remarks'])."'
@@ -439,7 +452,6 @@
                 } else {
                     echo "<tr><td colspan='11'>No inventory items found</td></tr>";
                 }
-                $conn->close();
             ?>
         </table>
     </div>
@@ -714,12 +726,14 @@
                 
                 // Get row data from cells and data attributes
                 const rowData = {
+                    article: row.cells[0].textContent.toLowerCase(),
                     description: row.cells[1].textContent.toLowerCase(),
                     acquisitionDate: row.cells[2].textContent,
                     cost: parseFloat(row.cells[5].textContent.replace(/[^0-9.-]/g, '')) || 0,
                     remarks: row.cells[10].textContent.toLowerCase(),
                     equipment: row.getAttribute('data-equipment')?.toLowerCase() || '',
-                    status: row.getAttribute('data-status')?.toLowerCase() || ''
+                    status: row.getAttribute('data-status')?.toLowerCase() || '',
+                    personAccountable: row.cells[6].textContent.toLowerCase()
                 };
 
                 // Parse date from acquisition date
@@ -735,9 +749,11 @@
                 
                 // Check each filter condition
                 const matchesSearch = searchTerm === '' || 
+                                    rowData.article.includes(searchTerm) ||
                                     rowData.description.includes(searchTerm) || 
                                     rowData.acquisitionDate.toLowerCase().includes(searchTerm) || 
-                                    rowData.remarks.includes(searchTerm);
+                                    rowData.remarks.includes(searchTerm) ||
+                                    rowData.personAccountable.includes(searchTerm);
                 
                 const matchesEquipment = equipmentType === 'all' || 
                                        rowData.equipment === equipmentType.toLowerCase() || 
@@ -817,10 +833,10 @@
             
             switch(valueFilter) {
                 case 'high':
-                    valueDisplay.textContent = 'High Value (≥₱5,000)';
+                    valueDisplay.textContent = 'High Value';
                     break;
                 case 'low':
-                    valueDisplay.textContent = 'Low Value (<₱5,000)';
+                    valueDisplay.textContent = 'Low Value';
                     break;
                 default:
                     valueDisplay.textContent = 'All Values';
@@ -1043,6 +1059,26 @@
             document.getElementById('copyTableBtn').addEventListener('click', copyTableToClipboard);
             document.getElementById('copyTableWithLayoutBtn').addEventListener('click', copyTableWithLayout);
             document.getElementById('copyAsImageBtn').addEventListener('click', copyAsImage);
+
+            // Export RPCPPE button
+            document.getElementById('exportRpcppeAjaxBtn').addEventListener('click', function() {
+                const table = document.querySelector('.rtp_table table');
+                const rows = Array.from(table.querySelectorAll('tr'));
+                const exportRows = [];
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    // Skip header rows (th)
+                    if (row.querySelector('th')) continue;
+                    // Only export visible rows
+                    if (row.style.display === 'none') continue;
+                    const cells = Array.from(row.querySelectorAll('td'));
+                    if (cells.length !== 11) continue; // Only data rows for RPCPPE
+                    exportRows.push(cells.map(cell => cell.textContent.trim()));
+                }
+                // Send data via hidden form
+                document.getElementById('exportRpcppeDataInput').value = JSON.stringify(exportRows);
+                document.getElementById('exportRpcppeForm').submit();
+            });
         });
     </script>
 </body>

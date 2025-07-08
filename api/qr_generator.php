@@ -1,5 +1,6 @@
 <?php
 require dirname(__FILE__, 2) . "/vendor/autoload.php";
+require_once __DIR__ . '/../pages/db.php';
 
 use BaconQrCode\Common\ErrorCorrectionLevel;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
@@ -10,41 +11,31 @@ use BaconQrCode\Writer;
 function generateSticker($propertyNumber) {
     global $db;
     
-    // Use existing connection if available, otherwise create a new one
-    if (!isset($db) || $db->connect_error) {
-        $db = new mysqli('localhost', 'root', '', 'inventory_system');
-        if ($db->connect_error) {
-            error_log("Database connection failed: " . $db->connect_error);
-            return false;
-        }
-    }
-    
+    // Always get the PDO connection
+    $db = Database::getInstance()->getConnection();
+
     // Debug log to check property number
     error_log("Generating sticker for property number: " . $propertyNumber);
-    
-    // Prepare and execute query using mysqli
+
+    // Prepare and execute query using PDO
     $stmt = $db->prepare("SELECT * FROM inventory WHERE property_number = ?");
     if (!$stmt) {
-        error_log("Prepare failed: " . $db->error);
+        error_log("Prepare failed: " . implode(' | ', $db->errorInfo()));
         return false;
     }
-    
-    $stmt->bind_param("s", $propertyNumber);
-    if (!$stmt->execute()) {
-        error_log("Execute failed: " . $stmt->error);
-        $stmt->close();
+
+    if (!$stmt->execute([$propertyNumber])) {
+        error_log("Execute failed: " . implode(' | ', $stmt->errorInfo()));
         return false;
     }
-    
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $stmt->close();
-    
+
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
     // Debug log to check if equipment_type is present in the record
     if ($row) {
         error_log("Found record with equipment_type: " . ($row['equipment_type'] ?? 'NOT SET'));
     }
-    
+
     if (!$row) {
         error_log("Record not found for property number: " . $propertyNumber);
         return false; // Record not found

@@ -16,11 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Update all records with empty equipment_type
         $stmt = $db->prepare("UPDATE inventory SET equipment_type = ? WHERE equipment_type IS NULL OR equipment_type = ''");
-        $stmt->bind_param("s", $equipment_type);
-        $stmt->execute();
+        $stmt->execute([$equipment_type]);
         
-        $affected = $stmt->affected_rows;
-        $stmt->close();
+        $affected = $stmt->rowCount();
+        $stmt->closeCursor();
         
         $_SESSION['import_success'] = "Updated equipment type for $affected records";
         
@@ -37,8 +36,9 @@ $valid_types = ['Machinery', 'Construction', 'ICT Equipment', 'Communications',
                'Military/Security', 'Office', 'DRRM Equipment', 'Furniture'];
 
 // Count records with empty equipment_type
-$result = $db->query("SELECT COUNT(*) as count FROM inventory WHERE equipment_type IS NULL OR equipment_type = ''");
-$row = $result->fetch_assoc();
+$stmt = $db->prepare("SELECT COUNT(*) as count FROM inventory WHERE equipment_type IS NULL OR equipment_type = ''");
+$stmt->execute();
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
 $empty_count = $row['count'];
 ?>
 

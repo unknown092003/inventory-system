@@ -179,6 +179,12 @@
                     <!-- PRINT BUTTON -->
                     <button id="printBtn">Print</button>
                     
+                    <!-- EXPORT REGISTRY BUTTON (AJAX) -->
+                    <button type="button" id="exportRegistryAjaxBtn">Export Registry (Visible Data)</button>
+                    <form id="exportRegistryForm" action="/inventory-system/pages/export_registry.php" method="post" style="display:none;">
+                        <input type="hidden" name="exportData" id="exportDataInput">
+                    </form>
+                    
                     <!-- NAVIGATION BUTTONS -->
                     <button class="settings-btn" type="button" onclick="window.location.href='viewdata2.php'">RPCPPE</button>
                     <button class="settings-btn" type="button" onclick="window.location.href='/inventory-system/pages/landing.php'">Return</button>
@@ -394,23 +400,32 @@
             </tr>
             
             <?php
-            $conn = new mysqli("localhost", "root", "", "inventory_system");
-            if ($conn->connect_error) die("Connection failed: " . $conn->connect_error);
+            require_once __DIR__ . '/../db.php';
+            // Database connection
+            $conn = Database::getInstance()->getConnection();
 
             // Build WHERE clause based on filters
             $where = [];
+            $params = [];
+            if (!empty($_GET['search'])) {
+                $search = '%' . $_GET['search'] . '%';
+                $where[] = "(property_number LIKE ? OR description LIKE ? OR model_number LIKE ? OR equipment_type LIKE ? OR remarks LIKE ? OR person_accountable LIKE ?)";
+                $params = array_fill(0, 6, $search);
+            }
             if (!empty($_GET['monthPicker'])) {
                 $monthYear = $_GET['monthPicker'];
-                $where[] = "acquisition_date LIKE '" . $conn->real_escape_string($monthYear) . "%'";
+                $where[] = "acquisition_date LIKE ?";
+                $params[] = $monthYear . '%';
             }
             $whereClause = $where ? "WHERE " . implode(" AND ", $where) : "";
-
             $sql = "SELECT * FROM inventory $whereClause";
-            $result = $conn->query($sql);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt;
 
             $totalAmount = 0;
-            if ($result && $result->num_rows > 0) {
-                while($row = $result->fetch_assoc()) {
+            if ($result && $result->rowCount() > 0) {
+                while($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     echo "<tr data-equipment='".htmlspecialchars($row['equipment_type'] ?? '')."' 
                               data-status='".htmlspecialchars($row['remarks'])."'
                               data-date='".htmlspecialchars($row['acquisition_date'])."'
@@ -444,8 +459,6 @@
             echo "<td id='totalAmount'>" . number_format($totalAmount, 2) . "</td>";
             echo "<td></td>";
             echo "</tr>";
-            
-            $conn->close();
             ?>
         </table>
     </div>
@@ -725,7 +738,8 @@
                     amount: parseFloat(row.cells[13].textContent.replace(/[^0-9.-]/g, '')) || 0,
                     remarks: row.cells[14].textContent.toLowerCase(),
                     equipment: row.getAttribute('data-equipment')?.toLowerCase() || '',
-                    status: row.getAttribute('data-status')?.toLowerCase() || ''
+                    status: row.getAttribute('data-status')?.toLowerCase() || '',
+                    personAccountable: row.cells[6].textContent.toLowerCase()
                 };
 
                 // Parse date from acquisition date
@@ -743,7 +757,8 @@
                 const matchesSearch = searchTerm === '' || 
                                     rowData.description.includes(searchTerm) || 
                                     rowData.acquisitionDate.toLowerCase().includes(searchTerm) || 
-                                    rowData.remarks.includes(searchTerm);
+                                    rowData.remarks.includes(searchTerm) ||
+                                    rowData.personAccountable.includes(searchTerm);
                 
                 const matchesEquipment = equipmentType === 'all' || 
                                        rowData.equipment === equipmentType.toLowerCase() || 
@@ -819,10 +834,10 @@
             
             switch(valueFilter) {
                 case 'high':
-                    valueDisplay.textContent = 'High Value (≥₱5,000)';
+                    valueDisplay.textContent = 'High Value';
                     break;
                 case 'low':
-                    valueDisplay.textContent = 'Low Value (<₱5,000)';
+                    valueDisplay.textContent = 'Low Value';
                     break;
                 default:
                     valueDisplay.textContent = 'All Values';
@@ -1049,6 +1064,35 @@
             // Month picker form submission
             document.getElementById('monthPicker')?.addEventListener('change', function() {
                 document.getElementById('filterForm').submit();
+            });
+
+            // Export Registry button
+            document.getElementById('exportRegistryAjaxBtn').addEventListener('click', function() {
+                // Collect visible table rows (excluding header and total)
+                const table = document.querySelector('.rtp_table table');
+                const rows = Array.from(table.querySelectorAll('tr'));
+                const exportRows = [];
+                for (let i = 0; i < rows.length; i++) {
+                    const row = rows[i];
+                    // Skip header rows (th) and total/footer rows
+                    if (row.querySelector('th')) continue;
+                    // Skip total row (has id totalRow)
+                    if (row.id === 'totalRow') continue;
+                    // Only export visible rows
+                    if (row.style.display === 'none') continue;
+                    const cells = Array.from(row.querySelectorAll('td'));
+                    if (cells.length < 15) continue; // Only data rows
+                    exportRows.push(cells.map(cell => cell.textContent.trim()));
+                }
+                // Add total row if present
+                const totalRow = document.getElementById('totalRow');
+                if (totalRow && totalRow.style.display !== 'none') {
+                    const cells = Array.from(totalRow.querySelectorAll('td'));
+                    exportRows.push(cells.map(cell => cell.textContent.trim()));
+                }
+                // Send data via hidden form
+                document.getElementById('exportDataInput').value = JSON.stringify(exportRows);
+                document.getElementById('exportRegistryForm').submit();
             });
         });
     </script>

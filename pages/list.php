@@ -126,6 +126,9 @@
     
     <div class="sticker-preview" id="stickerContainer">
         <?php
+        require_once __DIR__ . '/db.php';
+        $pdo = Database::getInstance()->getConnection();
+        
         require dirname(__FILE__, 2) . "/vendor/autoload.php";
         
         use BaconQrCode\Common\ErrorCorrectionLevel;
@@ -133,8 +136,6 @@
         use BaconQrCode\Renderer\ImageRenderer;
         use BaconQrCode\Renderer\RendererStyle\RendererStyle;
         use BaconQrCode\Writer;
-        
-        $pdo = new PDO("mysql:host=localhost;dbname=inventory_system", "root", "");
         
         // Build query with filters
         $query = "SELECT * FROM inventory WHERE 1=1";

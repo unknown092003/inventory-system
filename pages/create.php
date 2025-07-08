@@ -27,17 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     ];
 
     // 🔍 Check if property_number already exists
-    $checkStmt = $db->prepare("SELECT id FROM inventory WHERE property_number = ?");
-    $checkStmt->bind_param("s", $item['property_number']);
-    $checkStmt->execute();
-    $checkResult = $checkStmt->get_result();
+    $stmt = $db->prepare("SELECT id FROM inventory WHERE property_number = ?");
+    $stmt->execute([$item['property_number']]);
+    $checkResult = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($checkResult->num_rows > 0) {
+    if ($checkResult) {
         $error = "Property Number already exists. Please use a different one.";
     } else {
         // Insert only if not duplicate
         $stmt = $db->prepare("INSERT INTO inventory (property_number, article, description, model_number, acquisition_date, person_accountable, signature_of_inventory_team_date, cost, equipment_type, remarks) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssdss", 
+        $stmt->execute([
             $item['property_number'],
             $item['article'],
             $item['description'],
@@ -48,9 +47,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $item['cost'],
             $item['equipment_type'],
             $item['remarks']
-        );
+        ]);
 
-        if ($stmt->execute()) {
+        if ($stmt->rowCount() > 0) {
             $logger->logCreateItem($item['property_number'], $item['equipment_type'], $_SESSION['username']);
             require_once __DIR__ . '/../api/qr_generator.php';
 
@@ -63,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header("Location: landing.php");
             exit();
         } else {
-            $error = "Failed to add item: " . $db->error;
+            $error = "Failed to add item: " . $db->errorInfo()[2];
         }
     }
 }

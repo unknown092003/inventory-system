@@ -28,26 +28,118 @@
         </div>
         
         <dialog id="item-dialog">
-            <h2 id="prod-num"></h2>
-            <p id="art"></p>
-            <p id="prod-desc"></p>
-            <p id="model"></p>
-            <p id="accquisition-date"></p>
-            <p id="person-acc"></p>
-            <p id="status"></p>
-            <p id="et"></p>
-            <p id="sign"></p>
-            
-            <div class="dialog-actions">
-                <button id="scan-again">
-                    Scan Again
-                </button>
-                <button id="view-data" class="button primary">
-                    View Data
-                </button>
+            <div class="item-dialog-content">
+                <h2 id="prod-num"></h2>
+                <div class="item-info">
+                    <p id="art"></p>
+                    <p id="prod-desc"></p>
+                    <p id="model"></p>
+                    <p id="accquisition-date"></p>
+                    <p id="person-acc"></p>
+                    <p id="status"></p>
+                    <p id="sign"></p>
+                </div>
+                <div class="dialog-actions">
+                    <button id="scan-again">Scan Again</button>
+                    <button id="view-data" class="button primary">View Data</button>
+                </div>
             </div>
         </dialog>
     </main>
+
+    <style>
+    #item-dialog::backdrop {
+      background: rgba(0,0,0,0.4);
+    }
+    #item-dialog {
+      border: none;
+      border-radius: 16px;
+      max-width: 95vw;
+      width: 400px;
+      padding: 0;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      margin: 0 auto;
+      overflow: visible;
+    }
+    .item-dialog-content {
+      padding: 24px 18px 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .item-dialog-content h2 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      word-break: break-all;
+      white-space: pre-line;
+    }
+    .item-info p {
+      margin: 0 0 10px 0;
+      font-size: 1rem;
+      word-break: break-word;
+      white-space: pre-line;
+      line-height: 1.4;
+      overflow: visible !important;
+      text-overflow: unset !important;
+      white-space: pre-line !important;
+      max-width: 100vw;
+    }
+    #item-dialog p#prod-desc {
+      overflow: visible !important;
+      white-space: pre-line !important;
+      text-overflow: unset !important;
+    }
+    #item-dialog p, #item-dialog h2 {
+      border: 1px solid white;
+      margin: 5px 0;
+      padding: 8px;
+      background-color: white;
+      border-radius: 4px;
+      word-wrap: break-word;
+      font-size: 1rem;
+      white-space: pre-line !important;
+    }
+    .dialog-actions {
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      margin-top: 18px;
+      justify-content: flex-end;
+    }
+    @media (max-width: 600px) {
+      #item-dialog {
+        width: 98vw;
+        min-width: unset;
+        max-width: 98vw;
+        padding: 0;
+        border-radius: 10px;
+      }
+      .item-dialog-content {
+        padding: 14px 6vw 10px 6vw;
+        font-size: 0.98rem;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      .dialog-actions {
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+      }
+      .dialog-actions button {
+        width: 100%;
+        font-size: 1rem;
+      }
+      #item-dialog p, #item-dialog h2 {
+        font-size: 1rem;
+        padding: 6px;
+        white-space: pre-line !important;
+        overflow: visible !important;
+        text-overflow: unset !important;
+      }
+    }
+    </style>
 
     <script>
         const html5QrCode = new Html5Qrcode("reader");

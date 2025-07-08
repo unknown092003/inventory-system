@@ -15,11 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Check if username exists
         $stmt = $db->prepare("SELECT id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $stmt->store_result();
-        
-        if ($stmt->num_rows > 0) {
+        $stmt->execute([$username]);
+        if ($stmt->rowCount() > 0) {
             $error = "Username already exists!";
         } else {
             // Hash password
@@ -27,14 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             // Insert new user
             $stmt = $db->prepare("INSERT INTO users (username, password, full_name) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $username, $hashed_password, $full_name);
-            
-            if ($stmt->execute()) {
+            if ($stmt->execute([$username, $hashed_password, $full_name])) {
                 $success = "Registration successful! You can now login.";
                 // Optionally log this action if you want
                 $logger->logAction('user_created', 'New user registered', NULL, $username);
+                header("Location: login.php");
+                exit();
             } else {
-                $error = "Registration failed: " . $db->error;
+                $error = "Registration failed: " . implode(' | ', $db->errorInfo());
             }
         }
     }

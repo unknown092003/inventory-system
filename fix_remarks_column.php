@@ -3,7 +3,7 @@ require_once __DIR__ . '/api/config.php';
 
 // Check current column structure
 $result = $db->query("SHOW COLUMNS FROM inventory LIKE 'remarks'");
-$column = $result->fetch_assoc();
+$column = $result->fetch(PDO::FETCH_ASSOC);
 
 echo "Current remarks column structure:<br>";
 echo "Type: " . $column['Type'] . "<br><br>";
@@ -13,8 +13,8 @@ if (strpos($column['Type'], 'enum') !== false) {
     echo "Altering remarks column to include 'standby'...<br>";
     $db->query("ALTER TABLE inventory MODIFY COLUMN remarks ENUM('standby','service','unservice','disposed') DEFAULT 'standby'");
     
-    if ($db->error) {
-        echo "Error: " . $db->error . "<br>";
+    if ($db->errorInfo()) {
+        echo "Error: " . $db->errorInfo()[2] . "<br>";
     } else {
         echo "Successfully updated remarks column to include 'standby'<br>";
     }
@@ -24,7 +24,7 @@ if (strpos($column['Type'], 'enum') !== false) {
 
 // Check the updated structure
 $result = $db->query("SHOW COLUMNS FROM inventory LIKE 'remarks'");
-$column = $result->fetch_assoc();
+$column = $result->fetch(PDO::FETCH_ASSOC);
 echo "<br>Updated remarks column structure:<br>";
 echo "Type: " . $column['Type'] . "<br>";
 

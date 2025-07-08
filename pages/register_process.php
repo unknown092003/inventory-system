@@ -1,6 +1,9 @@
 <?php
 // register_process.php
-require_once __DIR__ . '/connect.php';
+require_once __DIR__ . '/db.php';
+
+// Get database connection
+$conn = Database::getInstance()->getConnection();
 
 if (isset($_POST['signUp'])) {
     $firstName = trim($_POST['fName']);
